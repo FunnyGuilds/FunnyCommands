@@ -118,3 +118,12 @@ hs_err_pid*
 
 # Personal debugging stuff
 debugging/
+
+# Spigot
+# MC
+*.mca
+*.dat
+*.dat_old
+*.lock
+*.log.gz
+*.log
