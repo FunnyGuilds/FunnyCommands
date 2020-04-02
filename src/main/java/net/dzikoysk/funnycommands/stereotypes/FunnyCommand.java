@@ -1,18 +1,16 @@
-package net.dzikoysk.funnycommands;
+package net.dzikoysk.funnycommands.stereotypes;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target(ElementType.METHOD)
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@interface FunnyCommand {
+public @interface FunnyCommand {
 
     String name();
 
     String permission();
-
-    String[] parameters() default { };
 
 }

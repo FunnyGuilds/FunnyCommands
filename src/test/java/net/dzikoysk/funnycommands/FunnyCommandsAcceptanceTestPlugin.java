@@ -1,12 +1,18 @@
 package net.dzikoysk.funnycommands;
 
 import net.dzikoysk.funnycommands.responses.SenderResponse;
+import net.dzikoysk.funnycommands.stereotypes.Arg;
+import net.dzikoysk.funnycommands.stereotypes.Command;
+import net.dzikoysk.funnycommands.stereotypes.FunnyCommand;
+import net.dzikoysk.funnycommands.stereotypes.TabCompleter;
 import org.bukkit.entity.Player;
 import org.panda_lang.utilities.commons.collection.Maps;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
@@ -29,8 +35,12 @@ public final class FunnyCommandsAcceptanceTestPlugin extends FunnyCommandsPlugin
                 .commands(TestCommand.class)
                 .type("player", Player.class, username -> super.getServer().getPlayer(username))
                 .bind(resources -> resources.annotatedWith(RandomUUID.class).assignInstance(UUID::randomUUID))
+                .responseHandler(boolean.class, (context, response) -> true)
                 .responseHandler(SenderResponse.class, (context, response) -> {
-                    context.getCommandSender().sendMessage(context.format(response));
+                    response.getSender()
+                            .getOrElse(context::getCommandSender)
+                            .sendMessage(context.format(response));
+
                     return true;
                 })
                 .exceptionHandler(FunnyCommandsException.class, e -> {
@@ -40,18 +50,19 @@ public final class FunnyCommandsAcceptanceTestPlugin extends FunnyCommandsPlugin
                 .create();
     }
 
-    @Override
-    public void onDisable() {
-        commands.dispose();
-    }
-
     @interface RandomUUID { }
 
-    static final class TestCommand {
+    @FunnyCommand(name = "${fc.test-alias}", permission = "fc.test")
+    private static final class TestCommand {
 
-        @FunnyCommand(name = "${fc.test-alias}", permission = "fc.test", parameters = {})
-        SenderResponse test(@RandomUUID UUID uuid) {
-            return new SenderResponse(uuid + ": ${fc.time}");
+        @Command({ "<player: target>" })
+        SenderResponse test(@Arg("arg-player") Player target) {
+            return new SenderResponse(target, "Test ${fc.time}");
+        }
+
+        @TabCompleter
+        List<String> complete() {
+            return Collections.emptyList();
         }
 
     }

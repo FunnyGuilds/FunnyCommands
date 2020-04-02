@@ -1,5 +1,6 @@
 package net.dzikoysk.funnycommands;
 
+import net.dzikoysk.funnycommands.data.Origin;
 import net.dzikoysk.funnycommands.mappers.TypeMapper;
 import org.bukkit.Server;
 import org.panda_lang.utilities.inject.InjectorResources;
@@ -21,7 +22,7 @@ public final class FunnyCommandsConfiguration {
     protected final Map<String, TypeMapper<?>> typeMappers = new HashMap<>();
     protected final Collection<Consumer<InjectorResources>> binds = new ArrayList<>();
     protected final Map<Class<? extends Exception>, Function<? extends Exception, Boolean>> exceptionHandlers = new HashMap<>();
-    protected final Map<Class<?>, BiFunction<FunnyCommandContext, ?, Boolean>> responseHandlers = new HashMap<>();
+    protected final Map<Class<?>, BiFunction<Origin, ?, Boolean>> responseHandlers = new HashMap<>();
 
     FunnyCommandsConfiguration(Server server) {
         this.server = server;
@@ -61,7 +62,7 @@ public final class FunnyCommandsConfiguration {
         return this;
     }
 
-    public <R> FunnyCommandsConfiguration responseHandler(Class<R> responseType, BiFunction<FunnyCommandContext, R, Boolean> responseHandler) {
+    public <R> FunnyCommandsConfiguration responseHandler(Class<R> responseType, BiFunction<Origin, R, Boolean> responseHandler) {
         this.responseHandlers.put(responseType, responseHandler);
         return this;
     }

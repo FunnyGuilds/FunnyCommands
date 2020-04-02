@@ -1,12 +1,12 @@
-package net.dzikoysk.funnycommands;
+package net.dzikoysk.funnycommands.data;
 
 import org.bukkit.command.CommandSender;
 
-public final class FunnyCommandContext {
+public final class Origin {
 
     private final CommandSender commandSender;
 
-    public FunnyCommandContext(CommandSender commandSender) {
+    public Origin(CommandSender commandSender) {
         this.commandSender = commandSender;
     }
 
