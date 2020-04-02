@@ -33,7 +33,7 @@ public final class FunnyCommandsAcceptanceTestPlugin extends FunnyCommandsPlugin
         }};
 
         // handled
-        FunnyCommands commands = FunnyCommands.configuration(this)
+        this.funnyCommands = FunnyCommands.configuration(this)
                 .placeholders(placeholders)
                 .commands(TestCommand.class)
                 .type("player", Player.class, username -> super.getServer().getPlayer(username))
