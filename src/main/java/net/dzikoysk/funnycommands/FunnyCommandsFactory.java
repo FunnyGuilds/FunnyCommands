@@ -27,7 +27,7 @@ final class FunnyCommandsFactory {
         }
 
         CommandsLoader commandsLoader = creator.commandsLoader;
-        commandsLoader.registerCommands(commands);
+        commandsLoader.loadCommands(commands);
 
         return new FunnyCommands(commandsLoader, injector);
     }

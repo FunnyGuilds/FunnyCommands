@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public final class FunnyCommandsConfiguration {
 
@@ -26,7 +27,7 @@ public final class FunnyCommandsConfiguration {
     protected final Map<Class<? extends Exception>, Function<? extends Exception, Boolean>> exceptionHandlers = new HashMap<>();
     protected final Map<Class<?>, BiFunction<Origin, ?, Boolean>> responseHandlers = new HashMap<>();
 
-    FunnyCommandsConfiguration(JavaPlugin plugin) {
+    FunnyCommandsConfiguration(Supplier<JavaPlugin> plugin) {
         this.commandsLoader = new CommandsLoader(plugin);
     }
 

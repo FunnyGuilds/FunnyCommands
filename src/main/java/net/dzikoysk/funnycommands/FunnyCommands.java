@@ -4,6 +4,8 @@ import net.dzikoysk.funnycommands.commands.CommandsLoader;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.panda_lang.utilities.inject.Injector;
 
+import java.util.function.Supplier;
+
 public final class FunnyCommands {
 
     private final CommandsLoader commandsLoader;
@@ -15,14 +17,14 @@ public final class FunnyCommands {
     }
 
     public void dispose() {
-        commandsLoader.unregisterCommands();
+        commandsLoader.unloadCommands();
     }
 
     public Injector getInjector() {
         return injector;
     }
 
-    public static FunnyCommandsConfiguration configuration(JavaPlugin plugin) {
+    public static FunnyCommandsConfiguration configuration(Supplier<JavaPlugin> plugin) {
         return new FunnyCommandsConfiguration(plugin);
     }
 

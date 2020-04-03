@@ -5,7 +5,7 @@ import net.dzikoysk.funnycommands.FunnyCommandsException;
 import net.dzikoysk.funnycommands.FunnyCommandsPlugin;
 import net.dzikoysk.funnycommands.responses.SenderResponse;
 import net.dzikoysk.funnycommands.stereotypes.Arg;
-import net.dzikoysk.funnycommands.stereotypes.Command;
+import net.dzikoysk.funnycommands.stereotypes.Executor;
 import net.dzikoysk.funnycommands.stereotypes.FunnyCommand;
 import org.bukkit.entity.Player;
 import org.panda_lang.utilities.commons.collection.Maps;
@@ -33,7 +33,7 @@ public final class FunnyCommandsAcceptanceTestPlugin extends FunnyCommandsPlugin
         }};
 
         // handled
-        this.funnyCommands = FunnyCommands.configuration(this)
+        this.funnyCommands = FunnyCommands.configuration(() -> this)
                 .placeholders(placeholders)
                 .commands(TestCommand.class)
                 .type("player", Player.class, username -> super.getServer().getPlayer(username))
@@ -63,7 +63,7 @@ public final class FunnyCommandsAcceptanceTestPlugin extends FunnyCommandsPlugin
     @FunnyCommand(name = "${fc.test-alias}", permission = "fc.test")
     private static final class TestCommand {
 
-        @Command({ "<player: target>" })
+        @Executor({ "<player: target>" })
         SenderResponse test(@Arg("arg-player") Player target) {
             return new SenderResponse(target, "Test ${fc.time}");
         }

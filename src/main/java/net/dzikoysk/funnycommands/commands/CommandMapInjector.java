@@ -1,27 +1,30 @@
 package net.dzikoysk.funnycommands.commands;
 
 import net.dzikoysk.funnycommands.FunnyCommandsException;
+import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.panda_lang.utilities.commons.ObjectUtils;
+import org.panda_lang.utilities.commons.function.CachedSupplier;
 import org.panda_lang.utilities.commons.function.ThrowingSupplier;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 final class CommandMapInjector {
 
-    private final JavaPlugin plugin;
+    private final Supplier<JavaPlugin> plugin;
     private final Map<String, DynamicCommand> registeredCommands = new HashMap<>();
 
-    CommandMapInjector(JavaPlugin plugin) {
-        this.plugin = plugin;
+    CommandMapInjector(Supplier<JavaPlugin> plugin) {
+        this.plugin = new CachedSupplier<>(plugin);
     }
 
     protected void register(DynamicCommand command) {
-        fetchCommandMap().register(plugin.getName(), command);
+        fetchCommandMap().register(plugin.get().getName(), command);
         registeredCommands.put(command.getName(), command);
     }
 
@@ -32,10 +35,10 @@ final class CommandMapInjector {
 
     private CommandMap fetchCommandMap() {
         return fetch(() -> {
-            Field commandMapField = plugin.getServer().getClass().getDeclaredField("commandMap");
+            Field commandMapField = getServer().getClass().getDeclaredField("commandMap");
             commandMapField.setAccessible(true);
 
-            return (CommandMap) commandMapField.get(plugin.getServer());
+            return (CommandMap) commandMapField.get(getServer());
         });
     }
 
@@ -56,6 +59,10 @@ final class CommandMapInjector {
         } catch (ReflectiveOperationException e) {
             throw new FunnyCommandsException("Unsupported server engine", e);
         }
+    }
+
+    private Server getServer() {
+        return plugin.get().getServer();
     }
 
 }
