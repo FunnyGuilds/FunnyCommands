@@ -41,7 +41,7 @@ public final class CommandsTree {
     }
 
     public Option<CommandMetadata> get(String name) {
-        return getNode(name).flatMap(CommandsTree::getElement);
+        return getNode(name).map(CommandsTree::getMetadata);
     }
 
     public Collection<CommandsTree> collectCommandsStartingWith(String str) {
@@ -66,8 +66,8 @@ public final class CommandsTree {
         return children.values();
     }
 
-    public Option<CommandMetadata> getElement() {
-        return Option.of(element);
+    public CommandMetadata getMetadata() {
+        return element;
     }
 
     public String getSimpleName() {

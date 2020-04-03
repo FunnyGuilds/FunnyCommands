@@ -8,36 +8,37 @@ import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.List;
 
 final class DynamicCommand extends Command {
 
     private final FunnyCommands funnyCommands;
-    private final Method executeMethod;
-    private final Method tabCompleteMethod;
-    private final Object commandInstance;
+    private final CommandsTree commandsTree;
 
-    protected DynamicCommand(FunnyCommands funnyCommands, BukkitCommandInfo bukkitCommandInfo, Method executeMethod, Method tabCompleteMethod, Object commandInstance) {
-        super(bukkitCommandInfo.getName(), bukkitCommandInfo.getDescription(), bukkitCommandInfo.getUsageMessage(), bukkitCommandInfo.getAliases());
+    protected DynamicCommand(FunnyCommands funnyCommands, CommandsTree commandsTree, CommandInfo commandInfo) {
+        super(commandInfo.getName(), commandInfo.getDescription(), commandInfo.getUsageMessage(), commandInfo.getAliases());
         this.funnyCommands = funnyCommands;
-        this.executeMethod = executeMethod;
-        this.tabCompleteMethod = tabCompleteMethod;
-        this.commandInstance = commandInstance;
+        this.commandsTree = commandsTree;
     }
 
     @Override
     public boolean execute(CommandSender commandSender, String s, String[] strings) {
-        return invoke(executeMethod);
+        return invoke(commandsTree.getMetadata().getCommandMethod());
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<String> tabComplete(CommandSender sender, String alias, String[] args, @Nullable Location location) throws IllegalArgumentException {
-        return invoke(tabCompleteMethod);
+        return commandsTree.getMetadata().getTabCompleteMethod()
+            .map(this::invoke)
+            .map(result -> (List<String>) result)
+            .getOrElse(Collections::emptyList);
     }
 
     private <T> T invoke(Method method) {
         try {
-            return funnyCommands.getInjector().invokeMethod(method, commandInstance);
+            return funnyCommands.getInjector().invokeMethod(method, commandsTree.getMetadata().getCommandInstance());
         } catch (Throwable throwable) {
             throw new FunnyCommandsException("Failed to invoke method " + method, throwable);
         }

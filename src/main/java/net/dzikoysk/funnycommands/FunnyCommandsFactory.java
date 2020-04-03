@@ -1,6 +1,5 @@
 package net.dzikoysk.funnycommands;
 
-import net.dzikoysk.funnycommands.commands.CommandsLoader;
 import org.panda_lang.utilities.inject.DependencyInjection;
 import org.panda_lang.utilities.inject.Injector;
 import org.panda_lang.utilities.inject.InjectorException;
@@ -11,14 +10,14 @@ import java.util.Collection;
 
 final class FunnyCommandsFactory {
 
-    protected FunnyCommands createFunnyCommands(FunnyCommandsConfiguration creator) {
+    protected FunnyCommands createFunnyCommands(FunnyCommandsConfiguration configuration) {
         Injector injector = DependencyInjection.createInjector(resources -> {
-            creator.binds.forEach(bind -> bind.accept(resources));
+            configuration.binds.forEach(bind -> bind.accept(resources));
         });
 
-        Collection<Object> commands = new ArrayList<>(creator.commandsInstances);
+        Collection<Object> commands = new ArrayList<>(configuration.commandsInstances);
 
-        for (Class<?> commandClass : creator.commandsClasses) {
+        for (Class<?> commandClass : configuration.commandsClasses) {
             try {
                 commands.add(injector.newInstance(commandClass));
             } catch (InstantiationException | InjectorException | InvocationTargetException | IllegalAccessException e) {
@@ -26,10 +25,10 @@ final class FunnyCommandsFactory {
             }
         }
 
-        CommandsLoader commandsLoader = creator.commandsLoader;
-        commandsLoader.loadCommands(commands);
+        FunnyCommands funnyCommands = new FunnyCommands(configuration, injector);
+        funnyCommands.getCommandsLoader().registerCommands(commands);
 
-        return new FunnyCommands(commandsLoader, injector);
+        return funnyCommands;
     }
 
 }

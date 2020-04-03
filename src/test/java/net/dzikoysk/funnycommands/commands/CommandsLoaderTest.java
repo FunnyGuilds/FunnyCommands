@@ -1,5 +1,6 @@
 package net.dzikoysk.funnycommands.commands;
 
+import net.dzikoysk.funnycommands.FunnyCommands;
 import net.dzikoysk.funnycommands.stereotypes.Executor;
 import net.dzikoysk.funnycommands.stereotypes.FunnyCommand;
 import org.junit.jupiter.api.Assertions;
@@ -11,11 +12,11 @@ class CommandsLoaderTest {
 
     @Test
     void loadCommands() {
-        CommandsLoader commandsLoader = new CommandsLoader(() -> {
+        FunnyCommands funnyCommands = FunnyCommands.configuration(() -> {
             throw new UnsupportedOperationException();
-        });
+        }).create();
 
-        CommandsTree tree = commandsLoader.loadCommands(Arrays.asList(
+        CommandsTree tree = funnyCommands.getCommandsLoader().loadCommands(Arrays.asList(
                 new CommandA(),
                 new CommandB(), new CommandB1(), new CommandB2(), new CommandB12(),
                 new CommandC()

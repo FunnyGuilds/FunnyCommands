@@ -1,9 +1,9 @@
 package net.dzikoysk.funnycommands;
 
-import net.dzikoysk.funnycommands.commands.CommandsLoader;
 import net.dzikoysk.funnycommands.data.Origin;
 import net.dzikoysk.funnycommands.mappers.TypeMapper;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.panda_lang.utilities.commons.function.CachedSupplier;
 import org.panda_lang.utilities.inject.InjectorResources;
 
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ import java.util.function.Supplier;
 
 public final class FunnyCommandsConfiguration {
 
-    protected final CommandsLoader commandsLoader;
+    protected final Supplier<JavaPlugin> plugin;
     protected final Map<String, Function<String, String>> placeholders = new HashMap<>();
     protected final Collection<Class<?>> commandsClasses = new ArrayList<>();
     protected final Collection<Object> commandsInstances = new ArrayList<>();
@@ -28,7 +28,7 @@ public final class FunnyCommandsConfiguration {
     protected final Map<Class<?>, BiFunction<Origin, ?, Boolean>> responseHandlers = new HashMap<>();
 
     FunnyCommandsConfiguration(Supplier<JavaPlugin> plugin) {
-        this.commandsLoader = new CommandsLoader(plugin);
+        this.plugin = new CachedSupplier<>(plugin);
     }
 
     public FunnyCommands create() {

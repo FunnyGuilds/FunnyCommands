@@ -1,4 +1,4 @@
-package net.dzikoysk.funnycommands.test;
+package net.dzikoysk.funnycommands.acceptance;
 
 import net.dzikoysk.funnycommands.FunnyCommands;
 import net.dzikoysk.funnycommands.FunnyCommandsException;

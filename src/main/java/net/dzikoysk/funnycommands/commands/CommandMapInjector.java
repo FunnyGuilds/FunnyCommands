@@ -23,9 +23,10 @@ final class CommandMapInjector {
         this.plugin = new CachedSupplier<>(plugin);
     }
 
-    protected void register(DynamicCommand command) {
+    protected DynamicCommand register(DynamicCommand command) {
         fetchCommandMap().register(plugin.get().getName(), command);
         registeredCommands.put(command.getName(), command);
+        return command;
     }
 
     protected void unregister() {
