@@ -17,4 +17,4 @@ private static final class TestCommand {
 }
 ```
 
-Full and up-to-date example is available in [FunnyCommandsAcceptanceTestPlugin](https://github.com/FunnyGuilds/FunnyCommands/blob/master/src/test/java/net/dzikoysk/funnycommands/test/FunnyCommandsAcceptanceTestPlugin.java) class.
+Full and up-to-date example is available in [FunnyCommandsAcceptanceTestPlugin](https://github.com/FunnyGuilds/FunnyCommands/blob/master/src/test/java/net/dzikoysk/funnycommands/acceptance/FunnyCommandsAcceptanceTestPlugin.java) class
