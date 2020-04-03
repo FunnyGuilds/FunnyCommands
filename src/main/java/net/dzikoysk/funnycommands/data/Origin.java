@@ -21,13 +21,25 @@ import org.bukkit.command.CommandSender;
 public final class Origin {
 
     private final CommandSender commandSender;
+    private final String alias;
+    private final String[] args;
 
-    public Origin(CommandSender commandSender) {
+    public Origin(CommandSender commandSender, String alias, String[] args) {
         this.commandSender = commandSender;
+        this.alias = alias;
+        this.args = args;
     }
 
     public String format(Object value) {
         return value.toString();
+    }
+
+    public String[] getArgs() {
+        return args;
+    }
+
+    public String getAlias() {
+        return alias;
     }
 
     public CommandSender getCommandSender() {

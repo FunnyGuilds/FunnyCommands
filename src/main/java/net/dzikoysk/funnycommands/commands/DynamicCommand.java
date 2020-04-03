@@ -18,10 +18,12 @@ package net.dzikoysk.funnycommands.commands;
 
 import net.dzikoysk.funnycommands.FunnyCommands;
 import net.dzikoysk.funnycommands.FunnyCommandsException;
+import net.dzikoysk.funnycommands.data.Origin;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Nullable;
+import org.panda_lang.utilities.inject.InjectorController;
 
 import java.lang.reflect.Method;
 import java.util.Collections;
@@ -39,22 +41,31 @@ final class DynamicCommand extends Command {
     }
 
     @Override
-    public boolean execute(CommandSender commandSender, String s, String[] strings) {
-        return invoke(commandsTree.getMetadata().getCommandMethod());
+    public boolean execute(CommandSender commandSender, String alias, String[] arguments) {
+        String[] normalizedArguments = CommandUtils.normalize(arguments);
+        Origin origin = new Origin(commandSender, alias, normalizedArguments);
+
+        String matched = commandsTree.getMetadata().getSimpleName();
+
+        for (int index = 0; index < normalizedArguments.length; index++) {
+            String preview = matched + normalizedArguments[index];
+        }
+
+        return invoke(commandsTree.getMetadata().getCommandMethod(), resources -> {
+            resources.on(Origin.class).assignInstance(origin);
+        });
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<String> tabComplete(CommandSender sender, String alias, String[] args, @Nullable Location location) throws IllegalArgumentException {
-        return commandsTree.getMetadata().getTabCompleteMethod()
-            .map(this::invoke)
-            .map(result -> (List<String>) result)
-            .getOrElse(Collections::emptyList);
+        return Collections.emptyList();
     }
 
-    private <T> T invoke(Method method) {
+    private <T> T invoke(Method method, InjectorController controller) {
         try {
-            return funnyCommands.getInjector().invokeMethod(method, commandsTree.getMetadata().getCommandInstance());
+            return funnyCommands.getInjector()
+                    .fork(controller)
+                    .invokeMethod(method, commandsTree.getMetadata().getCommandInstance());
         } catch (Throwable throwable) {
             throw new FunnyCommandsException("Failed to invoke method " + method, throwable);
         }
