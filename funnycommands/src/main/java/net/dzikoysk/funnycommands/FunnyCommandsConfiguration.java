@@ -17,7 +17,7 @@
 package net.dzikoysk.funnycommands;
 
 import net.dzikoysk.funnycommands.data.Origin;
-import net.dzikoysk.funnycommands.mappers.TypeMapper;
+import net.dzikoysk.funnycommands.commands.mappers.TypeMapper;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.panda_lang.utilities.commons.function.CachedSupplier;
 import org.panda_lang.utilities.inject.InjectorResources;

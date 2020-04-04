@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.dzikoysk.funnycommands.mappers;
+package net.dzikoysk.funnycommands.commands.mappers;
 
 import java.util.function.Function;
 

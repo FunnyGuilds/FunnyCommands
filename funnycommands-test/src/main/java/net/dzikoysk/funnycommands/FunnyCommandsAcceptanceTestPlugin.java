@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-package net.dzikoysk.funnycommands.acceptance;
+package net.dzikoysk.funnycommands;
 
-import net.dzikoysk.funnycommands.FunnyCommands;
-import net.dzikoysk.funnycommands.FunnyCommandsException;
-import net.dzikoysk.funnycommands.FunnyCommandsPlugin;
 import net.dzikoysk.funnycommands.responses.SenderResponse;
 import net.dzikoysk.funnycommands.stereotypes.Arg;
 import net.dzikoysk.funnycommands.stereotypes.Executor;

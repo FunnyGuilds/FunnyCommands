@@ -19,57 +19,19 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>net.dzikoysk</groupId>
-    <artifactId>funnycommands</artifactId>
+    <artifactId>funnycommands-parent</artifactId>
     <version>1.0.0</version>
-    <packaging>jar</packaging>
+    <modules>
+        <module>funnycommands</module>
+        <module>funnycommands-test</module>
+    </modules>
+    <packaging>pom</packaging>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.panda-lang</groupId>
-            <artifactId>panda</artifactId>
-            <version>indev-20.4.2</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.tinylog</groupId>
-                    <artifactId>tinylog-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.tinylog</groupId>
-                    <artifactId>tinylog-impl</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.tinylog</groupId>
-                    <artifactId>slf4j-tinylog</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>1.15-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- Tests -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>5.6.1</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.6.1</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
 
     <repositories>
         <repository>
@@ -83,25 +45,8 @@
         </repository>
     </repositories>
 
-
     <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.3.1</version>
-                <configuration>
-                    <outputDirectory>src/test/env/plugins</outputDirectory>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>test-jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
+        <defaultGoal>clean install</defaultGoal>
     </build>
 
 </project>
