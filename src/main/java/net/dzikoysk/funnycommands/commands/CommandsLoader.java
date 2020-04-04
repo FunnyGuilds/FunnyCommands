@@ -78,6 +78,10 @@ public final class CommandsLoader {
                 });
             }
 
+            parent.getNode(meta.getSimpleName()).peek(value -> {
+                throw new FunnyCommandsException("Commands collision: " + meta.getName() + " with " + value.getMetadata().getName());
+            });
+
             parent.add(meta);
         });
 

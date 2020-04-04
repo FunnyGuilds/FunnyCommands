@@ -26,6 +26,8 @@ import org.jetbrains.annotations.Nullable;
 import org.panda_lang.utilities.inject.InjectorController;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -43,13 +45,33 @@ final class DynamicCommand extends Command {
     @Override
     public boolean execute(CommandSender commandSender, String alias, String[] arguments) {
         String[] normalizedArguments = CommandUtils.normalize(arguments);
-        Origin origin = new Origin(commandSender, alias, normalizedArguments);
-
         String matched = commandsTree.getMetadata().getSimpleName();
+        Collection<CommandsTree> matchedTree = Collections.emptySet();
+        int index = 0;
 
-        for (int index = 0; index < normalizedArguments.length; index++) {
+        for (; index < normalizedArguments.length; index++) {
             String preview = matched + normalizedArguments[index];
+            Collection<CommandsTree> previewTree = commandsTree.collectCommandsStartingWith(preview);
+
+            if (previewTree.isEmpty()) {
+                index--;
+                break;
+            }
+
+            matchedTree = previewTree;
         }
+
+        if (matchedTree.isEmpty()) {
+            return false;
+        }
+
+        if (matchedTree.size() > 1) {
+            // should never happen?
+            throw new FunnyCommandsException("Commands conflict: " + matchedTree.toString());
+        }
+
+        String[] commandArguments = Arrays.copyOfRange(normalizedArguments, index, normalizedArguments.length);
+        Origin origin = new Origin(commandSender, alias, commandArguments);
 
         return invoke(commandsTree.getMetadata().getCommandMethod(), resources -> {
             resources.on(Origin.class).assignInstance(origin);
