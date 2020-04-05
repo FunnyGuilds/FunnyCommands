@@ -135,7 +135,7 @@ public final class CommandsLoader {
         return parametersMappings;
     }
 
-    private Map<String, TypeMapper<?>> mapMappers(Method commandMethod, List<String> parameters) {
+    private Map<String, TypeMapper<?>> mapMappers(Method commandMethod, Iterable<String> parameters) {
         Executor executor = commandMethod.getAnnotation(Executor.class);
         Map<String, TypeMapper<?>> mappers = new HashMap<>(commandMethod.getParameterCount());
 

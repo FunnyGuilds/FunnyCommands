@@ -35,7 +35,7 @@ final class FunnyCommandsFactory {
         });
 
         Injector injector = DependencyInjection.createInjector(resources -> {
-            configuration.binds.forEach(bind -> bind.accept(resources));
+            configuration.globalBinds.forEach(bind -> bind.accept(resources));
         });
 
         Collection<Object> commands = new ArrayList<>(configuration.commandsInstances);

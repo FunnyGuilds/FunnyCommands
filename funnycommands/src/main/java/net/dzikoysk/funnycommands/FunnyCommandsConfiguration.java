@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -39,7 +40,8 @@ public final class FunnyCommandsConfiguration {
     protected final Collection<Class<?>> commandsClasses = new ArrayList<>();
     protected final Collection<Object> commandsInstances = new ArrayList<>();
     protected final Map<String, TypeMapper<?>> typeMappers = new HashMap<>();
-    protected final Collection<Consumer<InjectorResources>> binds = new ArrayList<>();
+    protected final Collection<Consumer<InjectorResources>> globalBinds = new ArrayList<>();
+    protected final Collection<BiConsumer<Origin, InjectorResources>> dynamicBinds = new ArrayList<>();
     protected final Map<Class<? extends Exception>, Function<? extends Exception, Boolean>> exceptionHandlers = new HashMap<>();
     protected final Map<Class<?>, BiFunction<Origin, ?, Boolean>> responseHandlers = new HashMap<>();
 
@@ -76,8 +78,13 @@ public final class FunnyCommandsConfiguration {
         return this;
     }
 
-    public FunnyCommandsConfiguration bind(Consumer<InjectorResources> resourcesConsumer) {
-        this.binds.add(resourcesConsumer);
+    public FunnyCommandsConfiguration globalBind(Consumer<InjectorResources> bind) {
+        this.globalBinds.add(bind);
+        return this;
+    }
+
+    public FunnyCommandsConfiguration dynamicBind(BiConsumer<Origin, InjectorResources> bind) {
+        this.dynamicBinds.add(bind);
         return this;
     }
 

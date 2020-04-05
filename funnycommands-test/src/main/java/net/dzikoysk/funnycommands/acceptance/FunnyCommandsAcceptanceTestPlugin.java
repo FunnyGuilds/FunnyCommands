@@ -23,10 +23,14 @@ import net.dzikoysk.funnycommands.responses.SenderResponse;
 import net.dzikoysk.funnycommands.stereotypes.Arg;
 import net.dzikoysk.funnycommands.stereotypes.Executor;
 import net.dzikoysk.funnycommands.stereotypes.FunnyCommand;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 import org.panda_lang.utilities.commons.collection.Maps;
+import org.panda_lang.utilities.inject.annotations.Injectable;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -53,9 +57,15 @@ public final class FunnyCommandsAcceptanceTestPlugin extends FunnyCommandsPlugin
         this.funnyCommands = FunnyCommands.configuration(() -> this)
                 .placeholders(placeholders)
                 .commands(TestCommand.class)
-                .type("player", Player.class, (origin, username) -> super.getServer().getPlayer(username))
-                .bind(resources -> resources.annotatedWith(RandomUUID.class).assignInstance(UUID::randomUUID))
-                .responseHandler(boolean.class, (context, response) -> true)
+                .type("player", Player.class, (origin, username) -> {
+                    return super.getServer().getPlayer(username);
+                })
+                .globalBind(resources -> {
+                    resources.annotatedWith(RandomUUID.class).assignInstance(UUID::randomUUID);
+                })
+                .dynamicBind(((origin, resources) -> {
+                    resources.annotatedWith(Sender.class).assignInstance(origin.getCommandSender());
+                }))
                 .responseHandler(SenderResponse.class, (context, response) -> {
                     response.getSender()
                             .getOrElse(context::getCommandSender)
@@ -75,14 +85,20 @@ public final class FunnyCommandsAcceptanceTestPlugin extends FunnyCommandsPlugin
         funnyCommands.dispose();
     }
 
+    @Injectable
+    @Retention(RetentionPolicy.RUNTIME)
     @interface RandomUUID { }
+
+    @Injectable
+    @Retention(RetentionPolicy.RUNTIME)
+    @interface Sender { }
 
     @FunnyCommand(name = "${fc.test-alias}", permission = "fc.test", usage = "/${fc.test-alias} <player>")
     private static final class TestCommand {
 
         @Executor({ "player:target" })
-        SenderResponse test(@Arg("target") @Nullable Player target) {
-            System.out.println("target: " + target);
+        SenderResponse test(@Sender CommandSender sender, @Arg("target") @Nullable Player target) {
+            System.out.println(sender + " --target--> " + target);
             return new SenderResponse(target, "Test ${fc.time}");
         }
 

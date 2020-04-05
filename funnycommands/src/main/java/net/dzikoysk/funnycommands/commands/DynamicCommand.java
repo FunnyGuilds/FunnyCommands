@@ -84,17 +84,10 @@ final class DynamicCommand extends Command {
 
         Object result = invoke(commandsTree.getMetadata().getCommandMethod(), resources -> {
             resources.on(Origin.class).assignInstance(origin);
+            resources.annotatedWith(Arg.class).assignHandler(new ArgumentsHandler(command, origin));
 
-            resources.annotatedWith(Arg.class).assignHandler((requiredType, arg) -> {
-                @Nullable Integer parameterIndex = command.getParameters().get(arg.value());
-
-                if (parameterIndex == null) {
-                    throw new FunnyCommandsException("Unknown parameter: " + arg.value());
-                }
-
-                return command.getMappers()
-                        .get(arg.value())
-                        .map(origin, commandArguments[parameterIndex]);
+            funnyCommands.getDynamicBinds().forEach(bind -> {
+                bind.accept(origin, resources);
             });
         });
 
