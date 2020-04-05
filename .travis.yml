@@ -1,14 +1,13 @@
 language: java
 dist: trusty
+sudo: true
 
-install: script/install
-script: script/script
+jdk:
+  - openjdk8
+  - openjdk13
 
-matrix:
-  fast_finish: false
-  include:
-    - jdk: openjdk8
-    - jdk: openjdk13
+install:
+  - mvn test-compile -Dmaven.javadoc.skip=true -B -V
 
 notifications:
   email: false

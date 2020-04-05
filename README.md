@@ -35,7 +35,7 @@ private static final class TestCommand {
 }
 ```
 
-The example configuration for this kind of command may look like this:
+The configuration for this kind of command may look like this:
 
 ```java
 FunnyCommands funnyCommands = FunnyCommands.configuration(() -> this)
@@ -64,4 +64,4 @@ FunnyCommands funnyCommands = FunnyCommands.configuration(() -> this)
         .create();
 ```
 
-Full and up-to-date example is available in [FunnyCommandsAcceptanceTestPlugin](https://github.com/FunnyGuilds/FunnyCommands/blob/master/funnycommands-test/src/test/java/net/dzikoysk/funnycommands/acceptance/FunnyCommandsAcceptanceTestPlugin.java) class
+Full and up-to-date example is available in [FunnyCommandsAcceptanceTestPlugin](https://github.com/FunnyGuilds/FunnyCommands/blob/master/funnycommands-test/src/main/java/net/dzikoysk/funnycommands/acceptance/FunnyCommandsAcceptanceTestPlugin.java) class
