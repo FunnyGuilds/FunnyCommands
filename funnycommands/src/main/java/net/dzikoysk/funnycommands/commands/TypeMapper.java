@@ -17,23 +17,26 @@
 package net.dzikoysk.funnycommands.commands;
 
 import net.dzikoysk.funnycommands.data.Origin;
+import org.panda_lang.utilities.commons.function.TriFunction;
 
-import java.util.function.BiFunction;
+import java.lang.reflect.Parameter;
 
 public final class TypeMapper<T> {
 
     private final String name;
-    private final Class<T> type;
-    private final BiFunction<Origin, String, T> deserializer;
+    private final TriFunction<Origin, Parameter, String, T> deserializer;
 
-    public TypeMapper(String name, Class<T> type, BiFunction<Origin, String, T> deserializer) {
+    public TypeMapper(String name, TriFunction<Origin, Parameter, String, T> deserializer) {
         this.name = name;
-        this.type = type;
         this.deserializer = deserializer;
     }
 
-    public T map(Origin origin, String value) {
-        return deserializer.apply(origin, value);
+    public T map(Origin origin, Parameter parameter, String value) {
+        return deserializer.apply(origin, parameter, value);
+    }
+
+    public String getName() {
+        return name;
     }
 
 }

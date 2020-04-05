@@ -14,10 +14,15 @@
  * limitations under the License.
  */
 
-package net.dzikoysk.funnycommands;
+package net.dzikoysk.funnycommands.stereotypes;
 
-public final class FunnyCommandsConstants {
+import org.jetbrains.annotations.Nullable;
 
-    public static final String VERSION = "0.1.0";
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-}
+@Nullable
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Nillable { }

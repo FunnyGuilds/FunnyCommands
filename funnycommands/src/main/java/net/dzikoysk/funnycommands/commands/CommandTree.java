@@ -26,12 +26,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-public final class CommandsTree {
+public final class CommandTree {
 
     private final CommandMetadata element;
-    private final Map<String, CommandsTree> children;
+    private final Map<String, CommandTree> children;
 
-    public CommandsTree(CommandMetadata element) {
+    public CommandTree(CommandMetadata element) {
         this.element = element;
         this.children = new HashMap<>();
     }
@@ -40,31 +40,31 @@ public final class CommandsTree {
         print(this, 0);
     }
 
-    private void print(CommandsTree node, int level) {
-        for (CommandsTree child : node.getChildren()) {
+    private void print(CommandTree node, int level) {
+        for (CommandTree child : node.getChildren()) {
             System.out.println(StringUtils.buildSpace(level * 2) + (level == 0 ? "/" : "..") + child.getSimpleName() + " -> " + child.element);
             child.print(child, level + 1);
         }
     }
 
-    public CommandsTree computeIfAbsent(String name, Function<String, CommandMetadata> function) {
+    public CommandTree computeIfAbsent(String name, Function<String, CommandMetadata> function) {
         return getNode(name).getOrElse(() -> add(function.apply(name)));
     }
 
-    public CommandsTree add(CommandMetadata element) {
-        CommandsTree tree = new CommandsTree(element);
+    public CommandTree add(CommandMetadata element) {
+        CommandTree tree = new CommandTree(element);
         children.put(tree.getSimpleName(), tree);
         return tree;
     }
 
     public Option<CommandMetadata> get(String name) {
-        return getNode(name).map(CommandsTree::getMetadata);
+        return getNode(name).map(CommandTree::getMetadata);
     }
 
-    public List<CommandsTree> collectCommandsStartingWith(String str) {
-        List<CommandsTree> nodes = new ArrayList<>();
+    public List<CommandTree> collectCommandsStartingWith(String str) {
+        List<CommandTree> nodes = new ArrayList<>();
 
-        for (CommandsTree tree : children.values()) {
+        for (CommandTree tree : children.values()) {
             if (tree.getName().startsWith(str)) {
                 nodes.add(tree);
             }
@@ -75,11 +75,11 @@ public final class CommandsTree {
         return nodes;
     }
 
-    public Option<CommandsTree> getNode(String nodeName) {
+    public Option<CommandTree> getNode(String nodeName) {
         return Option.of(children.get(nodeName));
     }
 
-    public Collection<CommandsTree> getChildren() {
+    public Collection<CommandTree> getChildren() {
         return children.values();
     }
 

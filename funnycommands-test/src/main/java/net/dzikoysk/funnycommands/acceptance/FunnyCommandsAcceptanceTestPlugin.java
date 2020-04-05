@@ -16,6 +16,7 @@
 
 package net.dzikoysk.funnycommands.acceptance;
 
+import io.vavr.control.Option;
 import net.dzikoysk.funnycommands.FunnyCommands;
 import net.dzikoysk.funnycommands.FunnyCommandsException;
 import net.dzikoysk.funnycommands.FunnyCommandsPlugin;
@@ -23,9 +24,9 @@ import net.dzikoysk.funnycommands.responses.SenderResponse;
 import net.dzikoysk.funnycommands.stereotypes.Arg;
 import net.dzikoysk.funnycommands.stereotypes.Executor;
 import net.dzikoysk.funnycommands.stereotypes.FunnyCommand;
+import net.dzikoysk.funnycommands.stereotypes.Nillable;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.Nullable;
 import org.panda_lang.utilities.commons.collection.Maps;
 import org.panda_lang.utilities.inject.annotations.Injectable;
 
@@ -53,18 +54,23 @@ public final class FunnyCommandsAcceptanceTestPlugin extends FunnyCommandsPlugin
             put("fc.time", key -> new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime()));
         }};
 
+        GuildService guildService = new GuildService();
+
         // handled
         this.funnyCommands = FunnyCommands.configuration(() -> this)
                 .placeholders(placeholders)
                 .commands(TestCommand.class)
-                .type("player", Player.class, (origin, username) -> {
+                .type("player", (origin, required, username) -> {
                     return super.getServer().getPlayer(username);
                 })
+                .type("guild", ((origin, required, guild) -> {
+                    return guildService.guilds.get(guild);
+                }))
                 .globalBind(resources -> {
                     resources.annotatedWith(RandomUUID.class).assignInstance(UUID::randomUUID);
                 })
                 .dynamicBind(((origin, resources) -> {
-                    resources.annotatedWith(Sender.class).assignInstance(origin.getCommandSender());
+                    resources.annotatedWithTested(Sender.class).assignInstance(origin.getCommandSender());
                 }))
                 .responseHandler(SenderResponse.class, (context, response) -> {
                     response.getSender()
@@ -85,6 +91,18 @@ public final class FunnyCommandsAcceptanceTestPlugin extends FunnyCommandsPlugin
         funnyCommands.dispose();
     }
 
+    // Test classes
+
+    private static final class GuildService {
+        private final Map<String, Guild> guilds = new HashMap<String, Guild>() {{
+            put("test-guild", new Guild());
+        }};
+    }
+
+    private static final class Guild {
+        private final String name = "test-guild";
+    }
+
     @Injectable
     @Retention(RetentionPolicy.RUNTIME)
     @interface RandomUUID { }
@@ -96,9 +114,9 @@ public final class FunnyCommandsAcceptanceTestPlugin extends FunnyCommandsPlugin
     @FunnyCommand(name = "${fc.test-alias}", permission = "fc.test", usage = "/${fc.test-alias} <player>")
     private static final class TestCommand {
 
-        @Executor({ "player:target" })
-        SenderResponse test(@Sender CommandSender sender, @Arg("target") @Nullable Player target) {
-            System.out.println(sender + " --target--> " + target);
+        @Executor({ "player:target", "guild:arg-guild" })
+        SenderResponse test(@Sender CommandSender sender, @Arg("target") @Nillable Player target, @Arg("arg-guild") Option<Guild> guild) {
+            System.out.println(sender + " called " + target + " and " + guild.getOrNull());
             return new SenderResponse(target, "Test ${fc.time}");
         }
 

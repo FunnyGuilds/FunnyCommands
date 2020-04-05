@@ -37,9 +37,9 @@ import java.util.function.BiFunction;
 final class DynamicCommand extends Command {
 
     private final FunnyCommands funnyCommands;
-    private final CommandsTree commandsTree;
+    private final CommandTree commandsTree;
 
-    protected DynamicCommand(FunnyCommands funnyCommands, CommandsTree commandsTree, CommandInfo commandInfo) {
+    protected DynamicCommand(FunnyCommands funnyCommands, CommandTree commandsTree, CommandInfo commandInfo) {
         super(commandInfo.getName(), commandInfo.getDescription(), commandInfo.getUsageMessage(), commandInfo.getAliases());
         this.funnyCommands = funnyCommands;
         this.commandsTree = commandsTree;
@@ -49,12 +49,12 @@ final class DynamicCommand extends Command {
     public boolean execute(CommandSender commandSender, String alias, String[] arguments) {
         String[] normalizedArguments = CommandUtils.normalize(arguments);
         String matched = commandsTree.getMetadata().getSimpleName();
-        List<CommandsTree> matchedTree = Collections.singletonList(commandsTree);
+        List<CommandTree> matchedTree = Collections.singletonList(commandsTree);
         int index = 0;
 
         for (; index < normalizedArguments.length; index++) {
             String preview = matched + normalizedArguments[index];
-            List<CommandsTree> previewTree = commandsTree.collectCommandsStartingWith(preview);
+            List<CommandTree> previewTree = commandsTree.collectCommandsStartingWith(preview);
 
             if (previewTree.isEmpty()) {
                 break;
@@ -75,7 +75,7 @@ final class DynamicCommand extends Command {
         String[] commandArguments = Arrays.copyOfRange(normalizedArguments, index, normalizedArguments.length);
         Origin origin = new Origin(funnyCommands, commandSender, alias, commandArguments);
 
-        CommandsTree commandTree = matchedTree.get(0);
+        CommandTree commandTree = matchedTree.get(0);
         CommandInfo command = commandTree.getMetadata().getCommandInfo();
 
         if (command.getParameters().size() != commandArguments.length) {
@@ -110,6 +110,7 @@ final class DynamicCommand extends Command {
 
     @Override
     public List<String> tabComplete(CommandSender sender, String alias, String[] args, @Nullable Location location) throws IllegalArgumentException {
+
         return Collections.emptyList();
     }
 

@@ -1,0 +1,14 @@
+language: java
+dist: trusty
+
+install: script/install
+script: script/script
+
+matrix:
+  fast_finish: false
+  include:
+    - jdk: openjdk8
+    - jdk: openjdk13
+
+notifications:
+  email: false

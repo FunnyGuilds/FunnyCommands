@@ -16,12 +16,14 @@
 
 package net.dzikoysk.funnycommands;
 
-import net.dzikoysk.funnycommands.data.Origin;
 import net.dzikoysk.funnycommands.commands.TypeMapper;
+import net.dzikoysk.funnycommands.data.Origin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.panda_lang.utilities.commons.function.CachedSupplier;
+import org.panda_lang.utilities.commons.function.TriFunction;
 import org.panda_lang.utilities.inject.InjectorResources;
 
+import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -73,8 +75,8 @@ public final class FunnyCommandsConfiguration {
         return commands(Arrays.asList(commandsClasses));
     }
 
-    public <T> FunnyCommandsConfiguration type(String typeName, Class<T> typeClass, BiFunction<Origin, String, T> deserializer) {
-        this.typeMappers.put(typeName, new TypeMapper<>(typeName, typeClass, deserializer));
+    public <T> FunnyCommandsConfiguration type(String typeName, TriFunction<Origin, Parameter, String, T> deserializer) {
+        this.typeMappers.put(typeName, new TypeMapper<>(typeName, deserializer));
         return this;
     }
 

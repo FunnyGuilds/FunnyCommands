@@ -20,7 +20,7 @@
 
     <groupId>net.dzikoysk</groupId>
     <artifactId>funnycommands-parent</artifactId>
-    <version>1.0.0</version>
+    <version>0.1.0</version>
     <modules>
         <module>funnycommands</module>
         <module>funnycommands-test</module>
@@ -44,6 +44,14 @@
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
     </repositories>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub FunnyGuilds Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/FunnyGuilds/FunnyCommands</url>
+        </repository>
+    </distributionManagement>
 
     <build>
         <defaultGoal>clean install</defaultGoal>

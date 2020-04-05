@@ -20,7 +20,7 @@
     <parent>
         <artifactId>funnycommands-parent</artifactId>
         <groupId>net.dzikoysk</groupId>
-        <version>1.0.0</version>
+        <version>0.1.0</version>
     </parent>
 
     <artifactId>funnycommands</artifactId>
@@ -30,7 +30,7 @@
         <dependency>
             <groupId>org.panda-lang</groupId>
             <artifactId>panda</artifactId>
-            <version>indev-20.4.2</version>
+            <version>indev-20.4.5</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.tinylog</groupId>

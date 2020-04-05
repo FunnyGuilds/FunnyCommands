@@ -16,14 +16,18 @@
 
 package net.dzikoysk.funnycommands.commands;
 
+import io.vavr.control.Option;
 import net.dzikoysk.funnycommands.FunnyCommandsException;
 import net.dzikoysk.funnycommands.data.Origin;
 import net.dzikoysk.funnycommands.stereotypes.Arg;
+import net.dzikoysk.funnycommands.stereotypes.Nillable;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Parameter;
+import java.util.Optional;
 import java.util.function.BiFunction;
 
-final class ArgumentsHandler implements BiFunction<Class<?>, Arg, Object> {
+final class ArgumentsHandler implements BiFunction<Parameter, Arg, Object> {
 
     private final CommandInfo command;
     private final Origin origin;
@@ -34,16 +38,34 @@ final class ArgumentsHandler implements BiFunction<Class<?>, Arg, Object> {
     }
 
     @Override
-    public Object apply(Class<?> aClass, Arg arg) {
+    public @Nullable Object apply(Parameter required, Arg arg) {
         @Nullable Integer parameterIndex = command.getParameters().get(arg.value());
 
         if (parameterIndex == null) {
             throw new FunnyCommandsException("Unknown parameter: " + arg.value());
         }
 
-        return command.getMappers()
+        Object result = command.getMappers()
                 .get(arg.value())
-                .map(origin, origin.getArgs()[parameterIndex]);
+                .map(origin, required, origin.getArgs()[parameterIndex]);
+
+        if (required.getType().isAssignableFrom(Option.class)) {
+            return Option.of(result);
+        }
+
+        if (required.getType() == Optional.class) {
+            return Optional.ofNullable(result);
+        }
+
+        if (result != null) {
+            return result;
+        }
+
+        if (required.getAnnotation(Nillable.class) != null) {
+            return null;
+        }
+
+        throw new NullPointerException("Illegal null value at " + required);
     }
 
 }

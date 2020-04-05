@@ -46,32 +46,32 @@ public final class CommandsLoader {
     }
 
     public Collection<DynamicCommand> registerCommands(Iterable<Object> commands) {
-        CommandsTree commandsTree = loadCommands(commands);
+        CommandTree commandsTree = loadCommands(commands);
         Collection<DynamicCommand> dynamicCommands = new ArrayList<>(commandsTree.getChildren().size());
 
-        for (CommandsTree commandTree : commandsTree.getChildren()) {
+        for (CommandTree commandTree : commandsTree.getChildren()) {
             dynamicCommands.add(registerCommand(funnyCommands, commandTree));
         }
 
         return dynamicCommands;
     }
 
-    protected DynamicCommand registerCommand(FunnyCommands funnyCommands, CommandsTree commandTree) {
+    protected DynamicCommand registerCommand(FunnyCommands funnyCommands, CommandTree commandTree) {
         DynamicCommand dynamicCommand = new DynamicCommand(funnyCommands, commandTree, commandTree.getMetadata().getCommandInfo());
         return commandMapInjector.register(dynamicCommand);
     }
 
-    protected CommandsTree loadCommands(Iterable<Object> commands) {
+    protected CommandTree loadCommands(Iterable<Object> commands) {
         List<CommandMetadata> metadata = Stream.ofAll(commands)
                 .map(this::mapCommand)
                 .sorted()
                 .toJavaList();
 
-        CommandsTree metadataTree = new CommandsTree(null);
+        CommandTree metadataTree = new CommandTree(null);
 
         metadata.forEach(meta -> {
             String[] units = meta.getName().split(" ");
-            CommandsTree parent = metadataTree;
+            CommandTree parent = metadataTree;
 
             for (int index = 0; index < units.length - 1; index++) {
                 String unit = units[index];
@@ -136,7 +136,6 @@ public final class CommandsLoader {
     }
 
     private Map<String, TypeMapper<?>> mapMappers(Method commandMethod, Iterable<String> parameters) {
-        Executor executor = commandMethod.getAnnotation(Executor.class);
         Map<String, TypeMapper<?>> mappers = new HashMap<>(commandMethod.getParameterCount());
 
         for (String parameter : parameters) {
