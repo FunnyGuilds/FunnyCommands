@@ -22,6 +22,7 @@ import org.panda_lang.utilities.commons.StringUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -60,8 +61,8 @@ public final class CommandsTree {
         return getNode(name).map(CommandsTree::getMetadata);
     }
 
-    public Collection<CommandsTree> collectCommandsStartingWith(String str) {
-        Collection<CommandsTree> nodes = new ArrayList<>();
+    public List<CommandsTree> collectCommandsStartingWith(String str) {
+        List<CommandsTree> nodes = new ArrayList<>();
 
         for (CommandsTree tree : children.values()) {
             if (tree.getName().startsWith(str)) {

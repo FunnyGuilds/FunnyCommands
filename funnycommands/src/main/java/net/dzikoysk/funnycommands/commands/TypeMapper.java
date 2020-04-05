@@ -14,20 +14,26 @@
  * limitations under the License.
  */
 
-package net.dzikoysk.funnycommands.commands.mappers;
+package net.dzikoysk.funnycommands.commands;
 
-import java.util.function.Function;
+import net.dzikoysk.funnycommands.data.Origin;
+
+import java.util.function.BiFunction;
 
 public final class TypeMapper<T> {
 
     private final String name;
     private final Class<T> type;
-    private final Function<String, T> deserializer;
+    private final BiFunction<Origin, String, T> deserializer;
 
-    public TypeMapper(String name, Class<T> type, Function<String, T> deserializer) {
+    public TypeMapper(String name, Class<T> type, BiFunction<Origin, String, T> deserializer) {
         this.name = name;
         this.type = type;
         this.deserializer = deserializer;
+    }
+
+    public T map(Origin origin, String value) {
+        return deserializer.apply(origin, value);
     }
 
 }

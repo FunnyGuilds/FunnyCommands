@@ -17,6 +17,7 @@
 package net.dzikoysk.funnycommands.commands;
 
 import java.util.List;
+import java.util.Map;
 
 final class CommandInfo {
 
@@ -24,18 +25,24 @@ final class CommandInfo {
     private final String description;
     private final String usageMessage;
     private final List<String> aliases;
-    private final List<String> arguments;
+    private final Map<String, Integer> parameters;
+    private final Map<String, TypeMapper<?>> mappers;
 
-    CommandInfo(String name, String description, String usageMessage, List<String> aliases, List<String> arguments) {
+    CommandInfo(String name, String description, String usageMessage, List<String> aliases, Map<String, Integer> parameters, Map<String, TypeMapper<?>> mappers) {
         this.name = name;
         this.description = description;
         this.usageMessage = usageMessage;
         this.aliases = aliases;
-        this.arguments = arguments;
+        this.parameters = parameters;
+        this.mappers = mappers;
     }
 
-    List<String> getArguments() {
-        return arguments;
+    Map<String, Integer> getParameters() {
+        return parameters;
+    }
+
+    Map<? extends String, ? extends TypeMapper<?>> getMappers() {
+        return mappers;
     }
 
     List<String> getAliases() {

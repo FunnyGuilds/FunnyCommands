@@ -17,12 +17,14 @@
 package net.dzikoysk.funnycommands.stereotypes;
 
 import org.panda_lang.utilities.commons.StringUtils;
+import org.panda_lang.utilities.inject.annotations.Injectable;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+@Injectable
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface FunnyCommand {

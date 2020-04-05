@@ -2,8 +2,3 @@ name: FunnyCommandsIntegrationPlugin
 main: net.dzikoysk.funnycommands.acceptance.FunnyCommandsAcceptanceTestPlugin
 version: 1.0.0
 author: dzikoysk
-
-commands:
-  fc:
-    description: FunnyCommand Test
-    usage: /fc

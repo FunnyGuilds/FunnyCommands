@@ -24,6 +24,7 @@ import net.dzikoysk.funnycommands.stereotypes.Arg;
 import net.dzikoysk.funnycommands.stereotypes.Executor;
 import net.dzikoysk.funnycommands.stereotypes.FunnyCommand;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 import org.panda_lang.utilities.commons.collection.Maps;
 
 import java.text.SimpleDateFormat;
@@ -52,7 +53,7 @@ public final class FunnyCommandsAcceptanceTestPlugin extends FunnyCommandsPlugin
         this.funnyCommands = FunnyCommands.configuration(() -> this)
                 .placeholders(placeholders)
                 .commands(TestCommand.class)
-                .type("player", Player.class, username -> super.getServer().getPlayer(username))
+                .type("player", Player.class, (origin, username) -> super.getServer().getPlayer(username))
                 .bind(resources -> resources.annotatedWith(RandomUUID.class).assignInstance(UUID::randomUUID))
                 .responseHandler(boolean.class, (context, response) -> true)
                 .responseHandler(SenderResponse.class, (context, response) -> {
@@ -76,11 +77,12 @@ public final class FunnyCommandsAcceptanceTestPlugin extends FunnyCommandsPlugin
 
     @interface RandomUUID { }
 
-    @FunnyCommand(name = "${fc.test-alias}", permission = "fc.test")
+    @FunnyCommand(name = "${fc.test-alias}", permission = "fc.test", usage = "/${fc.test-alias} <player>")
     private static final class TestCommand {
 
-        @Executor({ "<player: target>" })
-        SenderResponse test(@Arg("arg-player") Player target) {
+        @Executor({ "player:target" })
+        SenderResponse test(@Arg("target") @Nullable Player target) {
+            System.out.println("target: " + target);
             return new SenderResponse(target, "Test ${fc.time}");
         }
 

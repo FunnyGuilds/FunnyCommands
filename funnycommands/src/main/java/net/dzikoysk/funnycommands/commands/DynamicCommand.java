@@ -19,17 +19,20 @@ package net.dzikoysk.funnycommands.commands;
 import net.dzikoysk.funnycommands.FunnyCommands;
 import net.dzikoysk.funnycommands.FunnyCommandsException;
 import net.dzikoysk.funnycommands.data.Origin;
+import net.dzikoysk.funnycommands.stereotypes.Arg;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Nullable;
+import org.panda_lang.utilities.commons.ObjectUtils;
 import org.panda_lang.utilities.inject.InjectorController;
+import org.panda_lang.utilities.inject.InjectorException;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.BiFunction;
 
 final class DynamicCommand extends Command {
 
@@ -46,15 +49,14 @@ final class DynamicCommand extends Command {
     public boolean execute(CommandSender commandSender, String alias, String[] arguments) {
         String[] normalizedArguments = CommandUtils.normalize(arguments);
         String matched = commandsTree.getMetadata().getSimpleName();
-        Collection<CommandsTree> matchedTree = Collections.emptySet();
+        List<CommandsTree> matchedTree = Collections.singletonList(commandsTree);
         int index = 0;
 
         for (; index < normalizedArguments.length; index++) {
             String preview = matched + normalizedArguments[index];
-            Collection<CommandsTree> previewTree = commandsTree.collectCommandsStartingWith(preview);
+            List<CommandsTree> previewTree = commandsTree.collectCommandsStartingWith(preview);
 
             if (previewTree.isEmpty()) {
-                index--;
                 break;
             }
 
@@ -71,11 +73,46 @@ final class DynamicCommand extends Command {
         }
 
         String[] commandArguments = Arrays.copyOfRange(normalizedArguments, index, normalizedArguments.length);
-        Origin origin = new Origin(commandSender, alias, commandArguments);
+        Origin origin = new Origin(funnyCommands, commandSender, alias, commandArguments);
 
-        return invoke(commandsTree.getMetadata().getCommandMethod(), resources -> {
+        CommandsTree commandTree = matchedTree.get(0);
+        CommandInfo command = commandTree.getMetadata().getCommandInfo();
+
+        if (command.getParameters().size() != commandArguments.length) {
+            return false;
+        }
+
+        Object result = invoke(commandsTree.getMetadata().getCommandMethod(), resources -> {
             resources.on(Origin.class).assignInstance(origin);
+
+            resources.annotatedWith(Arg.class).assignHandler((requiredType, arg) -> {
+                @Nullable Integer parameterIndex = command.getParameters().get(arg.value());
+
+                if (parameterIndex == null) {
+                    throw new FunnyCommandsException("Unknown parameter: " + arg.value());
+                }
+
+                return command.getMappers()
+                        .get(arg.value())
+                        .map(origin, commandArguments[parameterIndex]);
+            });
         });
+
+        if (result == null) {
+            return false;
+        }
+
+        if (result instanceof Boolean) {
+            return (boolean) result;
+        }
+
+        BiFunction<Origin, Object, Boolean> handler = ObjectUtils.cast(funnyCommands.getResponseHandlers().get(result.getClass()));
+
+        if (handler == null) {
+            throw new FunnyCommandsException("Missing response handler for " + result.getClass());
+        }
+
+        return handler.apply(origin, result);
     }
 
     @Override
@@ -88,6 +125,8 @@ final class DynamicCommand extends Command {
             return funnyCommands.getInjector()
                     .fork(controller)
                     .invokeMethod(method, commandsTree.getMetadata().getCommandInstance());
+        } catch (InjectorException e) {
+            throw new FunnyCommandsException("Lack of resources to invoke command method " + e.getMessage(), e);
         } catch (Throwable throwable) {
             throw new FunnyCommandsException("Failed to invoke method " + method, throwable);
         }

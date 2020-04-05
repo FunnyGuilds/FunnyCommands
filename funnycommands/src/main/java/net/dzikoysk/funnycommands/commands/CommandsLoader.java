@@ -23,13 +23,16 @@ import net.dzikoysk.funnycommands.FunnyCommandsException;
 import net.dzikoysk.funnycommands.stereotypes.Executor;
 import net.dzikoysk.funnycommands.stereotypes.FunnyCommand;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.Nullable;
 import org.panda_lang.utilities.commons.ReflectionUtils;
+import org.panda_lang.utilities.commons.text.MessageFormatter;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
 public final class CommandsLoader {
@@ -100,18 +103,66 @@ public final class CommandsLoader {
                     throw new FunnyCommandsException("Command class has to contain the one and only executor");
                 });
 
-
         Executor executor = commandMethod.getAnnotation(Executor.class);
+        MessageFormatter formatter = funnyCommands.getFormatter();
+        List<String> parameters = CommandUtils.format(formatter, executor.value());
 
         CommandInfo bukkitCommandInfo = new CommandInfo(
-                funnyCommand.name(),
-                funnyCommand.description(),
-                funnyCommand.usage(),
-                Arrays.asList(funnyCommand.aliases()),
-                Arrays.asList(executor.value())
+                formatter.format(funnyCommand.name()),
+                formatter.format(funnyCommand.description()),
+                formatter.format(funnyCommand.usage()),
+                CommandUtils.format(formatter, funnyCommand.aliases()),
+                mapParameters(parameters),
+                mapMappers(commandMethod, parameters)
         );
 
         return new CommandMetadata(command, bukkitCommandInfo, commandMethod, null);
+    }
+
+    private Map<String, Integer> mapParameters(List<String> parameters) {
+        Map<String, Integer> parametersMappings = new HashMap<>(parameters.size());
+
+        for (int index = 0; index < parameters.size(); index++) {
+            String[] elements = parameters.get(index).split(":");
+
+            if (elements.length != 2) {
+                throw new FunnyCommandsException("Invalid format of parameter: " + parameters.get(index));
+            }
+
+            parametersMappings.put(elements[1], index);
+        }
+
+        return parametersMappings;
+    }
+
+    private Map<String, TypeMapper<?>> mapMappers(Method commandMethod, List<String> parameters) {
+        Executor executor = commandMethod.getAnnotation(Executor.class);
+        Map<String, TypeMapper<?>> mappers = new HashMap<>(commandMethod.getParameterCount());
+
+        for (String parameter : parameters) {
+            String[] elements = parameter.split(":");
+
+            if (elements.length != 2) {
+                throw new FunnyCommandsException("Invalid format of parameter: " + parameter);
+            }
+
+            String typeName = elements[0];
+            @Nullable TypeMapper<?> typeMapper = funnyCommands.getTypeMappers().get(typeName);
+
+            if (typeMapper == null) {
+                throw new FunnyCommandsException("Unknown type " + typeName);
+            }
+
+            String parameterName = elements[1];
+
+            if (mappers.containsKey(parameterName)) {
+                throw new FunnyCommandsException("Duplicated parameter name: " + parameterName);
+            }
+
+            mappers.put(parameterName, typeMapper);
+        }
+
+        return mappers;
     }
 
     public void unloadCommands() {

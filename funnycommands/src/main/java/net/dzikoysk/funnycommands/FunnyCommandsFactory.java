@@ -16,6 +16,7 @@
 
 package net.dzikoysk.funnycommands;
 
+import org.panda_lang.utilities.commons.text.MessageFormatter;
 import org.panda_lang.utilities.inject.DependencyInjection;
 import org.panda_lang.utilities.inject.Injector;
 import org.panda_lang.utilities.inject.InjectorException;
@@ -27,6 +28,12 @@ import java.util.Collection;
 final class FunnyCommandsFactory {
 
     protected FunnyCommands createFunnyCommands(FunnyCommandsConfiguration configuration) {
+        MessageFormatter formatter = new MessageFormatter();
+
+        configuration.placeholders.forEach((key, value) -> {
+            formatter.register("${" + key + "}", () -> value.apply(key));
+        });
+
         Injector injector = DependencyInjection.createInjector(resources -> {
             configuration.binds.forEach(bind -> bind.accept(resources));
         });
@@ -41,7 +48,7 @@ final class FunnyCommandsFactory {
             }
         }
 
-        FunnyCommands funnyCommands = new FunnyCommands(configuration, injector);
+        FunnyCommands funnyCommands = new FunnyCommands(configuration, injector, formatter);
         funnyCommands.getCommandsLoader().registerCommands(commands);
 
         return funnyCommands;

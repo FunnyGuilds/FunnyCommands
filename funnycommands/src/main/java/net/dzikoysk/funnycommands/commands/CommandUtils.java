@@ -21,10 +21,13 @@ import org.panda_lang.utilities.commons.StringUtils;
 import org.panda_lang.utilities.commons.collection.FixedStack;
 import org.panda_lang.utilities.commons.collection.IStack;
 import org.panda_lang.utilities.commons.text.ContentJoiner;
+import org.panda_lang.utilities.commons.text.MessageFormatter;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 final class CommandUtils {
 
@@ -72,6 +75,12 @@ final class CommandUtils {
         }
 
         return normalizedArguments.toArray(StringUtils.EMPTY_ARRAY);
+    }
+
+    public static List<String> format(MessageFormatter formatter, String[] array) {
+        return Stream.of(array)
+                .map(formatter::format)
+                .collect(Collectors.toList());
     }
 
 }

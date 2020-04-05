@@ -16,22 +16,27 @@
 
 package net.dzikoysk.funnycommands.data;
 
+import net.dzikoysk.funnycommands.FunnyCommands;
 import org.bukkit.command.CommandSender;
+
+import java.util.Objects;
 
 public final class Origin {
 
+    private final FunnyCommands funnyCommands;
     private final CommandSender commandSender;
     private final String alias;
     private final String[] args;
 
-    public Origin(CommandSender commandSender, String alias, String[] args) {
+    public Origin(FunnyCommands funnyCommands, CommandSender commandSender, String alias, String[] args) {
+        this.funnyCommands = funnyCommands;
         this.commandSender = commandSender;
         this.alias = alias;
         this.args = args;
     }
 
     public String format(Object value) {
-        return value.toString();
+        return funnyCommands.getFormatter().format(Objects.toString(value));
     }
 
     public String[] getArgs() {
@@ -44,6 +49,10 @@ public final class Origin {
 
     public CommandSender getCommandSender() {
         return commandSender;
+    }
+
+    public FunnyCommands getFunnyCommands() {
+        return funnyCommands;
     }
 
 }
