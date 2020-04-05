@@ -9,8 +9,8 @@ FunnyGuilds command framework based on top of the [Panda](https://github.com/pan
 @FunnyCommand(name = "${fc.test-alias}", permission = "fc.test")
 private static final class TestCommand {
 
-    @Command({ "<player: target>" })
-    SenderResponse test(@Arg("arg-player") Player target) {
+    @Command({ "player:target" })
+    SenderResponse test(@Arg("target") Player target) {
         return new SenderResponse(target, "Test ${fc.time}");
     }
 
