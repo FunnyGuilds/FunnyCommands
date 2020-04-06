@@ -17,13 +17,16 @@ settings:
   moved-too-quickly-threshold: 100.0
   filter-creative-items: true
   moved-wrongly-threshold: 0.0625
-  bungeecord: false
+  timeout-time: 60
+  restart-on-crash: true
+  restart-script: ./start.sh
+  player-shuffle: 0
   late-bind: false
   sample-count: 12
+  bungeecord: false
+  netty-threads: 4
   int-cache-limit: 1024
   user-cache-size: 1000
-  player-shuffle: 0
-  netty-threads: 4
   attribute:
     maxHealth:
       max: 2048.0
@@ -31,20 +34,17 @@ settings:
       max: 2048.0
     attackDamage:
       max: 2048.0
-  timeout-time: 60
-  restart-on-crash: true
-  restart-script: ./start.sh
 commands:
   tab-complete: 0
   silent-commandblock-console: false
-  log: true
-  spam-exclusions:
-  - /skill
   replace-commands:
   - setblock
   - summon
   - testforblock
   - tellraw
+  spam-exclusions:
+  - /skill
+  log: true
 messages:
   whitelist: You are not whitelisted on this server!
   unknown-command: Unknown command. Type "/help" for help.
@@ -58,11 +58,19 @@ stats:
 world-settings:
   default:
     verbose: true
-    dragon-death-sound-radius: 0
     item-despawn-rate: 6000
     merge-radius:
       item: 2.5
       exp: 3.0
+    chunks-per-tick: 650
+    clear-tick-list: false
+    hanging-tick-frequency: 100
+    wither-spawn-sound-radius: 0
+    arrow-despawn-rate: 1200
+    view-distance: 10
+    enable-zombie-pigmen-portal-spawns: true
+    nerf-spawner-mobs: false
+    mob-spawn-range: 4
     anti-xray:
       enabled: true
       engine-mode: 1
@@ -83,33 +91,6 @@ world-settings:
       replace-blocks:
       - 1
       - 5
-    mob-spawn-range: 4
-    nerf-spawner-mobs: false
-    entity-tracking-range:
-      players: 48
-      animals: 48
-      monsters: 48
-      misc: 32
-      other: 64
-    ticks-per:
-      hopper-transfer: 8
-      hopper-check: 8
-    hopper-amount: 1
-    max-tick-time:
-      tile: 50
-      entity: 50
-    hunger:
-      walk-exhaustion: 0.2
-      sprint-exhaustion: 0.8
-      combat-exhaustion: 0.3
-      regen-exhaustion: 3.0
-    max-entity-collisions: 8
-    seed-village: 10387312
-    seed-feature: 14357617
-    random-light-updates: false
-    save-structure-info: true
-    max-bulk-chunks: 10
-    max-tnt-per-tick: 100
     growth:
       cactus-modifier: 100
       cane-modifier: 100
@@ -119,15 +100,34 @@ world-settings:
       sapling-modifier: 100
       wheat-modifier: 100
       netherwart-modifier: 100
+    entity-tracking-range:
+      players: 48
+      animals: 48
+      monsters: 48
+      misc: 32
+      other: 64
     entity-activation-range:
       animals: 32
       monsters: 32
       misc: 16
-    chunks-per-tick: 650
-    clear-tick-list: false
-    arrow-despawn-rate: 1200
-    view-distance: 10
-    wither-spawn-sound-radius: 0
-    hanging-tick-frequency: 100
+    random-light-updates: false
+    save-structure-info: true
+    ticks-per:
+      hopper-transfer: 8
+      hopper-check: 8
+    hopper-amount: 1
+    hunger:
+      walk-exhaustion: 0.2
+      sprint-exhaustion: 0.8
+      combat-exhaustion: 0.3
+      regen-exhaustion: 3.0
+    max-bulk-chunks: 10
+    max-tick-time:
+      tile: 50
+      entity: 50
+    seed-village: 10387312
+    seed-feature: 14357617
+    max-entity-collisions: 8
+    max-tnt-per-tick: 100
     zombie-aggressive-towards-villager: true
-    enable-zombie-pigmen-portal-spawns: true
+    dragon-death-sound-radius: 0

@@ -88,8 +88,7 @@ public final class FunnyCommandsAcceptanceTestPlugin extends FunnyCommandsPlugin
             parameters = { "player:target", "guild:arg-guild" }
         )
         SenderResponse test(CommandSender sender, @Arg("target") @Nillable Player target, @Arg("arg-guild") Option<Guild> guild) {
-            System.out.println(sender + " called " + target + " and " + guild.getOrNull());
-            return new SenderResponse(target, "Test ${fc.time}");
+            return new SenderResponse(target, "Test ${fc.time} > " + sender + " called " + target + " and " + guild.getOrNull());
         }
 
     }

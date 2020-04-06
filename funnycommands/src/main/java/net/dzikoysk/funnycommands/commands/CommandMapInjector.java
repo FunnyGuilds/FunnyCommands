@@ -20,6 +20,9 @@ import net.dzikoysk.funnycommands.FunnyCommandsException;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
+import org.bukkit.help.GenericCommandHelpTopic;
+import org.bukkit.help.HelpMap;
+import org.bukkit.help.HelpTopic;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.panda_lang.utilities.commons.ObjectUtils;
 import org.panda_lang.utilities.commons.function.CachedSupplier;
@@ -28,6 +31,7 @@ import org.panda_lang.utilities.commons.function.ThrowingSupplier;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.Supplier;
 
 final class CommandMapInjector {
@@ -41,6 +45,7 @@ final class CommandMapInjector {
 
     protected DynamicCommand register(DynamicCommand command) {
         fetchCommandMap().register(plugin.get().getName(), command);
+        fetchHelpTopicsMap().put("/" + command.getName(), new GenericCommandHelpTopic(command));
         registeredCommands.put(command.getName(), command);
         return command;
     }
@@ -67,6 +72,17 @@ final class CommandMapInjector {
             knownCommandMapField.setAccessible(true);
 
             return ObjectUtils.cast(knownCommandMapField.get(commandMap));
+        });
+    }
+
+    private TreeMap<String, HelpTopic> fetchHelpTopicsMap() {
+        return fetch(() -> {
+            HelpMap helpMap = getServer().getHelpMap();
+
+            Field helpTopicsField = helpMap.getClass().getDeclaredField("helpTopics");
+            helpTopicsField.setAccessible(true);
+
+            return ObjectUtils.cast(helpTopicsField.get(helpMap));
         });
     }
 
