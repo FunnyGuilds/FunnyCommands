@@ -18,22 +18,17 @@ package net.dzikoysk.funnycommands.acceptance;
 
 import io.vavr.control.Option;
 import net.dzikoysk.funnycommands.FunnyCommands;
-import net.dzikoysk.funnycommands.FunnyCommandsException;
 import net.dzikoysk.funnycommands.FunnyCommandsPlugin;
-import net.dzikoysk.funnycommands.defaults.CommandSenderBind;
 import net.dzikoysk.funnycommands.defaults.PlayerType;
-import net.dzikoysk.funnycommands.defaults.RandomUUIDBind;
 import net.dzikoysk.funnycommands.responses.SenderResponse;
 import net.dzikoysk.funnycommands.stereotypes.Arg;
 import net.dzikoysk.funnycommands.stereotypes.FunnyCommand;
+import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
 import net.dzikoysk.funnycommands.stereotypes.Nillable;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.panda_lang.utilities.commons.collection.Maps;
-import org.panda_lang.utilities.inject.annotations.Injectable;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -42,51 +37,14 @@ import java.util.function.Function;
 
 public final class FunnyCommandsAcceptanceTestPlugin extends FunnyCommandsPlugin {
 
-    private static final String FC_TEST_ALIAS = "fc.test-alias";
-
-    private FunnyCommands funnyCommands;
-
-    @Override
-    public void onEnable() {
-        Map<String, String> configuration = Maps.of(FC_TEST_ALIAS, "test");
-
-        Map<String, Function<String, String>> placeholders = new HashMap<String, Function<String, String>>() {{
-            put(FC_TEST_ALIAS, configuration::get);
-            put("fc.time", key -> new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime()));
-        }};
-
-        GuildService guildService = new GuildService();
-
-        // handled
-        this.funnyCommands = FunnyCommands.configuration(() -> this)
-                .placeholders(placeholders)
-                .commands(TestCommand.class)
-                .type(new PlayerType(super.getServer()))
-                .type("guild", ((origin, required, guild) -> {
-                    return guildService.guilds.get(guild);
-                }))
-                .globalBind(new RandomUUIDBind())
-                .dynamicBind(new CommandSenderBind())
-                .responseHandler(SenderResponse.class, (context, response) -> {
-                    response.getSender()
-                            .getOrElse(context::getCommandSender)
-                            .sendMessage(context.format(response));
-
-                    return true;
-                })
-                .exceptionHandler(FunnyCommandsException.class, e -> {
-                    e.printStackTrace();
-                    return true; // handled
-                })
-                .create();
-    }
-
-    @Override
-    public void onDisable() {
-        funnyCommands.dispose();
-    }
-
     // Test classes
+
+    private static final String FC_TEST_ALIAS = "fc.test-alias";
+    private static final Map<String, String> CONFIGURATION = Maps.of(FC_TEST_ALIAS, "test");
+    private static final Map<String, Function<String, String>> PLACEHOLDERS = new HashMap<String, Function<String, String>>() {{
+        put(FC_TEST_ALIAS, CONFIGURATION::get);
+        put("fc.time", key -> new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime()));
+    }};
 
     private static final class GuildService {
         private final Map<String, Guild> guilds = new HashMap<String, Guild>() {{
@@ -98,24 +56,42 @@ public final class FunnyCommandsAcceptanceTestPlugin extends FunnyCommandsPlugin
         private final String name = "test-guild";
     }
 
-    @Injectable
-    @Retention(RetentionPolicy.RUNTIME)
-    @interface Sender { }
+    // Example plugin
 
-private static final class TestCommand {
+    private FunnyCommands funnyCommands;
 
-    @FunnyCommand(
-        name = "${fc.test-alias}",
-        permission = "fc.test",
-        usage = "/${fc.test-alias} <player>",
-        completer = { "@online-players", "@guilds"},
-        parameters = { "player:target", "guild:arg-guild" }
-    )
-    SenderResponse test(@Sender CommandSender sender, @Arg("target") @Nillable Player target, @Arg("arg-guild") Option<Guild> guild) {
-        System.out.println(sender + " called " + target + " and " + guild.getOrNull());
-        return new SenderResponse(target, "Test ${fc.time}");
+    @Override
+    public void onEnable() {
+        GuildService guildService = new GuildService();
+
+        this.funnyCommands = FunnyCommands.configuration(() -> this)
+                .placeholders(PLACEHOLDERS)
+                .registerComponents()
+                .type(new PlayerType(super.getServer()))
+                .type("guild", ((origin, required, guild) -> guildService.guilds.get(guild)))
+                .create();
     }
 
-}
+    @Override
+    public void onDisable() {
+        funnyCommands.dispose();
+    }
+
+    @FunnyComponent
+    private static final class TestCommand {
+
+        @FunnyCommand(
+            name = "${fc.test-alias}",
+            permission = "fc.test",
+            usage = "/${fc.test-alias} <player>",
+            completer = { "online-players", "guilds"},
+            parameters = { "player:target", "guild:arg-guild" }
+        )
+        SenderResponse test(CommandSender sender, @Arg("target") @Nillable Player target, @Arg("arg-guild") Option<Guild> guild) {
+            System.out.println(sender + " called " + target + " and " + guild.getOrNull());
+            return new SenderResponse(target, "Test ${fc.time}");
+        }
+
+    }
 
 }

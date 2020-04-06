@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 
-package net.dzikoysk.funnycommands.defaults;
+package net.dzikoysk.funnycommands.stereotypes;
 
-import net.dzikoysk.funnycommands.commands.DynamicBind;
-import net.dzikoysk.funnycommands.commands.Origin;
-import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
-import org.bukkit.command.CommandSender;
-import org.panda_lang.utilities.inject.InjectorResources;
+import org.atteo.classindex.IndexAnnotated;
 
-@FunnyComponent
-public final class CommandSenderBind implements DynamicBind {
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    @Override
-    public void accept(Origin origin, InjectorResources resources) {
-        resources.on(CommandSender.class).assignInstance(origin.getCommandSender());
-    }
-
-}
+@IndexAnnotated
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface FunnyComponent { }

@@ -17,13 +17,21 @@
 package net.dzikoysk.funnycommands;
 
 import net.dzikoysk.funnycommands.commands.CommandDataType;
-import net.dzikoysk.funnycommands.commands.TypeMapper;
+import net.dzikoysk.funnycommands.commands.DynamicBind;
+import net.dzikoysk.funnycommands.commands.ExceptionHandler;
+import net.dzikoysk.funnycommands.commands.GlobalBind;
 import net.dzikoysk.funnycommands.commands.Origin;
+import net.dzikoysk.funnycommands.commands.ResponseHandler;
+import net.dzikoysk.funnycommands.commands.TypeMapper;
+import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
+import org.atteo.classindex.ClassIndex;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.panda_lang.utilities.commons.ObjectUtils;
 import org.panda_lang.utilities.commons.function.CachedSupplier;
 import org.panda_lang.utilities.commons.function.TriFunction;
 import org.panda_lang.utilities.inject.InjectorResources;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,6 +66,44 @@ public final class FunnyCommandsConfiguration {
         return factory.createFunnyCommands(this);
     }
 
+    public FunnyCommandsConfiguration registerComponents() {
+        for (Class<?> componentClass : ClassIndex.getAnnotated(FunnyComponent.class)) {
+            try {
+                registerComponent(componentClass.getConstructor().newInstance());
+            } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+                throw new FunnyCommandsException("Cannot create component " + componentClass, e);
+            }
+        }
+
+        return this;
+    }
+
+    private <T> FunnyCommandsConfiguration registerComponent(Object componentInstance) {
+        Class<?> componentType = componentInstance.getClass();
+
+        if (CommandDataType.class.isAssignableFrom(componentType)) {
+            return type(ObjectUtils.cast(componentInstance));
+        }
+
+        if (GlobalBind.class.isAssignableFrom(componentType)) {
+            return globalBind(ObjectUtils.cast(componentInstance));
+        }
+
+        if (DynamicBind.class.isAssignableFrom(componentType)) {
+            return dynamicBind(ObjectUtils.cast(componentInstance));
+        }
+
+        if (ResponseHandler.class.isAssignableFrom(componentType)) {
+            return responseHandler(ObjectUtils.cast(componentInstance));
+        }
+
+        if (ExceptionHandler.class.isAssignableFrom(componentType))  {
+            return exceptionHandler(ObjectUtils.cast(componentInstance));
+        }
+
+        return command(componentInstance);
+    }
+
     public FunnyCommandsConfiguration placeholders(Map<String, Function<String, String>> placeholders) {
         this.placeholders.putAll(placeholders);
         return this;
@@ -77,13 +123,12 @@ public final class FunnyCommandsConfiguration {
         return commands(Arrays.asList(commandsClasses));
     }
 
-    public <T> FunnyCommandsConfiguration type(String typeName, TriFunction<Origin, Parameter, String, T> deserializer) {
-        this.typeMappers.put(typeName, new TypeMapper<>(typeName, deserializer));
-        return this;
+    public <T> FunnyCommandsConfiguration type(CommandDataType<T> commandDataType) {
+        return type(commandDataType.getName(), commandDataType);
     }
 
-    public <T> FunnyCommandsConfiguration type(CommandDataType<T> commandDataType) {
-        this.typeMappers.put(commandDataType.getName(), new TypeMapper<>(commandDataType.getName(), commandDataType));
+    public <T> FunnyCommandsConfiguration type(String typeName, TriFunction<Origin, Parameter, String, T> deserializer) {
+        this.typeMappers.put(typeName, new TypeMapper<>(typeName, deserializer));
         return this;
     }
 
@@ -97,9 +142,17 @@ public final class FunnyCommandsConfiguration {
         return this;
     }
 
+    public <E extends Exception> FunnyCommandsConfiguration exceptionHandler(ExceptionHandler<E> exceptionHandler) {
+        return exceptionHandler(exceptionHandler.getExceptionType(), exceptionHandler);
+    }
+
     public <E extends Exception> FunnyCommandsConfiguration exceptionHandler(Class<E> exceptionType, Function<E, Boolean> exceptionConsumer) {
         this.exceptionHandlers.put(exceptionType, exceptionConsumer);
         return this;
+    }
+
+    public <R> FunnyCommandsConfiguration responseHandler(ResponseHandler<R> responseHandler) {
+        return responseHandler(responseHandler.getResponseType(), responseHandler);
     }
 
     public <R> FunnyCommandsConfiguration responseHandler(Class<R> responseType, BiFunction<Origin, R, Boolean> responseHandler) {

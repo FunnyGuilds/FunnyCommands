@@ -14,20 +14,12 @@
  * limitations under the License.
  */
 
-package net.dzikoysk.funnycommands.defaults;
+package net.dzikoysk.funnycommands.commands;
 
-import net.dzikoysk.funnycommands.commands.DynamicBind;
-import net.dzikoysk.funnycommands.commands.Origin;
-import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
-import org.bukkit.command.CommandSender;
-import org.panda_lang.utilities.inject.InjectorResources;
+import java.util.function.Function;
 
-@FunnyComponent
-public final class CommandSenderBind implements DynamicBind {
+public interface ExceptionHandler<E extends Exception> extends Function<E, Boolean> {
 
-    @Override
-    public void accept(Origin origin, InjectorResources resources) {
-        resources.on(CommandSender.class).assignInstance(origin.getCommandSender());
-    }
+    Class<E> getExceptionType();
 
 }

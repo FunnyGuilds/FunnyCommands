@@ -16,31 +16,22 @@
 
 package net.dzikoysk.funnycommands.defaults;
 
-import net.dzikoysk.funnycommands.commands.CommandDataType;
-import net.dzikoysk.funnycommands.commands.Origin;
+import net.dzikoysk.funnycommands.FunnyCommandsException;
+import net.dzikoysk.funnycommands.commands.ExceptionHandler;
 import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
-import org.panda_lang.utilities.commons.function.TriFunction;
-
-import java.lang.reflect.Parameter;
 
 @FunnyComponent
-public class CustomType<T> implements CommandDataType<T> {
+public final class FunnyCommandsExceptionHandler implements ExceptionHandler<FunnyCommandsException> {
 
-    private final String name;
-    private final TriFunction<Origin, Parameter, String, T> deserializer;
-
-    public CustomType(String name, TriFunction<Origin, Parameter, String, T> deserializer) {
-        this.name = name;
-        this.deserializer = deserializer;
+    @Override
+    public Boolean apply(FunnyCommandsException e) {
+        e.printStackTrace();
+        return true;
     }
 
     @Override
-    public T apply(Origin origin, Parameter parameter, String argument) {
-        return deserializer.apply(origin, parameter, argument);
+    public Class<FunnyCommandsException> getExceptionType() {
+        return FunnyCommandsException.class;
     }
 
-    @Override
-    public String getName() {
-        return name;
-    }
 }

@@ -16,15 +16,17 @@
 
 package net.dzikoysk.funnycommands.defaults;
 
+import net.dzikoysk.funnycommands.commands.GlobalBind;
+import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
 import org.panda_lang.utilities.inject.InjectorResources;
 import org.panda_lang.utilities.inject.annotations.Injectable;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.UUID;
-import java.util.function.Consumer;
 
-public final class RandomUUIDBind implements Consumer<InjectorResources> {
+@FunnyComponent
+public final class RandomUUIDBind implements GlobalBind {
 
     @Injectable
     @Retention(RetentionPolicy.RUNTIME)

@@ -16,31 +16,26 @@
 
 package net.dzikoysk.funnycommands.defaults;
 
-import net.dzikoysk.funnycommands.commands.CommandDataType;
 import net.dzikoysk.funnycommands.commands.Origin;
+import net.dzikoysk.funnycommands.commands.ResponseHandler;
+import net.dzikoysk.funnycommands.responses.SenderResponse;
 import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
-import org.panda_lang.utilities.commons.function.TriFunction;
-
-import java.lang.reflect.Parameter;
 
 @FunnyComponent
-public class CustomType<T> implements CommandDataType<T> {
+public final class SenderResponseHandler implements ResponseHandler<SenderResponse> {
 
-    private final String name;
-    private final TriFunction<Origin, Parameter, String, T> deserializer;
+    @Override
+    public Boolean apply(Origin origin, SenderResponse senderResponse) {
+        senderResponse.getSender()
+                .getOrElse(origin::getCommandSender)
+                .sendMessage(origin.format(senderResponse));
 
-    public CustomType(String name, TriFunction<Origin, Parameter, String, T> deserializer) {
-        this.name = name;
-        this.deserializer = deserializer;
+        return true;
     }
 
     @Override
-    public T apply(Origin origin, Parameter parameter, String argument) {
-        return deserializer.apply(origin, parameter, argument);
+    public Class<SenderResponse> getResponseType() {
+        return SenderResponse.class;
     }
 
-    @Override
-    public String getName() {
-        return name;
-    }
 }
