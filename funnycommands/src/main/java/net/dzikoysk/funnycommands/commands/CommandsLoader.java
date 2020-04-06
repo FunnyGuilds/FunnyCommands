@@ -17,7 +17,6 @@
 package net.dzikoysk.funnycommands.commands;
 
 import io.vavr.collection.Stream;
-import io.vavr.control.Option;
 import net.dzikoysk.funnycommands.FunnyCommands;
 import net.dzikoysk.funnycommands.FunnyCommandsException;
 import net.dzikoysk.funnycommands.stereotypes.FunnyCommand;
@@ -32,6 +31,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Supplier;
 
 public final class CommandsLoader {
@@ -62,7 +62,7 @@ public final class CommandsLoader {
 
     protected CommandTree loadCommands(Iterable<Object> commands) {
         List<CommandMetadata> metadata = Stream.ofAll(commands)
-                .map(this::mapCommand)
+                .flatMap(this::mapCommandInstance)
                 .sorted()
                 .toJavaList();
 
@@ -90,32 +90,33 @@ public final class CommandsLoader {
         return metadataTree;
     }
 
-    private CommandMetadata mapCommand(Object command) {
-        FunnyCommand funnyCommand = Option.of(command.getClass().getAnnotation(FunnyCommand.class)).getOrElseThrow(() -> {
-            throw new FunnyCommandsException("Missing @FunnyCommand annotation in command " + command.getClass());
-        });
+    private Collection<CommandMetadata> mapCommandInstance(Object command) {
+        Set<Method> commandMethods = ReflectionUtils.getMethodsAnnotatedWith(command.getClass(), FunnyCommand.class);
+        Collection<CommandMetadata> metadata = new ArrayList<>(commandMethods.size());
 
-        Method commandMethod = Option.of(ReflectionUtils.getMethodsAnnotatedWith(command.getClass(), Executor.class))
-                .filter(set -> set.size() == 1)
-                .map(set -> set.iterator().next())
-                .getOrElseThrow(() -> {
-                    throw new FunnyCommandsException("Command class has to contain the one and only executor");
-                });
+        for (Method commandMethod : commandMethods) {
+            metadata.add(mapCommand(command, commandMethod));
+        }
 
-        Executor executor = commandMethod.getAnnotation(Executor.class);
+        return metadata;
+    }
+
+    private CommandMetadata mapCommand(Object commandInstance, Method commandMethod) {
+        FunnyCommand funnyCommand = commandMethod.getAnnotation(FunnyCommand.class);
         MessageFormatter formatter = funnyCommands.getFormatter();
-        List<String> parameters = CommandUtils.format(formatter, executor.value());
+        List<String> parameters = CommandUtils.format(formatter, funnyCommand.parameters());
 
         CommandInfo bukkitCommandInfo = new CommandInfo(
                 formatter.format(funnyCommand.name()),
                 formatter.format(funnyCommand.description()),
+                formatter.format(funnyCommand.permission()),
                 formatter.format(funnyCommand.usage()),
                 CommandUtils.format(formatter, funnyCommand.aliases()),
                 mapParameters(parameters),
                 mapMappers(commandMethod, parameters)
         );
 
-        return new CommandMetadata(command, bukkitCommandInfo, commandMethod, null);
+        return new CommandMetadata(commandInstance, bukkitCommandInfo, commandMethod, null);
     }
 
     private Map<String, Integer> mapParameters(List<String> parameters) {

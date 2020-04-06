@@ -47,33 +47,33 @@ class CommandsLoaderTest {
         Assertions.assertArrayEquals(new String[] { "b 1", "b 1 2" }, subdomains);
     }
 
-    @FunnyCommand(name = "a")
     private static final class CommandA {
+        @FunnyCommand(name = "a")
         protected boolean a() { return true; }
     }
 
-    @FunnyCommand(name = "b")
     private static final class CommandB {
+        @FunnyCommand(name = "b")
         protected boolean b() { return true; }
     }
 
-    @FunnyCommand(name = "b 1")
     private static final class CommandB1 {
+        @FunnyCommand(name = "b 1")
         protected boolean b1() { return true; }
     }
 
-    @FunnyCommand(name = "b 2")
     private static final class CommandB2 {
+        @FunnyCommand(name = "b 2")
         protected boolean b2() { return true; }
     }
 
-    @FunnyCommand(name = "b 1 2")
     private static final class CommandB12 {
+        @FunnyCommand(name = "b 1 2")
         protected boolean b12() { return true; }
     }
 
-    @FunnyCommand(name = "c")
     private static final class CommandC {
+        @FunnyCommand(name = "c")
         protected boolean c() { return true; }
     }
 
