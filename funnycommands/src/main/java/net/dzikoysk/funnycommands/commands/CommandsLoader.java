@@ -20,7 +20,6 @@ import io.vavr.collection.Stream;
 import io.vavr.control.Option;
 import net.dzikoysk.funnycommands.FunnyCommands;
 import net.dzikoysk.funnycommands.FunnyCommandsException;
-import net.dzikoysk.funnycommands.stereotypes.Executor;
 import net.dzikoysk.funnycommands.stereotypes.FunnyCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;

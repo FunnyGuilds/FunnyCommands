@@ -14,28 +14,31 @@
  * limitations under the License.
  */
 
-package net.dzikoysk.funnycommands.commands;
+package net.dzikoysk.funnycommands.defaults;
 
+import net.dzikoysk.funnycommands.commands.CommandDataType;
+import net.dzikoysk.funnycommands.commands.Origin;
 import org.panda_lang.utilities.commons.function.TriFunction;
 
 import java.lang.reflect.Parameter;
 
-public final class TypeMapper<T> {
+public class CustomType<T> implements CommandDataType<T> {
 
     private final String name;
     private final TriFunction<Origin, Parameter, String, T> deserializer;
 
-    public TypeMapper(String name, TriFunction<Origin, Parameter, String, T> deserializer) {
+    public CustomType(String name, TriFunction<Origin, Parameter, String, T> deserializer) {
         this.name = name;
         this.deserializer = deserializer;
     }
 
-    public T map(Origin origin, Parameter parameter, String value) {
-        return deserializer.apply(origin, parameter, value);
+    @Override
+    public T apply(Origin origin, Parameter parameter, String argument) {
+        return deserializer.apply(origin, parameter, argument);
     }
 
+    @Override
     public String getName() {
         return name;
     }
-
 }

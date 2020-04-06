@@ -14,28 +14,31 @@
  * limitations under the License.
  */
 
-package net.dzikoysk.funnycommands.commands;
+package net.dzikoysk.funnycommands.defaults;
 
-import org.panda_lang.utilities.commons.function.TriFunction;
+import net.dzikoysk.funnycommands.commands.CommandDataType;
+import net.dzikoysk.funnycommands.commands.Origin;
+import org.bukkit.Server;
+import org.bukkit.entity.Player;
 
 import java.lang.reflect.Parameter;
 
-public final class TypeMapper<T> {
+public final class PlayerType implements CommandDataType<Player> {
 
-    private final String name;
-    private final TriFunction<Origin, Parameter, String, T> deserializer;
+    private final Server server;
 
-    public TypeMapper(String name, TriFunction<Origin, Parameter, String, T> deserializer) {
-        this.name = name;
-        this.deserializer = deserializer;
+    public PlayerType(Server server) {
+        this.server = server;
     }
 
-    public T map(Origin origin, Parameter parameter, String value) {
-        return deserializer.apply(origin, parameter, value);
+    @Override
+    public Player apply(Origin origin, Parameter parameter, String argument) {
+        return server.getPlayer(argument);
     }
 
+    @Override
     public String getName() {
-        return name;
+        return "player";
     }
 
 }

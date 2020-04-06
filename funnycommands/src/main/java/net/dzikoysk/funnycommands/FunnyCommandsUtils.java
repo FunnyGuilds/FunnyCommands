@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 
-package net.dzikoysk.funnycommands.stereotypes;
+package net.dzikoysk.funnycommands;
 
-import org.panda_lang.utilities.inject.annotations.Injectable;
+import org.bukkit.ChatColor;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+final class FunnyCommandsUtils {
 
-@Injectable
-@Target(ElementType.METHOD)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Executor {
+    private FunnyCommandsUtils() { }
 
-    String[] value() default { };
+    static String translate(String message) {
+        return ChatColor.translateAlternateColorCodes('&', message);
+    }
 
 }

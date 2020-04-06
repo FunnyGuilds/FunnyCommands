@@ -18,7 +18,6 @@ package net.dzikoysk.funnycommands.commands;
 
 import io.vavr.control.Option;
 import net.dzikoysk.funnycommands.FunnyCommandsException;
-import net.dzikoysk.funnycommands.data.Origin;
 import net.dzikoysk.funnycommands.stereotypes.Arg;
 import net.dzikoysk.funnycommands.stereotypes.Nillable;
 import org.jetbrains.annotations.Nullable;

@@ -14,33 +14,25 @@
  * limitations under the License.
  */
 
-package net.dzikoysk.funnycommands.stereotypes;
+package net.dzikoysk.funnycommands.defaults;
 
-import org.panda_lang.utilities.commons.StringUtils;
+import org.panda_lang.utilities.inject.InjectorResources;
 import org.panda_lang.utilities.inject.annotations.Injectable;
 
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.util.UUID;
+import java.util.function.Consumer;
 
-@Injectable
-@Target(ElementType.METHOD)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface FunnyCommand {
+public final class RandomUUIDBind implements Consumer<InjectorResources> {
 
-    String name();
+    @Injectable
+    @Retention(RetentionPolicy.RUNTIME)
+    @interface RandomUUID { }
 
-    String permission() default StringUtils.EMPTY;
-
-    String description() default StringUtils.EMPTY;
-
-    String usage() default StringUtils.EMPTY;
-
-    String[] aliases() default  { };
-
-    String[] completer() default  { };
-
-    String[] parameters() default { };
+    @Override
+    public void accept(InjectorResources resources) {
+        resources.annotatedWith(RandomUUID.class).assignInstance(UUID::randomUUID);
+    }
 
 }

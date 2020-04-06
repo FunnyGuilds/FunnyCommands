@@ -16,6 +16,8 @@
 
 package net.dzikoysk.funnycommands;
 
+import net.dzikoysk.funnycommands.commands.Origin;
+import org.jetbrains.annotations.Nullable;
 import org.panda_lang.utilities.commons.text.MessageFormatter;
 import org.panda_lang.utilities.inject.DependencyInjection;
 import org.panda_lang.utilities.inject.Injector;
@@ -24,6 +26,7 @@ import org.panda_lang.utilities.inject.InjectorException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.function.BiConsumer;
 
 final class FunnyCommandsFactory {
 
@@ -48,7 +51,13 @@ final class FunnyCommandsFactory {
             }
         }
 
-        FunnyCommands funnyCommands = new FunnyCommands(configuration, injector, formatter);
+        @Nullable BiConsumer<Origin, String> permissionHandler = configuration.permissionHandler;
+
+        if (permissionHandler == null) {
+            permissionHandler = (origin, permission) -> origin.getCommandSender().sendMessage(FunnyCommandsUtils.translate("&cYou don't have permission to perform that command"));
+        }
+
+        FunnyCommands funnyCommands = new FunnyCommands(configuration, injector, formatter, permissionHandler);
         funnyCommands.getCommandsLoader().registerCommands(commands);
 
         return funnyCommands;

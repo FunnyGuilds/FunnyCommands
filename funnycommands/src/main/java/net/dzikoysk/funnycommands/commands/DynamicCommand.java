@@ -18,7 +18,6 @@ package net.dzikoysk.funnycommands.commands;
 
 import net.dzikoysk.funnycommands.FunnyCommands;
 import net.dzikoysk.funnycommands.FunnyCommandsException;
-import net.dzikoysk.funnycommands.data.Origin;
 import net.dzikoysk.funnycommands.stereotypes.Arg;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -72,11 +71,17 @@ final class DynamicCommand extends Command {
             throw new FunnyCommandsException("Commands conflict: " + matchedTree.toString());
         }
 
-        String[] commandArguments = Arrays.copyOfRange(normalizedArguments, index, normalizedArguments.length);
-        Origin origin = new Origin(funnyCommands, commandSender, alias, commandArguments);
-
         CommandTree commandTree = matchedTree.get(0);
         CommandInfo command = commandTree.getMetadata().getCommandInfo();
+
+        String[] commandArguments = Arrays.copyOfRange(normalizedArguments, index, normalizedArguments.length);
+        Origin origin = new Origin(funnyCommands, commandSender, alias, commandArguments);
+        String permission = commandTree.getMetadata().getCommandInfo().getPermission();
+
+        if (commandSender.hasPermission(permission)) {
+            funnyCommands.getPermissionHandler().accept(origin, permission);
+            return true;
+        }
 
         if (command.getParameters().size() != commandArguments.length) {
             return false;

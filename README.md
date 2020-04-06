@@ -4,6 +4,7 @@ FunnyGuilds command framework based on top of the [Panda](https://github.com/pan
 * Configurable placeholders to extend annotation based API
 * Customizable dependency injection 
 * Supports reloading 
+* Null safety
 
 ### Install
 FunnyCommands uses official GitHub Packages, the artifact is available by adding this declaration to your `pom.xml`. 
@@ -15,6 +16,15 @@ FunnyCommands uses official GitHub Packages, the artifact is available by adding
 </dependency>
 ```
 
+Located in Maven repository: [repo.panda-lang.org](https://repo.panda-lang.org/)
+
+```xml
+<repository>
+    <id>panda-repository</id>
+    <name>Panda Repository</name>
+    <url>https://repo.panda-lang.org/</url>
+</repository>```
+
 Requirements:
 * Java 8 or higher
 * Spigot 1.8.8 or higher
@@ -24,12 +34,18 @@ Requirements:
 As an example, we can take `/test <player> <guild>` command.
 
 ```java
-@FunnyCommand(name = "test", permission = "fc.test", usage = "/test <player> <guild>")
 private static final class TestCommand {
 
-    @Executor({ "player:target", "guild:arg-guild" })
+    @FunnyCommand(
+        name = "${fc.test-alias}",
+        permission = "fc.test",
+        usage = "/${fc.test-alias} <player>",
+        completer = { "@online-players", "@guilds"},
+        parameters = { "player:target", "guild:arg-guild" }
+    )
     SenderResponse test(@Sender CommandSender sender, @Arg("target") @Nillable Player target, @Arg("arg-guild") Option<Guild> guild) {
-        return new SenderResponse(target, "Test at ${fc.time} > " + sender + " called " + target + " and " + guild.getOrNull());
+        System.out.println(sender + " called " + target + " and " + guild.getOrNull());
+        return new SenderResponse(target, "Test ${fc.time}");
     }
 
 }

@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-package net.dzikoysk.funnycommands.stereotypes;
+package net.dzikoysk.funnycommands.defaults;
 
-import org.panda_lang.utilities.inject.annotations.Injectable;
+import net.dzikoysk.funnycommands.commands.Origin;
+import org.bukkit.command.CommandSender;
+import org.panda_lang.utilities.inject.InjectorResources;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Target;
+import java.util.function.BiConsumer;
 
-@Injectable
-@Target(ElementType.METHOD)
-public @interface TabCompleter { }
+public final class CommandSenderBind implements BiConsumer<Origin, InjectorResources> {
+
+    @Override
+    public void accept(Origin origin, InjectorResources resources) {
+        resources.on(CommandSender.class).assignInstance(origin.getCommandSender());
+    }
+
+}

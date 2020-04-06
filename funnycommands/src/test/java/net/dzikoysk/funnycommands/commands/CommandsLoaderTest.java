@@ -17,7 +17,6 @@
 package net.dzikoysk.funnycommands.commands;
 
 import net.dzikoysk.funnycommands.FunnyCommands;
-import net.dzikoysk.funnycommands.stereotypes.Executor;
 import net.dzikoysk.funnycommands.stereotypes.FunnyCommand;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -50,37 +49,31 @@ class CommandsLoaderTest {
 
     @FunnyCommand(name = "a")
     private static final class CommandA {
-        @Executor
         protected boolean a() { return true; }
     }
 
     @FunnyCommand(name = "b")
     private static final class CommandB {
-        @Executor
         protected boolean b() { return true; }
     }
 
     @FunnyCommand(name = "b 1")
     private static final class CommandB1 {
-        @Executor
         protected boolean b1() { return true; }
     }
 
     @FunnyCommand(name = "b 2")
     private static final class CommandB2 {
-        @Executor
         protected boolean b2() { return true; }
     }
 
     @FunnyCommand(name = "b 1 2")
     private static final class CommandB12 {
-        @Executor
         protected boolean b12() { return true; }
     }
 
     @FunnyCommand(name = "c")
     private static final class CommandC {
-        @Executor
         protected boolean c() { return true; }
     }
 

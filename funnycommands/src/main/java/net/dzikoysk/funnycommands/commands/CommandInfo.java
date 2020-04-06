@@ -23,18 +23,27 @@ final class CommandInfo {
 
     private final String name;
     private final String description;
+    private final String permission;
     private final String usageMessage;
     private final List<String> aliases;
     private final Map<String, Integer> parameters;
     private final Map<String, TypeMapper<?>> mappers;
 
-    CommandInfo(String name, String description, String usageMessage, List<String> aliases, Map<String, Integer> parameters, Map<String, TypeMapper<?>> mappers) {
+    CommandInfo(
+            String name, String description, String permission, String usageMessage, List<String> aliases,
+            Map<String, Integer> parameters, Map<String, TypeMapper<?>> mappers
+    ) {
         this.name = name;
         this.description = description;
+        this.permission = permission;
         this.usageMessage = usageMessage;
         this.aliases = aliases;
         this.parameters = parameters;
         this.mappers = mappers;
+    }
+
+    String getPermission() {
+        return permission;
     }
 
     Map<String, Integer> getParameters() {

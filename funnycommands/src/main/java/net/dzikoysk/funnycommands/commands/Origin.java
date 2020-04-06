@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.dzikoysk.funnycommands.data;
+package net.dzikoysk.funnycommands.commands;
 
 import net.dzikoysk.funnycommands.FunnyCommands;
 import org.bukkit.command.CommandSender;
