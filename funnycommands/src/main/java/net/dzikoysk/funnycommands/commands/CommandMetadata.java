@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Method;
 
-final class CommandMetadata implements Comparable<CommandMetadata> {
+public final class CommandMetadata implements Comparable<CommandMetadata> {
 
     private final Object commandInstance;
     private final CommandInfo commandInfo;
@@ -48,20 +48,20 @@ final class CommandMetadata implements Comparable<CommandMetadata> {
         return commandMethod;
     }
 
-    protected CommandInfo getCommandInfo() {
-        return commandInfo;
-    }
-
     protected Object getCommandInstance() {
         return commandInstance;
     }
 
-    protected String getSimpleName() {
+    public CommandInfo getCommandInfo() {
+        return commandInfo;
+    }
+
+    public String getSimpleName() {
         String[] units = getName().split(" ");
         return units[units.length - 1];
     }
 
-    protected String getName() {
+    public String getName() {
         return commandInfo.getName();
     }
 

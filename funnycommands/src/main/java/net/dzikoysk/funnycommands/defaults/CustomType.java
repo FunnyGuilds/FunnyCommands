@@ -18,12 +18,10 @@ package net.dzikoysk.funnycommands.defaults;
 
 import net.dzikoysk.funnycommands.commands.CommandDataType;
 import net.dzikoysk.funnycommands.commands.Origin;
-import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
 import org.panda_lang.utilities.commons.function.TriFunction;
 
 import java.lang.reflect.Parameter;
 
-@FunnyComponent
 public class CustomType<T> implements CommandDataType<T> {
 
     private final String name;

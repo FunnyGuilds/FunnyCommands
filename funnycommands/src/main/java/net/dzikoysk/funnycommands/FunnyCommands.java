@@ -16,9 +16,11 @@
 
 package net.dzikoysk.funnycommands;
 
+import net.dzikoysk.funnycommands.commands.CommandTree;
 import net.dzikoysk.funnycommands.commands.CommandsLoader;
 import net.dzikoysk.funnycommands.commands.TypeMapper;
 import net.dzikoysk.funnycommands.commands.Origin;
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.panda_lang.utilities.commons.text.MessageFormatter;
 import org.panda_lang.utilities.inject.Injector;
@@ -38,17 +40,23 @@ public final class FunnyCommands {
     private final MessageFormatter formatter;
     private final Injector injector;
     private final BiConsumer<Origin, String> permissionHandler;
+    private final BiConsumer<CommandSender, CommandTree> usageHandler;
 
-    FunnyCommands(FunnyCommandsConfiguration configuration, Injector injector, MessageFormatter formatter, BiConsumer<Origin, String> permissionHandler) {
+    FunnyCommands(FunnyCommandsConfiguration configuration, Injector injector, MessageFormatter formatter, BiConsumer<Origin, String> permissionHandler, BiConsumer<CommandSender, CommandTree> usageHandler) {
         this.injector = injector;
         this.formatter = formatter;
         this.configuration = configuration;
         this.permissionHandler = permissionHandler;
+        this.usageHandler = usageHandler;
         this.commandsLoader = new CommandsLoader(this, configuration.plugin);
     }
 
     public void dispose() {
         commandsLoader.unloadCommands();
+    }
+
+    public BiConsumer<CommandSender, CommandTree> getUsageHandler() {
+        return usageHandler;
     }
 
     public BiConsumer<Origin, String> getPermissionHandler() {

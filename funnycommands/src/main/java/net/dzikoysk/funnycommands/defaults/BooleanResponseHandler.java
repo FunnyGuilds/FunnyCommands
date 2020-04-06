@@ -14,27 +14,23 @@
  * limitations under the License.
  */
 
-package net.dzikoysk.funnycommands;
+package net.dzikoysk.funnycommands.defaults;
 
-import org.bukkit.ChatColor;
+import net.dzikoysk.funnycommands.commands.Origin;
+import net.dzikoysk.funnycommands.commands.ResponseHandler;
+import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
 
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
+@FunnyComponent
+public final class BooleanResponseHandler implements ResponseHandler<Boolean> {
 
-final class FunnyCommandsUtils {
-
-    static String translate(String message) {
-        return ChatColor.translateAlternateColorCodes('&', message);
+    @Override
+    public Boolean apply(Origin origin, Boolean response) {
+        return response;
     }
 
-    static URL getURL(Class<?> clazz) {
-        try {
-            return clazz.getProtectionDomain().getCodeSource().getLocation().toURI().toURL();
-        } catch (MalformedURLException | URISyntaxException e) {
-            throw new FunnyCommandsException("Cannot get URL", e);
-        }
+    @Override
+    public Class<Boolean> getResponseType() {
+        return Boolean.class;
     }
-
 
 }

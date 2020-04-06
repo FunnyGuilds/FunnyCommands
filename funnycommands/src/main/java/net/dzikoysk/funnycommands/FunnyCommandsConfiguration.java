@@ -17,6 +17,7 @@
 package net.dzikoysk.funnycommands;
 
 import net.dzikoysk.funnycommands.commands.CommandDataType;
+import net.dzikoysk.funnycommands.commands.CommandTree;
 import net.dzikoysk.funnycommands.commands.DynamicBind;
 import net.dzikoysk.funnycommands.commands.ExceptionHandler;
 import net.dzikoysk.funnycommands.commands.GlobalBind;
@@ -25,12 +26,16 @@ import net.dzikoysk.funnycommands.commands.ResponseHandler;
 import net.dzikoysk.funnycommands.commands.TypeMapper;
 import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
 import org.atteo.classindex.ClassIndex;
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.panda_lang.utilities.annotations.AnnotationsScanner;
+import org.panda_lang.utilities.annotations.monads.filters.JavaFilter;
 import org.panda_lang.utilities.commons.ObjectUtils;
 import org.panda_lang.utilities.commons.function.CachedSupplier;
 import org.panda_lang.utilities.commons.function.TriFunction;
 import org.panda_lang.utilities.inject.InjectorResources;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
@@ -56,6 +61,7 @@ public final class FunnyCommandsConfiguration {
     protected final Map<Class<? extends Exception>, Function<? extends Exception, Boolean>> exceptionHandlers = new HashMap<>();
     protected final Map<Class<?>, BiFunction<Origin, ?, Boolean>> responseHandlers = new HashMap<>();
     protected BiConsumer<Origin, String> permissionHandler;
+    protected BiConsumer<CommandSender, CommandTree> usageHandler;
 
     FunnyCommandsConfiguration(Supplier<JavaPlugin> plugin) {
         this.plugin = new CachedSupplier<>(plugin);
@@ -66,10 +72,29 @@ public final class FunnyCommandsConfiguration {
         return factory.createFunnyCommands(this);
     }
 
-    public FunnyCommandsConfiguration registerComponents() {
-        for (Class<?> componentClass : ClassIndex.getAnnotated(FunnyComponent.class)) {
+    public FunnyCommandsConfiguration registerAllComponents(Class<?> pluginClass) {
+        Collection<Class<?>> components = AnnotationsScanner.configuration()
+                .includeResources(FunnyCommandsUtils.getURL(pluginClass))
+                .build()
+                .createProcess()
+                .addURLFilters(new JavaFilter())
+                .fetch()
+                .createSelector()
+                .selectTypesAnnotatedWith(FunnyComponent.class);
+
+        return registerComponents(components);
+    }
+
+    public FunnyCommandsConfiguration registerProcessedComponents() {
+        return registerComponents(ClassIndex.getAnnotated(FunnyComponent.class, FunnyCommands.class.getClassLoader()));
+    }
+
+    private FunnyCommandsConfiguration registerComponents(Iterable<Class<?>> components) {
+        for (Class<?> componentClass : components) {
             try {
-                registerComponent(componentClass.getConstructor().newInstance());
+                Constructor<?> constructor = componentClass.getDeclaredConstructor();
+                constructor.setAccessible(true);
+                registerComponent(constructor.newInstance());
             } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
                 throw new FunnyCommandsException("Cannot create component " + componentClass, e);
             }
@@ -157,6 +182,16 @@ public final class FunnyCommandsConfiguration {
 
     public <R> FunnyCommandsConfiguration responseHandler(Class<R> responseType, BiFunction<Origin, R, Boolean> responseHandler) {
         this.responseHandlers.put(responseType, responseHandler);
+        return this;
+    }
+
+    public FunnyCommandsConfiguration permissionHandler(BiConsumer<Origin, String> permissionHandler) {
+        this.permissionHandler = permissionHandler;
+        return this;
+    }
+
+    public FunnyCommandsConfiguration usageHandler(BiConsumer<CommandSender, CommandTree> usageHandler) {
+        this.usageHandler = usageHandler;
         return this;
     }
 

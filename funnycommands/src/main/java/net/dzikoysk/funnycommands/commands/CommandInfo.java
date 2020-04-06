@@ -19,7 +19,7 @@ package net.dzikoysk.funnycommands.commands;
 import java.util.List;
 import java.util.Map;
 
-final class CommandInfo {
+public final class CommandInfo {
 
     private final String name;
     private final String description;
@@ -42,31 +42,31 @@ final class CommandInfo {
         this.mappers = mappers;
     }
 
-    String getPermission() {
+    public String getPermission() {
         return permission;
     }
 
-    Map<String, Integer> getParameters() {
+    public Map<String, Integer> getParameters() {
         return parameters;
     }
 
-    Map<? extends String, ? extends TypeMapper<?>> getMappers() {
+    public Map<? extends String, ? extends TypeMapper<?>> getMappers() {
         return mappers;
     }
 
-    List<String> getAliases() {
+    public List<? extends String> getAliases() {
         return aliases;
     }
 
-    String getUsageMessage() {
+    public String getUsageMessage() {
         return usageMessage;
     }
 
-    String getDescription() {
+    public String getDescription() {
         return description;
     }
 
-    String getName() {
+    public String getName() {
         return name;
     }
 

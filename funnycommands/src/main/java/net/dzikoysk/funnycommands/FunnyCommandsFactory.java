@@ -16,7 +16,10 @@
 
 package net.dzikoysk.funnycommands;
 
+import net.dzikoysk.funnycommands.commands.CommandTree;
 import net.dzikoysk.funnycommands.commands.Origin;
+import net.dzikoysk.funnycommands.defaults.BooleanResponseHandler;
+import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Nullable;
 import org.panda_lang.utilities.commons.text.MessageFormatter;
 import org.panda_lang.utilities.inject.DependencyInjection;
@@ -51,13 +54,23 @@ final class FunnyCommandsFactory {
             }
         }
 
+        if (!configuration.responseHandlers.containsKey(Boolean.class)) {
+            configuration.responseHandler(new BooleanResponseHandler());
+        }
+
         @Nullable BiConsumer<Origin, String> permissionHandler = configuration.permissionHandler;
 
         if (permissionHandler == null) {
             permissionHandler = (origin, permission) -> origin.getCommandSender().sendMessage(FunnyCommandsUtils.translate("&cYou don't have permission to perform that command"));
         }
 
-        FunnyCommands funnyCommands = new FunnyCommands(configuration, injector, formatter, permissionHandler);
+        @Nullable BiConsumer<CommandSender, CommandTree> usageHandler = configuration.usageHandler;
+
+        if (usageHandler == null) {
+            usageHandler = (sender, commandTree) -> sender.sendMessage(FunnyCommandsUtils.translate("&cUsage: " + commandTree.getMetadata().getCommandInfo().getUsageMessage()));
+        }
+
+        FunnyCommands funnyCommands = new FunnyCommands(configuration, injector, formatter, permissionHandler, usageHandler);
         funnyCommands.getCommandsLoader().registerCommands(commands);
 
         return funnyCommands;

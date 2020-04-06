@@ -19,15 +19,14 @@ package net.dzikoysk.funnycommands.commands;
 import net.dzikoysk.funnycommands.FunnyCommands;
 import net.dzikoysk.funnycommands.FunnyCommandsException;
 import net.dzikoysk.funnycommands.stereotypes.Arg;
-import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.Nullable;
 import org.panda_lang.utilities.commons.ObjectUtils;
 import org.panda_lang.utilities.inject.InjectorController;
 import org.panda_lang.utilities.inject.InjectorException;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -39,7 +38,7 @@ final class DynamicCommand extends Command {
     private final CommandTree commandsTree;
 
     protected DynamicCommand(FunnyCommands funnyCommands, CommandTree commandsTree, CommandInfo commandInfo) {
-        super(commandInfo.getName(), commandInfo.getDescription(), commandInfo.getUsageMessage(), commandInfo.getAliases());
+        super(commandInfo.getName(), commandInfo.getDescription(), commandInfo.getUsageMessage(), new ArrayList<>(commandInfo.getAliases()));
         this.funnyCommands = funnyCommands;
         this.commandsTree = commandsTree;
     }
@@ -63,7 +62,8 @@ final class DynamicCommand extends Command {
         }
 
         if (matchedTree.isEmpty()) {
-            return false;
+            funnyCommands.getUsageHandler().accept(commandSender, commandsTree);
+            return true;
         }
 
         if (matchedTree.size() > 1) {
@@ -78,13 +78,14 @@ final class DynamicCommand extends Command {
         Origin origin = new Origin(funnyCommands, commandSender, alias, commandArguments);
         String permission = commandTree.getMetadata().getCommandInfo().getPermission();
 
-        if (commandSender.hasPermission(permission)) {
+        if (!commandSender.hasPermission(permission)) {
             funnyCommands.getPermissionHandler().accept(origin, permission);
             return true;
         }
 
         if (command.getParameters().size() != commandArguments.length) {
-            return false;
+            funnyCommands.getUsageHandler().accept(commandSender, commandTree);
+            return true;
         }
 
         Object result = invoke(commandsTree.getMetadata().getCommandMethod(), resources -> {
@@ -97,11 +98,8 @@ final class DynamicCommand extends Command {
         });
 
         if (result == null) {
-            return false;
-        }
-
-        if (result instanceof Boolean) {
-            return (boolean) result;
+            funnyCommands.getUsageHandler().accept(commandSender, commandTree);
+            return true;
         }
 
         BiFunction<Origin, Object, Boolean> handler = ObjectUtils.cast(funnyCommands.getResponseHandlers().get(result.getClass()));
@@ -110,13 +108,18 @@ final class DynamicCommand extends Command {
             throw new FunnyCommandsException("Missing response handler for " + result.getClass());
         }
 
-        return handler.apply(origin, result);
+        Boolean success = handler.apply(origin, result);
+
+        if (success == null || !success) {
+            funnyCommands.getUsageHandler().accept(commandSender, commandTree);
+        }
+
+        return true;
     }
 
     @Override
-    public List<String> tabComplete(CommandSender sender, String alias, String[] args, @Nullable Location location) throws IllegalArgumentException {
-
-        return Collections.emptyList();
+    public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
+        return super.tabComplete(sender, alias, args);
     }
 
     private <T> T invoke(Method method, InjectorController controller) {
