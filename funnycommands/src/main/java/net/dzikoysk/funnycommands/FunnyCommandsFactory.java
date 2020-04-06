@@ -19,6 +19,7 @@ package net.dzikoysk.funnycommands;
 import net.dzikoysk.funnycommands.commands.CommandTree;
 import net.dzikoysk.funnycommands.commands.Origin;
 import net.dzikoysk.funnycommands.defaults.BooleanResponseHandler;
+import net.dzikoysk.funnycommands.defaults.StringBind;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Nullable;
 import org.panda_lang.utilities.commons.text.MessageFormatter;
@@ -52,6 +53,10 @@ final class FunnyCommandsFactory {
             } catch (InstantiationException | InjectorException | InvocationTargetException | IllegalAccessException e) {
                 throw new FunnyCommandsException("Failed to instantiate command class " + commandClass, e);
             }
+        }
+
+        if (!configuration.typeMappers.containsKey("string")) {
+            configuration.type(new StringBind());
         }
 
         if (!configuration.responseHandlers.containsKey(Boolean.class)) {

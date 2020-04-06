@@ -40,8 +40,9 @@ private static final class TestCommand {
 
     @FunnyCommand(
         name = "${fc.test-alias}",
+        description = "Test command",
         permission = "fc.test",
-        usage = "/${fc.test-alias} <player>",
+        usage = "/${fc.test-alias} <player> <guild>",
         completer = { "online-players", "guilds"},
         parameters = { "player:target", "guild:arg-guild" }
     )
@@ -57,7 +58,7 @@ The configuration for this kind of command may look like this:
 ```java
 this.funnyCommands = FunnyCommands.configuration(() -> this)
         .placeholders(PLACEHOLDERS)
-        .registerComponents()
+        .registerProcessedComponents()
         .type(new PlayerType(super.getServer()))
         .type("guild", ((origin, required, guild) -> guildService.guilds.get(guild)))
         .create();
