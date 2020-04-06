@@ -14,25 +14,27 @@
  * limitations under the License.
  */
 
-package net.dzikoysk.funnycommands.defaults;
+package net.dzikoysk.funnycommands.resources.responses;
 
-import net.dzikoysk.funnycommands.commands.CommandDataType;
-import net.dzikoysk.funnycommands.commands.Origin;
+import net.dzikoysk.funnycommands.resources.Origin;
+import net.dzikoysk.funnycommands.resources.ResponseHandler;
 import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
 
-import java.lang.reflect.Parameter;
-
 @FunnyComponent
-public final class StringBind implements CommandDataType<String> {
+public final class SenderResponseHandler implements ResponseHandler<SenderResponse> {
 
     @Override
-    public String apply(Origin origin, Parameter parameter, String argument) {
-        return argument;
+    public Boolean apply(Origin origin, SenderResponse senderResponse) {
+        senderResponse.getSender()
+                .getOrElse(origin::getCommandSender)
+                .sendMessage(origin.format(senderResponse));
+
+        return true;
     }
 
     @Override
-    public String getName() {
-        return "string";
+    public Class<SenderResponse> getResponseType() {
+        return SenderResponse.class;
     }
 
 }

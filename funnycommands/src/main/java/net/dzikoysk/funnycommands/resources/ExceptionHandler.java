@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package net.dzikoysk.funnycommands.commands;
+package net.dzikoysk.funnycommands.resources;
 
-import org.panda_lang.utilities.inject.InjectorResources;
+import java.util.function.Function;
 
-import java.util.function.BiConsumer;
+public interface ExceptionHandler<E extends Exception> extends Function<E, Boolean> {
 
-@FunctionalInterface
-public interface DynamicBind extends BiConsumer<Origin, InjectorResources> { }
+    Class<E> getExceptionType();
+
+}

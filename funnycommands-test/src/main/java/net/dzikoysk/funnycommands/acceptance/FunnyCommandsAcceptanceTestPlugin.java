@@ -19,8 +19,8 @@ package net.dzikoysk.funnycommands.acceptance;
 import io.vavr.control.Option;
 import net.dzikoysk.funnycommands.FunnyCommands;
 import net.dzikoysk.funnycommands.FunnyCommandsPlugin;
-import net.dzikoysk.funnycommands.defaults.PlayerType;
-import net.dzikoysk.funnycommands.responses.SenderResponse;
+import net.dzikoysk.funnycommands.resources.types.PlayerType;
+import net.dzikoysk.funnycommands.resources.responses.SenderResponse;
 import net.dzikoysk.funnycommands.stereotypes.Arg;
 import net.dzikoysk.funnycommands.stereotypes.FunnyCommand;
 import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
@@ -85,7 +85,7 @@ public final class FunnyCommandsAcceptanceTestPlugin extends FunnyCommandsPlugin
             description = "Test command",
             permission = "fc.test",
             usage = "/${fc.test-alias} <player> <guild>",
-            completer = { "online-players", "guilds"},
+            completer = { "online-players:5", "guilds:5"},
             parameters = { "player:target", "guild:arg-guild" }
         )
         SenderResponse test(CommandSender sender, @Arg("target") @Nillable Player target, @Arg("arg-guild") Option<Guild> guild) {

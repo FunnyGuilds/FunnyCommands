@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.dzikoysk.funnycommands.responses;
+package net.dzikoysk.funnycommands.resources.responses;
 
 import io.vavr.control.Option;
 import org.bukkit.command.CommandSender;

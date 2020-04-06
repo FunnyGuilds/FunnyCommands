@@ -16,6 +16,8 @@
 
 package net.dzikoysk.funnycommands.commands;
 
+import net.dzikoysk.funnycommands.resources.types.TypeMapper;
+
 import java.util.List;
 import java.util.Map;
 
@@ -26,32 +28,34 @@ public final class CommandInfo {
     private final String permission;
     private final String usageMessage;
     private final List<String> aliases;
+    private final List<CustomizedCompleter> completers;
     private final Map<String, Integer> parameters;
     private final Map<String, TypeMapper<?>> mappers;
 
     CommandInfo(
             String name, String description, String permission, String usageMessage, List<String> aliases,
-            Map<String, Integer> parameters, Map<String, TypeMapper<?>> mappers
+            List<CustomizedCompleter> completers, Map<String, Integer> parameters, Map<String, TypeMapper<?>> mappers
     ) {
         this.name = name;
         this.description = description;
         this.permission = permission;
         this.usageMessage = usageMessage;
         this.aliases = aliases;
+        this.completers = completers;
         this.parameters = parameters;
         this.mappers = mappers;
     }
 
-    public String getPermission() {
-        return permission;
+    public Map<? extends String, ? extends TypeMapper<?>> getMappers() {
+        return mappers;
     }
 
-    public Map<String, Integer> getParameters() {
+    public Map<? extends String, ? extends Integer> getParameters() {
         return parameters;
     }
 
-    public Map<? extends String, ? extends TypeMapper<?>> getMappers() {
-        return mappers;
+    public List<? extends CustomizedCompleter> getCompleters() {
+        return completers;
     }
 
     public List<? extends String> getAliases() {
@@ -60,6 +64,10 @@ public final class CommandInfo {
 
     public String getUsageMessage() {
         return usageMessage;
+    }
+
+    public String getPermission() {
+        return permission;
     }
 
     public String getDescription() {

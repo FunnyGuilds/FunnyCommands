@@ -16,26 +16,10 @@
 
 package net.dzikoysk.funnycommands.commands;
 
-import org.panda_lang.utilities.commons.function.TriFunction;
+import net.dzikoysk.funnycommands.resources.Origin;
 
-import java.lang.reflect.Parameter;
+import java.util.List;
+import java.util.function.BiFunction;
 
-public final class TypeMapper<T> {
-
-    private final String name;
-    private final TriFunction<Origin, Parameter, String, T> deserializer;
-
-    public TypeMapper(String name, TriFunction<Origin, Parameter, String, T> deserializer) {
-        this.name = name;
-        this.deserializer = deserializer;
-    }
-
-    public T map(Origin origin, Parameter parameter, String value) {
-        return deserializer.apply(origin, parameter, value);
-    }
-
-    public String getName() {
-        return name;
-    }
-
-}
+@FunctionalInterface
+interface CustomizedCompleter extends BiFunction<Origin, String, List<String>> { }

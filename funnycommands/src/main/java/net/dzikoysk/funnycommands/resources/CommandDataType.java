@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package net.dzikoysk.funnycommands.commands;
+package net.dzikoysk.funnycommands.resources;
 
-import java.util.function.Function;
+import org.panda_lang.utilities.commons.function.TriFunction;
 
-public interface ExceptionHandler<E extends Exception> extends Function<E, Boolean> {
+import java.lang.reflect.Parameter;
 
-    Class<E> getExceptionType();
+public interface CommandDataType<T> extends TriFunction<Origin, Parameter, String, T> {
+
+    String getName();
 
 }

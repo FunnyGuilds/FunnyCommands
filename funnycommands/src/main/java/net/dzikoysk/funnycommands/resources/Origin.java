@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package net.dzikoysk.funnycommands.commands;
+package net.dzikoysk.funnycommands.resources;
 
 import net.dzikoysk.funnycommands.FunnyCommands;
+import net.dzikoysk.funnycommands.commands.CommandStructure;
 import org.bukkit.command.CommandSender;
 
 import java.util.Objects;
@@ -25,26 +26,32 @@ public final class Origin {
 
     private final FunnyCommands funnyCommands;
     private final CommandSender commandSender;
+    private final CommandStructure commandStructure;
     private final String alias;
-    private final String[] args;
+    private final String[] arguments;
 
-    public Origin(FunnyCommands funnyCommands, CommandSender commandSender, String alias, String[] args) {
+    public Origin(FunnyCommands funnyCommands, CommandSender commandSender, CommandStructure commandStructure, String alias, String[] arguments) {
         this.funnyCommands = funnyCommands;
         this.commandSender = commandSender;
+        this.commandStructure = commandStructure;
         this.alias = alias;
-        this.args = args;
+        this.arguments = arguments;
     }
 
     public String format(Object value) {
         return funnyCommands.getFormatter().format(Objects.toString(value));
     }
 
-    public String[] getArgs() {
-        return args;
+    public String[] getArguments() {
+        return arguments;
     }
 
     public String getAlias() {
         return alias;
+    }
+
+    public CommandStructure getCommandStructure() {
+        return commandStructure;
     }
 
     public CommandSender getCommandSender() {

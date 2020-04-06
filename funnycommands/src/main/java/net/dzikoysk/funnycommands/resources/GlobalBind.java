@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.dzikoysk.funnycommands.commands;
+package net.dzikoysk.funnycommands.resources;
 
 import org.panda_lang.utilities.inject.InjectorResources;
 

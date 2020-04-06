@@ -16,24 +16,26 @@
 
 package net.dzikoysk.funnycommands;
 
-import net.dzikoysk.funnycommands.commands.CommandDataType;
-import net.dzikoysk.funnycommands.commands.CommandTree;
-import net.dzikoysk.funnycommands.commands.DynamicBind;
-import net.dzikoysk.funnycommands.commands.ExceptionHandler;
-import net.dzikoysk.funnycommands.commands.GlobalBind;
-import net.dzikoysk.funnycommands.commands.Origin;
-import net.dzikoysk.funnycommands.commands.ResponseHandler;
-import net.dzikoysk.funnycommands.commands.TypeMapper;
+import net.dzikoysk.funnycommands.resources.CommandDataType;
+import net.dzikoysk.funnycommands.resources.Completer;
+import net.dzikoysk.funnycommands.resources.DynamicBind;
+import net.dzikoysk.funnycommands.resources.ExceptionHandler;
+import net.dzikoysk.funnycommands.resources.GlobalBind;
+import net.dzikoysk.funnycommands.resources.Origin;
+import net.dzikoysk.funnycommands.resources.PermissionHandler;
+import net.dzikoysk.funnycommands.resources.ResponseHandler;
+import net.dzikoysk.funnycommands.resources.types.TypeMapper;
+import net.dzikoysk.funnycommands.resources.UsageHandler;
+import net.dzikoysk.funnycommands.resources.exceptions.CustomExceptionHandler;
+import net.dzikoysk.funnycommands.resources.responses.CustomResponseHandler;
 import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
 import org.atteo.classindex.ClassIndex;
-import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.panda_lang.utilities.annotations.AnnotationsScanner;
 import org.panda_lang.utilities.annotations.monads.filters.JavaFilter;
 import org.panda_lang.utilities.commons.ObjectUtils;
 import org.panda_lang.utilities.commons.function.CachedSupplier;
 import org.panda_lang.utilities.commons.function.TriFunction;
-import org.panda_lang.utilities.inject.InjectorResources;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -43,9 +45,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -55,13 +55,14 @@ public final class FunnyCommandsConfiguration {
     protected final Map<String, Function<String, String>> placeholders = new HashMap<>();
     protected final Collection<Class<?>> commandsClasses = new ArrayList<>();
     protected final Collection<Object> commandsInstances = new ArrayList<>();
+    protected final Map<String, Completer> completers = new HashMap<>();
     protected final Map<String, TypeMapper<?>> typeMappers = new HashMap<>();
-    protected final Collection<Consumer<InjectorResources>> globalBinds = new ArrayList<>();
-    protected final Collection<BiConsumer<Origin, InjectorResources>> dynamicBinds = new ArrayList<>();
-    protected final Map<Class<? extends Exception>, Function<? extends Exception, Boolean>> exceptionHandlers = new HashMap<>();
-    protected final Map<Class<?>, BiFunction<Origin, ?, Boolean>> responseHandlers = new HashMap<>();
-    protected BiConsumer<Origin, String> permissionHandler;
-    protected BiConsumer<CommandSender, CommandTree> usageHandler;
+    protected final Collection<GlobalBind> globalBinds = new ArrayList<>();
+    protected final Collection<DynamicBind> dynamicBinds = new ArrayList<>();
+    protected final Map<Class<? extends Exception>, ExceptionHandler<? extends Exception>> exceptionHandlers = new HashMap<>();
+    protected final Map<Class<?>, ResponseHandler<?>> responseHandlers = new HashMap<>();
+    protected PermissionHandler permissionHandler;
+    protected UsageHandler usageHandler;
 
     FunnyCommandsConfiguration(Supplier<JavaPlugin> plugin) {
         this.plugin = new CachedSupplier<>(plugin);
@@ -108,6 +109,10 @@ public final class FunnyCommandsConfiguration {
 
         if (CommandDataType.class.isAssignableFrom(componentType)) {
             return type(ObjectUtils.cast(componentInstance));
+        }
+
+        if (Completer.class.isAssignableFrom(componentType)) {
+            return completer(ObjectUtils.cast(componentInstance));
         }
 
         if (GlobalBind.class.isAssignableFrom(componentType)) {
@@ -157,40 +162,45 @@ public final class FunnyCommandsConfiguration {
         return this;
     }
 
-    public FunnyCommandsConfiguration globalBind(Consumer<InjectorResources> bind) {
+    public FunnyCommandsConfiguration globalBind(GlobalBind bind) {
         this.globalBinds.add(bind);
         return this;
     }
 
-    public FunnyCommandsConfiguration dynamicBind(BiConsumer<Origin, InjectorResources> bind) {
+    public FunnyCommandsConfiguration dynamicBind(DynamicBind bind) {
         this.dynamicBinds.add(bind);
         return this;
     }
 
+    public FunnyCommandsConfiguration completer(Completer completer) {
+        this.completers.put(completer.getName(), completer);
+        return this;
+    }
+
     public <E extends Exception> FunnyCommandsConfiguration exceptionHandler(ExceptionHandler<E> exceptionHandler) {
-        return exceptionHandler(exceptionHandler.getExceptionType(), exceptionHandler);
+        exceptionHandlers.put(exceptionHandler.getExceptionType(), exceptionHandler);
+        return this;
     }
 
     public <E extends Exception> FunnyCommandsConfiguration exceptionHandler(Class<E> exceptionType, Function<E, Boolean> exceptionConsumer) {
-        this.exceptionHandlers.put(exceptionType, exceptionConsumer);
-        return this;
+        return exceptionHandler(new CustomExceptionHandler<>(exceptionType, exceptionConsumer));
     }
 
     public <R> FunnyCommandsConfiguration responseHandler(ResponseHandler<R> responseHandler) {
-        return responseHandler(responseHandler.getResponseType(), responseHandler);
-    }
-
-    public <R> FunnyCommandsConfiguration responseHandler(Class<R> responseType, BiFunction<Origin, R, Boolean> responseHandler) {
-        this.responseHandlers.put(responseType, responseHandler);
+        responseHandlers.put(responseHandler.getResponseType(), responseHandler);
         return this;
     }
 
-    public FunnyCommandsConfiguration permissionHandler(BiConsumer<Origin, String> permissionHandler) {
+    public <R> FunnyCommandsConfiguration responseHandler(Class<R> responseType, BiFunction<Origin, R, Boolean> responseHandler) {
+        return responseHandler(new CustomResponseHandler<>(responseType, responseHandler));
+    }
+
+    public FunnyCommandsConfiguration permissionHandler(PermissionHandler permissionHandler) {
         this.permissionHandler = permissionHandler;
         return this;
     }
 
-    public FunnyCommandsConfiguration usageHandler(BiConsumer<CommandSender, CommandTree> usageHandler) {
+    public FunnyCommandsConfiguration usageHandler(UsageHandler usageHandler) {
         this.usageHandler = usageHandler;
         return this;
     }

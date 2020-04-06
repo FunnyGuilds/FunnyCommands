@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-package net.dzikoysk.funnycommands.defaults;
+package net.dzikoysk.funnycommands.resources;
 
-import net.dzikoysk.funnycommands.commands.DynamicBind;
-import net.dzikoysk.funnycommands.commands.Origin;
-import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
-import org.bukkit.command.CommandSender;
-import org.panda_lang.utilities.inject.InjectorResources;
+import org.panda_lang.utilities.commons.function.TriFunction;
 
-@FunnyComponent
-public final class CommandSenderBind implements DynamicBind {
+import java.util.List;
 
-    @Override
-    public void accept(Origin origin, InjectorResources resources) {
-        resources.on(CommandSender.class).assignInstance(origin.getCommandSender());
-    }
+public interface Completer extends TriFunction<Origin, String, Integer, List<String>> {
+
+    String getName();
 
 }

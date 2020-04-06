@@ -14,24 +14,27 @@
  * limitations under the License.
  */
 
-package net.dzikoysk.funnycommands.defaults;
+package net.dzikoysk.funnycommands.resources.binds;
 
-import net.dzikoysk.funnycommands.FunnyCommandsException;
-import net.dzikoysk.funnycommands.commands.ExceptionHandler;
+import net.dzikoysk.funnycommands.resources.GlobalBind;
 import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
+import org.panda_lang.utilities.inject.InjectorResources;
+import org.panda_lang.utilities.inject.annotations.Injectable;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.util.UUID;
 
 @FunnyComponent
-public final class FunnyCommandsExceptionHandler implements ExceptionHandler<FunnyCommandsException> {
+public final class RandomUUIDBind implements GlobalBind {
+
+    @Injectable
+    @Retention(RetentionPolicy.RUNTIME)
+    @interface RandomUUID { }
 
     @Override
-    public Boolean apply(FunnyCommandsException e) {
-        e.printStackTrace();
-        return true;
-    }
-
-    @Override
-    public Class<FunnyCommandsException> getExceptionType() {
-        return FunnyCommandsException.class;
+    public void accept(InjectorResources resources) {
+        resources.annotatedWith(RandomUUID.class).assignInstance(UUID::randomUUID);
     }
 
 }

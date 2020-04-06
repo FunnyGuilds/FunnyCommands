@@ -14,12 +14,23 @@
  * limitations under the License.
  */
 
-package net.dzikoysk.funnycommands.commands;
+package net.dzikoysk.funnycommands.resources.responses;
 
-import java.util.function.BiFunction;
+import net.dzikoysk.funnycommands.resources.Origin;
+import net.dzikoysk.funnycommands.resources.ResponseHandler;
+import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
 
-public interface ResponseHandler<R> extends BiFunction<Origin, R, Boolean> {
+@FunnyComponent
+public final class BooleanResponseHandler implements ResponseHandler<Boolean> {
 
-    Class<R> getResponseType();
+    @Override
+    public Boolean apply(Origin origin, Boolean response) {
+        return response;
+    }
+
+    @Override
+    public Class<Boolean> getResponseType() {
+        return Boolean.class;
+    }
 
 }

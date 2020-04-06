@@ -14,28 +14,20 @@
  * limitations under the License.
  */
 
-package net.dzikoysk.funnycommands.defaults;
+package net.dzikoysk.funnycommands.resources.binds;
 
-import net.dzikoysk.funnycommands.commands.Origin;
-import net.dzikoysk.funnycommands.commands.ResponseHandler;
-import net.dzikoysk.funnycommands.responses.SenderResponse;
+import net.dzikoysk.funnycommands.resources.DynamicBind;
+import net.dzikoysk.funnycommands.resources.Origin;
 import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
+import org.bukkit.command.CommandSender;
+import org.panda_lang.utilities.inject.InjectorResources;
 
 @FunnyComponent
-public final class SenderResponseHandler implements ResponseHandler<SenderResponse> {
+public final class CommandSenderBind implements DynamicBind {
 
     @Override
-    public Boolean apply(Origin origin, SenderResponse senderResponse) {
-        senderResponse.getSender()
-                .getOrElse(origin::getCommandSender)
-                .sendMessage(origin.format(senderResponse));
-
-        return true;
-    }
-
-    @Override
-    public Class<SenderResponse> getResponseType() {
-        return SenderResponse.class;
+    public void accept(Origin origin, InjectorResources resources) {
+        resources.on(CommandSender.class).assignInstance(origin.getCommandSender());
     }
 
 }

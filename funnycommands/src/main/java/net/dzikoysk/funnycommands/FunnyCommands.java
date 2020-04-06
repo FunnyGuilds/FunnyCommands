@@ -16,10 +16,11 @@
 
 package net.dzikoysk.funnycommands;
 
-import net.dzikoysk.funnycommands.commands.CommandTree;
+import net.dzikoysk.funnycommands.commands.CommandStructure;
 import net.dzikoysk.funnycommands.commands.CommandsLoader;
-import net.dzikoysk.funnycommands.commands.TypeMapper;
-import net.dzikoysk.funnycommands.commands.Origin;
+import net.dzikoysk.funnycommands.resources.Completer;
+import net.dzikoysk.funnycommands.resources.types.TypeMapper;
+import net.dzikoysk.funnycommands.resources.Origin;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.panda_lang.utilities.commons.text.MessageFormatter;
@@ -40,9 +41,9 @@ public final class FunnyCommands {
     private final MessageFormatter formatter;
     private final Injector injector;
     private final BiConsumer<Origin, String> permissionHandler;
-    private final BiConsumer<CommandSender, CommandTree> usageHandler;
+    private final BiConsumer<CommandSender, CommandStructure> usageHandler;
 
-    FunnyCommands(FunnyCommandsConfiguration configuration, Injector injector, MessageFormatter formatter, BiConsumer<Origin, String> permissionHandler, BiConsumer<CommandSender, CommandTree> usageHandler) {
+    FunnyCommands(FunnyCommandsConfiguration configuration, Injector injector, MessageFormatter formatter, BiConsumer<Origin, String> permissionHandler, BiConsumer<CommandSender, CommandStructure> usageHandler) {
         this.injector = injector;
         this.formatter = formatter;
         this.configuration = configuration;
@@ -55,7 +56,7 @@ public final class FunnyCommands {
         commandsLoader.unloadCommands();
     }
 
-    public BiConsumer<CommandSender, CommandTree> getUsageHandler() {
+    public BiConsumer<CommandSender, CommandStructure> getUsageHandler() {
         return usageHandler;
     }
 
@@ -73,6 +74,10 @@ public final class FunnyCommands {
 
     public Map<? extends String, ? extends Function<String, String>> getPlaceholders() {
         return configuration.placeholders;
+    }
+
+    public Map<? extends String, ? extends Completer> getCompleters() {
+        return configuration.completers;
     }
 
     public Map<? extends String, ? extends TypeMapper<?>> getTypeMappers() {

@@ -14,26 +14,35 @@
  * limitations under the License.
  */
 
-package net.dzikoysk.funnycommands.commands;
+package net.dzikoysk.funnycommands.resources.binds;
 
 import io.vavr.control.Option;
 import net.dzikoysk.funnycommands.FunnyCommandsException;
+import net.dzikoysk.funnycommands.commands.CommandInfo;
+import net.dzikoysk.funnycommands.resources.DynamicBind;
+import net.dzikoysk.funnycommands.resources.Origin;
 import net.dzikoysk.funnycommands.stereotypes.Arg;
 import net.dzikoysk.funnycommands.stereotypes.Nillable;
 import org.jetbrains.annotations.Nullable;
+import org.panda_lang.utilities.inject.InjectorResources;
 
 import java.lang.reflect.Parameter;
 import java.util.Optional;
 import java.util.function.BiFunction;
 
-final class ArgumentsHandler implements BiFunction<Parameter, Arg, Object> {
+public final class ArgumentsBind implements DynamicBind, BiFunction<Parameter, Arg, Object> {
 
     private final CommandInfo command;
     private final Origin origin;
 
-    ArgumentsHandler(CommandInfo command, Origin origin) {
+    public ArgumentsBind(CommandInfo command, Origin origin) {
         this.command = command;
         this.origin = origin;
+    }
+
+    @Override
+    public void accept(Origin origin, InjectorResources resources) {
+        resources.annotatedWith(Arg.class).assignHandler(this);
     }
 
     @Override
@@ -46,7 +55,7 @@ final class ArgumentsHandler implements BiFunction<Parameter, Arg, Object> {
 
         Object result = command.getMappers()
                 .get(arg.value())
-                .map(origin, required, origin.getArgs()[parameterIndex]);
+                .map(origin, required, origin.getArguments()[parameterIndex]);
 
         if (required.getType().isAssignableFrom(Option.class)) {
             return Option.of(result);

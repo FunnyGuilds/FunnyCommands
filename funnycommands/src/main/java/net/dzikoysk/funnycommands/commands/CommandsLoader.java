@@ -19,6 +19,8 @@ package net.dzikoysk.funnycommands.commands;
 import io.vavr.collection.Stream;
 import net.dzikoysk.funnycommands.FunnyCommands;
 import net.dzikoysk.funnycommands.FunnyCommandsException;
+import net.dzikoysk.funnycommands.resources.Completer;
+import net.dzikoysk.funnycommands.resources.types.TypeMapper;
 import net.dzikoysk.funnycommands.stereotypes.FunnyCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
@@ -45,42 +47,42 @@ public final class CommandsLoader {
     }
 
     public Collection<DynamicCommand> registerCommands(Iterable<Object> commands) {
-        CommandTree commandsTree = loadCommands(commands);
-        Collection<DynamicCommand> dynamicCommands = new ArrayList<>(commandsTree.getChildren().size());
+        CommandStructure commandsTree = loadCommands(commands);
+        Collection<DynamicCommand> dynamicCommands = new ArrayList<>(commandsTree.getSubcommands().size());
 
-        for (CommandTree commandTree : commandsTree.getChildren()) {
-            dynamicCommands.add(registerCommand(funnyCommands, commandTree));
+        for (CommandStructure commandStructure : commandsTree.getSubcommands()) {
+            dynamicCommands.add(registerCommand(funnyCommands, commandStructure));
         }
 
         return dynamicCommands;
     }
 
-    protected DynamicCommand registerCommand(FunnyCommands funnyCommands, CommandTree commandTree) {
-        DynamicCommand dynamicCommand = new DynamicCommand(funnyCommands, commandTree, commandTree.getMetadata().getCommandInfo());
+    protected DynamicCommand registerCommand(FunnyCommands funnyCommands, CommandStructure commandStructure) {
+        DynamicCommand dynamicCommand = new DynamicCommand(funnyCommands, commandStructure, commandStructure.getMetadata().getCommandInfo());
         return commandMapInjector.register(dynamicCommand);
     }
 
-    protected CommandTree loadCommands(Iterable<Object> commands) {
+    protected CommandStructure loadCommands(Iterable<Object> commands) {
         List<CommandMetadata> metadata = Stream.ofAll(commands)
                 .flatMap(this::mapCommandInstance)
                 .sorted()
                 .toJavaList();
 
-        CommandTree metadataTree = new CommandTree(null);
+        CommandStructure metadataTree = new CommandStructure(null);
 
         metadata.forEach(meta -> {
             String[] units = meta.getName().split(" ");
-            CommandTree parent = metadataTree;
+            CommandStructure parent = metadataTree;
 
             for (int index = 0; index < units.length - 1; index++) {
                 String unit = units[index];
 
-                parent = parent.getNode(unit).getOrElseThrow(() -> {
+                parent = parent.getSubcommandStructure(unit).getOrElseThrow(() -> {
                     throw new FunnyCommandsException("Unknown command root '" + unit + "' of '" + meta.getName() + "'");
                 });
             }
 
-            parent.getNode(meta.getSimpleName()).peek(value -> {
+            parent.getSubcommandStructure(meta.getSimpleName()).peek(value -> {
                 throw new FunnyCommandsException("Commands collision: " + meta.getName() + " with " + value.getMetadata().getName());
             });
 
@@ -112,11 +114,35 @@ public final class CommandsLoader {
                 formatter.format(funnyCommand.permission()),
                 formatter.format(funnyCommand.usage()),
                 CommandUtils.format(formatter, funnyCommand.aliases()),
+                mapCompleters(CommandUtils.format(formatter, funnyCommand.completer())),
                 mapParameters(parameters),
                 mapMappers(commandMethod, parameters)
         );
 
         return new CommandMetadata(commandInstance, bukkitCommandInfo, commandMethod, null);
+    }
+
+    private List<CustomizedCompleter> mapCompleters(Iterable<String> completersData) {
+        List<CustomizedCompleter> mappedCompleters = new ArrayList<>();
+
+        for (String completerData : completersData) {
+            String[] elements = completerData.split(":");
+
+            if (elements.length != 2) {
+                throw new FunnyCommandsException("Invalid format of completer data: " + completerData);
+            }
+
+            Completer completer = funnyCommands.getCompleters().get(elements[0]);
+
+            if (completer == null) {
+                throw new FunnyCommandsException("Cannot find completer declared as " + completersData);
+            }
+
+            Integer limit = Integer.parseInt(elements[1]);
+            mappedCompleters.add(((origin, prefix) -> completer.apply(origin, prefix, limit)));
+        }
+        
+        return mappedCompleters;
     }
 
     private Map<String, Integer> mapParameters(List<String> parameters) {

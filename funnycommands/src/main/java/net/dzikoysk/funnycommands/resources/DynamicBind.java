@@ -14,27 +14,11 @@
  * limitations under the License.
  */
 
-package net.dzikoysk.funnycommands.defaults;
+package net.dzikoysk.funnycommands.resources;
 
-import net.dzikoysk.funnycommands.commands.GlobalBind;
-import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
 import org.panda_lang.utilities.inject.InjectorResources;
-import org.panda_lang.utilities.inject.annotations.Injectable;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.util.UUID;
+import java.util.function.BiConsumer;
 
-@FunnyComponent
-public final class RandomUUIDBind implements GlobalBind {
-
-    @Injectable
-    @Retention(RetentionPolicy.RUNTIME)
-    @interface RandomUUID { }
-
-    @Override
-    public void accept(InjectorResources resources) {
-        resources.annotatedWith(RandomUUID.class).assignInstance(UUID::randomUUID);
-    }
-
-}
+@FunctionalInterface
+public interface DynamicBind extends BiConsumer<Origin, InjectorResources> { }

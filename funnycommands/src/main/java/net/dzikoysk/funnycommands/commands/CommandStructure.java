@@ -25,13 +25,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
-public final class CommandTree {
+public final class CommandStructure {
 
     private final CommandMetadata element;
-    private final Map<String, CommandTree> children;
+    private final Map<String, CommandStructure> children;
 
-    public CommandTree(CommandMetadata element) {
+    public CommandStructure(CommandMetadata element) {
         this.element = element;
         this.children = new HashMap<>();
     }
@@ -40,31 +41,31 @@ public final class CommandTree {
         print(this, 0);
     }
 
-    private void print(CommandTree node, int level) {
-        for (CommandTree child : node.getChildren()) {
+    private void print(CommandStructure node, int level) {
+        for (CommandStructure child : node.getSubcommands()) {
             System.out.println(StringUtils.buildSpace(level * 2) + (level == 0 ? "/" : "..") + child.getSimpleName() + " -> " + child.element);
             child.print(child, level + 1);
         }
     }
 
-    public CommandTree computeIfAbsent(String name, Function<String, CommandMetadata> function) {
-        return getNode(name).getOrElse(() -> add(function.apply(name)));
+    public CommandStructure computeIfAbsent(String name, Function<String, CommandMetadata> function) {
+        return getSubcommandStructure(name).getOrElse(() -> add(function.apply(name)));
     }
 
-    public CommandTree add(CommandMetadata element) {
-        CommandTree tree = new CommandTree(element);
+    public CommandStructure add(CommandMetadata element) {
+        CommandStructure tree = new CommandStructure(element);
         children.put(tree.getSimpleName(), tree);
         return tree;
     }
 
     public Option<CommandMetadata> get(String name) {
-        return getNode(name).map(CommandTree::getMetadata);
+        return getSubcommandStructure(name).map(CommandStructure::getMetadata);
     }
 
-    public List<CommandTree> collectCommandsStartingWith(String str) {
-        List<CommandTree> nodes = new ArrayList<>();
+    public List<CommandStructure> collectCommandsStartingWith(String str) {
+        List<CommandStructure> nodes = new ArrayList<>();
 
-        for (CommandTree tree : children.values()) {
+        for (CommandStructure tree : children.values()) {
             if (tree.getName().startsWith(str)) {
                 nodes.add(tree);
             }
@@ -75,12 +76,18 @@ public final class CommandTree {
         return nodes;
     }
 
-    public Option<CommandTree> getNode(String nodeName) {
+    public Option<CommandStructure> getSubcommandStructure(String nodeName) {
         return Option.of(children.get(nodeName));
     }
 
-    public Collection<CommandTree> getChildren() {
+    public Collection<CommandStructure> getSubcommands() {
         return children.values();
+    }
+
+    public List<String> getNames() {
+        return getSubcommands().stream()
+                .map(CommandStructure::getSimpleName)
+                .collect(Collectors.toList());
     }
 
     public CommandMetadata getMetadata() {

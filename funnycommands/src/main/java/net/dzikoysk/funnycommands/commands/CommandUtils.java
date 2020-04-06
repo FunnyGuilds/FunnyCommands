@@ -26,16 +26,38 @@ import org.panda_lang.utilities.commons.text.MessageFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-final class CommandUtils {
+public final class CommandUtils {
 
     private static final char[] TEXT_OPERATORS = { '"', '\'' };
 
     private CommandUtils() { }
 
-    public static String[] normalize(String[] arguments) {
+    public static <T> List<String> collectCompletions(Iterable<T> collection, String prefix, int limit, Function<Integer, List<String>> listFunction, Function<T, String> toStringFunction) {
+        List<String> completions = listFunction.apply(limit);
+        int limiter = 0;
+
+        for (T element : collection) {
+            String text = toStringFunction.apply(element);
+
+            if (!text.startsWith(prefix)) {
+                continue;
+            }
+
+            completions.add(toStringFunction.apply(element));
+
+            if (++limiter == limit) {
+                break;
+            }
+        }
+
+        return completions;
+    }
+
+    static String[] normalize(String[] arguments) {
         List<String> normalizedArguments = new ArrayList<>(arguments.length);
         IStack<Character> lock = new FixedStack<>(1);
         List<String> cache = null;
@@ -77,7 +99,7 @@ final class CommandUtils {
         return normalizedArguments.toArray(StringUtils.EMPTY_ARRAY);
     }
 
-    public static List<String> format(MessageFormatter formatter, String[] array) {
+    static List<String> format(MessageFormatter formatter, String[] array) {
         return Stream.of(array)
                 .map(formatter::format)
                 .collect(Collectors.toList());

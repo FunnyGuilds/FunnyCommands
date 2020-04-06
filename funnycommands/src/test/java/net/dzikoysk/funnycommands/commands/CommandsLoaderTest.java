@@ -31,7 +31,7 @@ class CommandsLoaderTest {
             throw new UnsupportedOperationException();
         }).create();
 
-        CommandTree tree = funnyCommands.getCommandsLoader().loadCommands(Arrays.asList(
+        CommandStructure tree = funnyCommands.getCommandsLoader().loadCommands(Arrays.asList(
                 new CommandA(),
                 new CommandB(), new CommandB1(), new CommandB2(), new CommandB12(),
                 new CommandC()
@@ -40,7 +40,7 @@ class CommandsLoaderTest {
         tree.print();
 
         String[] subdomains = tree.collectCommandsStartingWith("b 1").stream()
-                .map(CommandTree::getName)
+                .map(CommandStructure::getName)
                 .sorted()
                 .toArray(String[]::new);
 
