@@ -67,7 +67,7 @@ this.funnyCommands = FunnyCommands.configuration(() -> this)
 ### Guides
 `#soon™`
 
-At this moment you can see full and up-to-date example is available in [FunnyCommandsAcceptanceTestPlugin](https://github.com/FunnyGuilds/FunnyCommands/blob/master/funnycommands-test/src/main/java/net/dzikoysk/funnycommands/acceptance/FunnyCommandsAcceptanceTestPlugin.java) class
+At this moment you can see full and up-to-date example in [FunnyCommandsAcceptanceTestPlugin](https://github.com/FunnyGuilds/FunnyCommands/blob/master/funnycommands-test/src/main/java/net/dzikoysk/funnycommands/acceptance/FunnyCommandsAcceptanceTestPlugin.java) class
 
 ### FAQ
 **Q**: The `configuration.registerProcessedComponents()` does not detect my component classes <br>
