@@ -82,21 +82,21 @@ public final class FunnyCommandsAcceptanceTestPlugin extends FunnyCommandsPlugin
         funnyCommands.dispose();
     }
 
-    @FunnyComponent
-    private static final class TestCommand {
+@FunnyComponent
+private static final class TestCommand {
 
-        @FunnyCommand(
-            name = "${fc.test-alias}",
-            description = "Test command",
-            permission = "fc.test",
-            usage = "/${fc.test-alias} <player> <guild>",
-            completer = { "online-players:5", "guilds:5"},
-            parameters = { "player:target", "guild:arg-guild" }
-        )
-        SenderResponse test(CommandSender sender, @Arg("target") @Nillable Player target, @Arg("arg-guild") Option<Guild> guild) {
-            return new SenderResponse(target, "Test ${fc.time} > " + sender + " called " + target + " and " + guild.getOrNull());
-        }
-
+    @FunnyCommand(
+        name = "${fc.test-alias}",
+        description = "Test command",
+        permission = "fc.test",
+        usage = "/${fc.test-alias} <player> <guild>",
+        completer = { "online-players:5", "guilds:5"},
+        parameters = { "player:target", "guild:arg-guild" }
+    )
+    SenderResponse test(CommandSender sender, @Arg("target") @Nillable Player target, @Arg("arg-guild") Option<Guild> guild) {
+        return new SenderResponse(target, "Test ${fc.time} > " + sender + " called " + target + " and " + guild.getOrNull());
     }
+
+}
 
 }

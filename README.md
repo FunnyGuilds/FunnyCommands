@@ -12,7 +12,7 @@ FunnyCommands uses official GitHub Packages, the artifact is available by adding
 <dependency>
   <groupId>net.dzikoysk</groupId>
   <artifactId>funnycommands</artifactId>
-  <version>0.1.1</version>
+  <version>0.1.2</version>
 </dependency>
 ```
 
@@ -43,7 +43,7 @@ private static final class TestCommand {
         description = "Test command",
         permission = "fc.test",
         usage = "/${fc.test-alias} <player> <guild>",
-        completer = { "online-players", "guilds"},
+        completer = { "online-players:5", "guilds:5"},
         parameters = { "player:target", "guild:arg-guild" }
     )
     SenderResponse test(CommandSender sender, @Arg("target") @Nillable Player target, @Arg("arg-guild") Option<Guild> guild) {
