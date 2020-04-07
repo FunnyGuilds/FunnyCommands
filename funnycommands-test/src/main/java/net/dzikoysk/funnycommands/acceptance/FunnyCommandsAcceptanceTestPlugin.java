@@ -109,12 +109,8 @@ public final class FunnyCommandsAcceptanceTestPlugin extends FunnyCommandsPlugin
             );
         }
 
-        @FunnyCommand(
-                name = "${name} version",
-                description = "Test subcommand",
-                usage = "/${name} version"
-        )
-        String version() {
+        @FunnyCommand(name = "${name} version", description = "Test subcommand", usage = "/${name} version")
+        protected String version() {
             return "&a" + FunnyCommandsConstants.VERSION;
         }
 
