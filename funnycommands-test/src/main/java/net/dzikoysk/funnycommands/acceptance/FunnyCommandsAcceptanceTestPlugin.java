@@ -19,6 +19,7 @@ package net.dzikoysk.funnycommands.acceptance;
 import io.vavr.control.Option;
 import net.dzikoysk.funnycommands.FunnyCommands;
 import net.dzikoysk.funnycommands.FunnyCommandsPlugin;
+import net.dzikoysk.funnycommands.commands.CommandUtils;
 import net.dzikoysk.funnycommands.resources.types.PlayerType;
 import net.dzikoysk.funnycommands.resources.responses.SenderResponse;
 import net.dzikoysk.funnycommands.stereotypes.Arg;
@@ -30,6 +31,7 @@ import org.bukkit.entity.Player;
 import org.panda_lang.utilities.commons.collection.Maps;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -69,6 +71,9 @@ public final class FunnyCommandsAcceptanceTestPlugin extends FunnyCommandsPlugin
                 .registerProcessedComponents()
                 .type(new PlayerType(super.getServer()))
                 .type("guild", ((origin, required, guild) -> guildService.guilds.get(guild)))
+                .completer("guilds", (origin, prefix, limit) -> {
+                    return CommandUtils.collectCompletions(guildService.guilds.values(), prefix, limit, ArrayList::new, guild -> guild.name);
+                })
                 .create();
     }
 

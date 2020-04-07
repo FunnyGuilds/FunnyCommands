@@ -1,1 +1,8 @@
-[]
+[
+  {
+    "uuid": "5cd58dda-b205-4197-bd61-6d4510040156",
+    "name": "Dzikoysk",
+    "level": 4,
+    "bypassesPlayerLimit": false
+  }
+]

@@ -25,7 +25,9 @@ import net.dzikoysk.funnycommands.stereotypes.Arg;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.util.StringUtil;
+import org.panda_lang.utilities.commons.ArrayUtils;
 import org.panda_lang.utilities.commons.ObjectUtils;
+import org.panda_lang.utilities.commons.StringUtils;
 import org.panda_lang.utilities.inject.InjectorController;
 import org.panda_lang.utilities.inject.InjectorException;
 
@@ -101,29 +103,49 @@ final class DynamicCommand extends Command {
 
     @Override
     public List<String> tabComplete(CommandSender sender, String alias, String[] arguments) throws IllegalArgumentException {
+        // custom tab complete
         if (root.getMetadata().getTabCompleteMethod().isDefined()) {
             return invoke(root.getMetadata().getTabCompleteMethod().get(), resources -> {});
         }
 
-        Option<Origin> originValue = fetchOrigin(sender, alias, arguments);
+        Option<Origin> subcommandOrigin = fetchOrigin(sender, alias, arguments);
 
-        if (!originValue.isDefined()) {
+        // list subcommands for root request
+        if (subcommandOrigin.isEmpty()) {
             List<String> names = root.getNames();
             return arguments.length == 0 ? names : StringUtil.copyPartialMatches(arguments[arguments.length - 1], names, new ArrayList<>());
         }
 
-        Origin origin = originValue.get();
+        Origin origin = subcommandOrigin.get();
         CommandInfo commandInfo = origin.getCommandStructure().getMetadata().getCommandInfo();
 
-        String[] normalizedArguments = origin.getArguments();
-        int lastArgument = normalizedArguments.length - 1;
+        // skip undefined completions
+        if (commandInfo.getCompleters().isEmpty()) {
+            return Collections.emptyList();
+        }
 
+        String[] normalizedArguments = origin.getArguments();
+        // System.out.println("|" + ContentJoiner.on(",").join(normalizedArguments) + "|");
+
+        // skip completion for exceeded arguments
         if (normalizedArguments.length > commandInfo.getCompleters().size()) {
             return Collections.emptyList();
         }
 
-        CustomizedCompleter completer = commandInfo.getCompleters().get(lastArgument);
-        return completer.apply(origin, normalizedArguments[lastArgument]);
+        int completerIndex = normalizedArguments.length - 1;
+
+        if (completerIndex == -1) {
+            completerIndex = 0;
+        }
+
+        CustomizedCompleter completer = commandInfo.getCompleters().get(completerIndex);
+
+        // edge case to handle empty args array
+        if (ArrayUtils.isEmpty(normalizedArguments)) {
+            return completer.apply(origin, StringUtils.EMPTY);
+        }
+
+        return completer.apply(origin, normalizedArguments[completerIndex]);
     }
 
     private Option<Origin> fetchOrigin(CommandSender commandSender, String alias, String[] arguments) {

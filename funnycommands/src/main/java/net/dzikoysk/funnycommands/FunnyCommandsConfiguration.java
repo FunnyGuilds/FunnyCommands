@@ -24,6 +24,7 @@ import net.dzikoysk.funnycommands.resources.GlobalBind;
 import net.dzikoysk.funnycommands.resources.Origin;
 import net.dzikoysk.funnycommands.resources.PermissionHandler;
 import net.dzikoysk.funnycommands.resources.ResponseHandler;
+import net.dzikoysk.funnycommands.resources.completers.CustomCompleter;
 import net.dzikoysk.funnycommands.resources.types.TypeMapper;
 import net.dzikoysk.funnycommands.resources.UsageHandler;
 import net.dzikoysk.funnycommands.resources.exceptions.CustomExceptionHandler;
@@ -44,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -170,6 +172,10 @@ public final class FunnyCommandsConfiguration {
     public FunnyCommandsConfiguration dynamicBind(DynamicBind bind) {
         this.dynamicBinds.add(bind);
         return this;
+    }
+
+    public FunnyCommandsConfiguration completer(String name, TriFunction<Origin, String, Integer, List<String>> completer) {
+        return completer(new CustomCompleter(name, completer));
     }
 
     public FunnyCommandsConfiguration completer(Completer completer) {

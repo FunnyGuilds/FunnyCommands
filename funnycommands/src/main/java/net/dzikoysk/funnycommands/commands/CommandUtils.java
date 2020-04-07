@@ -66,6 +66,7 @@ public final class CommandUtils {
             String raw = arguments[index];
 
             if (raw.isEmpty()) {
+                normalizedArguments.add(raw);
                 continue;
             }
 

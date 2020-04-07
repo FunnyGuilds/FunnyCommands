@@ -135,7 +135,7 @@ public final class CommandsLoader {
             Completer completer = funnyCommands.getCompleters().get(elements[0]);
 
             if (completer == null) {
-                throw new FunnyCommandsException("Cannot find completer declared as " + completersData);
+                throw new FunnyCommandsException("Cannot find completer declared as " + completerData);
             }
 
             Integer limit = Integer.parseInt(elements[1]);
