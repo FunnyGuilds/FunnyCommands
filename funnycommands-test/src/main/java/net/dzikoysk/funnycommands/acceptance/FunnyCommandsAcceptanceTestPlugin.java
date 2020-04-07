@@ -18,10 +18,12 @@ package net.dzikoysk.funnycommands.acceptance;
 
 import io.vavr.control.Option;
 import net.dzikoysk.funnycommands.FunnyCommands;
+import net.dzikoysk.funnycommands.FunnyCommandsConstants;
 import net.dzikoysk.funnycommands.FunnyCommandsPlugin;
 import net.dzikoysk.funnycommands.commands.CommandUtils;
+import net.dzikoysk.funnycommands.resources.Origin;
+import net.dzikoysk.funnycommands.resources.responses.MultilineResponse;
 import net.dzikoysk.funnycommands.resources.types.PlayerType;
-import net.dzikoysk.funnycommands.resources.responses.SenderResponse;
 import net.dzikoysk.funnycommands.stereotypes.Arg;
 import net.dzikoysk.funnycommands.stereotypes.FunnyCommand;
 import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
@@ -29,6 +31,7 @@ import net.dzikoysk.funnycommands.stereotypes.Nillable;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.panda_lang.utilities.commons.collection.Maps;
+import org.panda_lang.utilities.commons.text.ContentJoiner;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -41,21 +44,26 @@ public final class FunnyCommandsAcceptanceTestPlugin extends FunnyCommandsPlugin
 
     // Test classes
 
-    private static final String FC_TEST_ALIAS = "fc.test-alias";
-    private static final Map<String, String> CONFIGURATION = Maps.of(FC_TEST_ALIAS, "test");
+    private static final Map<String, String> CONFIGURATION = Maps.of("name", "test");
     private static final Map<String, Function<String, String>> PLACEHOLDERS = new HashMap<String, Function<String, String>>() {{
-        put(FC_TEST_ALIAS, CONFIGURATION::get);
-        put("fc.time", key -> new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime()));
+        put("name", CONFIGURATION::get);
+        put("time", key -> new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime()));
     }};
 
     private static final class GuildService {
         private final Map<String, Guild> guilds = new HashMap<String, Guild>() {{
-            put("test-guild", new Guild());
+            for (int index = 0; index < 10; index++) {
+                put("test-" + index + "-guild", new Guild("test-" + index + "-guild"));
+            }
         }};
     }
 
     private static final class Guild {
-        private final String name = "test-guild";
+        private final String name;
+
+        public Guild(String name) {
+            this.name = name;
+        }
     }
 
     // Example plugin
@@ -82,21 +90,34 @@ public final class FunnyCommandsAcceptanceTestPlugin extends FunnyCommandsPlugin
         funnyCommands.dispose();
     }
 
-@FunnyComponent
-private static final class TestCommand {
+    @FunnyComponent
+    private static final class TestCommand {
 
-    @FunnyCommand(
-        name = "${fc.test-alias}",
-        description = "Test command",
-        permission = "fc.test",
-        usage = "/${fc.test-alias} <player> <guild>",
-        completer = { "online-players:5", "guilds:5"},
-        parameters = { "player:target", "guild:arg-guild" }
-    )
-    SenderResponse test(CommandSender sender, @Arg("target") @Nillable Player target, @Arg("arg-guild") Option<Guild> guild) {
-        return new SenderResponse(target, "Test ${fc.time} > " + sender + " called " + target + " and " + guild.getOrNull());
+        @FunnyCommand(
+            name = "${name}",
+            description = "Test ${name} command",
+            permission = "funnycommands.test",
+            usage = "/${name} <player> <guild>",
+            completer = { "online-players:5", "guilds:5"},
+            parameters = { "player:target", "guild:arg-guild" }
+        )
+        MultilineResponse test(Origin origin, CommandSender sender, @Arg @Nillable Player target, @Arg("arg-guild") Option<Guild> guild) {
+            return new MultilineResponse(
+                    "Test ${time} > " + sender + " called " + target + " and " + guild.getOrNull(),
+                    "Subcommands: ",
+                    ContentJoiner.on(", ").join(origin.getCommandStructure().getSubcommandsNames())
+            );
+        }
+
+        @FunnyCommand(
+                name = "${name} version",
+                description = "Test subcommand",
+                usage = "/${name} version"
+        )
+        String version() {
+            return "&a" + FunnyCommandsConstants.VERSION;
+        }
+
     }
-
-}
 
 }

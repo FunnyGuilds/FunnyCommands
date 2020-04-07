@@ -112,19 +112,27 @@ final class DynamicCommand extends Command {
 
         // list subcommands for root request
         if (subcommandOrigin.isEmpty()) {
-            List<String> names = root.getNames();
+            List<String> names = root.getSubcommandsNames();
             return arguments.length == 0 ? names : StringUtil.copyPartialMatches(arguments[arguments.length - 1], names, new ArrayList<>());
         }
 
         Origin origin = subcommandOrigin.get();
+        String[] normalizedArguments = origin.getArguments();
+
+        if (origin.getCommandStructure().equals(root) && normalizedArguments.length == 1) {
+            ArrayList<String> subcommands = StringUtil.copyPartialMatches(normalizedArguments[0], origin.getCommandStructure().getSubcommandsNames(), new ArrayList<>());
+
+            if (!subcommands.isEmpty()) {
+                return subcommands;
+            }
+        }
+
         CommandInfo commandInfo = origin.getCommandStructure().getMetadata().getCommandInfo();
 
         // skip undefined completions
         if (commandInfo.getCompleters().isEmpty()) {
             return Collections.emptyList();
         }
-
-        String[] normalizedArguments = origin.getArguments();
         // System.out.println("|" + ContentJoiner.on(",").join(normalizedArguments) + "|");
 
         // skip completion for exceeded arguments
@@ -150,32 +158,19 @@ final class DynamicCommand extends Command {
 
     private Option<Origin> fetchOrigin(CommandSender commandSender, String alias, String[] arguments) {
         String[] normalizedArguments = CommandUtils.normalize(arguments);
-        String matched = root.getMetadata().getSimpleName();
-        List<CommandStructure> matchedTree = Collections.singletonList(root);
+        CommandStructure commandStructure = root;
         int index = 0;
 
         for (; index < normalizedArguments.length; index++) {
-            String preview = matched + normalizedArguments[index];
-            List<CommandStructure> previewTree = root.collectCommandsStartingWith(preview);
+            Option<CommandStructure> nextStructure = root.getSubcommandStructure(normalizedArguments[index]);
 
-            if (previewTree.isEmpty()) {
+            if (nextStructure.isEmpty()) {
                 break;
             }
 
-            matchedTree = previewTree;
+            commandStructure = nextStructure.get();
         }
 
-        if (matchedTree.isEmpty()) {
-            funnyCommands.getUsageHandler().accept(commandSender, root);
-            return Option.none();
-        }
-
-        if (matchedTree.size() > 1) {
-            // should never happen?
-            throw new FunnyCommandsException("Commands conflict: " + matchedTree.toString());
-        }
-
-        CommandStructure commandStructure = matchedTree.get(0);
         String[] commandArguments = Arrays.copyOfRange(normalizedArguments, index, normalizedArguments.length);
         Origin origin = new Origin(funnyCommands, commandSender, commandStructure, alias, commandArguments);
 

@@ -47,14 +47,20 @@ public final class ArgumentsBind implements DynamicBind, BiFunction<Parameter, A
 
     @Override
     public @Nullable Object apply(Parameter required, Arg arg) {
-        @Nullable Integer parameterIndex = command.getParameters().get(arg.value());
+        String parameter = arg.value();
+
+        if (parameter.isEmpty()) {
+            parameter = required.getName();
+        }
+
+        @Nullable Integer parameterIndex = command.getParameters().get(parameter);
 
         if (parameterIndex == null) {
-            throw new FunnyCommandsException("Unknown parameter: " + arg.value());
+            throw new FunnyCommandsException("Unknown parameter: " + arg.value() + " (inferred: " + parameter + ")");
         }
 
         Object result = command.getMappers()
-                .get(arg.value())
+                .get(parameter)
                 .map(origin, required, origin.getArguments()[parameterIndex]);
 
         if (required.getType().isAssignableFrom(Option.class)) {

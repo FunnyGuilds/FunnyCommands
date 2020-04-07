@@ -7,7 +7,7 @@ FunnyGuilds command framework based on top of the [Panda](https://github.com/pan
 * Null safety
 
 ### Install
-FunnyCommands uses official GitHub Packages, the artifact is available by adding this declaration to your `pom.xml`. 
+FunnyCommands artifact is available in Panda repository. Add these declarations to your `pom.xml`. 
 ```xml
 <dependency>
   <groupId>net.dzikoysk</groupId>
@@ -31,8 +31,8 @@ Requirements:
 * Spigot 1.8.8 or higher
 * Panda Utilities
 
-### Usage
-As an example, we can take `/test <player> <guild>` command.
+### Preview
+As an example, we can take pointless `/test <player> <guild>` command.
 
 ```java
 @FunnyComponent
@@ -64,4 +64,21 @@ this.funnyCommands = FunnyCommands.configuration(() -> this)
         .create();
 ```
 
-Full and up-to-date example is available in [FunnyCommandsAcceptanceTestPlugin](https://github.com/FunnyGuilds/FunnyCommands/blob/master/funnycommands-test/src/main/java/net/dzikoysk/funnycommands/acceptance/FunnyCommandsAcceptanceTestPlugin.java) class
+### Guides
+`#soon™`
+
+At this moment you can see full and up-to-date example is available in [FunnyCommandsAcceptanceTestPlugin](https://github.com/FunnyGuilds/FunnyCommands/blob/master/funnycommands-test/src/main/java/net/dzikoysk/funnycommands/acceptance/FunnyCommandsAcceptanceTestPlugin.java) class
+
+### FAQ
+**Q**: The `configuration.registerProcessedComponents()` does not detect my component classes <br>
+**A**: To use processed components (these components are collected at compile time) you have to add transformer to your maven shade plugin:
+```xml
+<configuration>
+    <transformers>
+        <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+            <resource>META-INF/annotations/net.dzikoysk.funnycommands.stereotypes.FunnyComponent</resource>
+        </transformer>
+    </transformers>
+</configuration>
+```
+In case of any problems there is always possibility to use `configuration.registerAllComponents(<Plugin Class>)`.

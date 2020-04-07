@@ -14,20 +14,24 @@
  * limitations under the License.
  */
 
-package net.dzikoysk.funnycommands.stereotypes;
+package net.dzikoysk.funnycommands.resources.responses;
 
-import org.panda_lang.utilities.inject.annotations.Injectable;
+import net.dzikoysk.funnycommands.resources.Origin;
+import net.dzikoysk.funnycommands.resources.ResponseHandler;
+import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+@FunnyComponent
+public final class StringResponseHandler implements ResponseHandler<String> {
 
-@Injectable
-@Target(ElementType.PARAMETER)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Arg {
+    @Override
+    public Boolean apply(Origin origin, String response) {
+        origin.getCommandSender().sendMessage(origin.format(response));
+        return true;
+    }
 
-    String value() default "";
+    @Override
+    public Class<String> getResponseType() {
+        return String.class;
+    }
 
 }

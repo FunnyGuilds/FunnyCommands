@@ -22,9 +22,11 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-final class FunnyCommandsUtils {
+public final class FunnyCommandsUtils {
 
-    static String translate(String message) {
+    private FunnyCommandsUtils() { }
+
+    public static String translate(String message) {
         return ChatColor.translateAlternateColorCodes('&', message);
     }
 

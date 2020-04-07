@@ -84,7 +84,7 @@ public final class CommandStructure {
         return children.values();
     }
 
-    public List<String> getNames() {
+    public List<String> getSubcommandsNames() {
         return getSubcommands().stream()
                 .map(CommandStructure::getSimpleName)
                 .collect(Collectors.toList());

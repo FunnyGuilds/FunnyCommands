@@ -17,6 +17,7 @@
 package net.dzikoysk.funnycommands.resources;
 
 import net.dzikoysk.funnycommands.FunnyCommands;
+import net.dzikoysk.funnycommands.FunnyCommandsUtils;
 import net.dzikoysk.funnycommands.commands.CommandStructure;
 import org.bukkit.command.CommandSender;
 
@@ -39,7 +40,7 @@ public final class Origin {
     }
 
     public String format(Object value) {
-        return funnyCommands.getFormatter().format(Objects.toString(value));
+        return FunnyCommandsUtils.translate(funnyCommands.getFormatter().format(Objects.toString(value)));
     }
 
     public String[] getArguments() {
