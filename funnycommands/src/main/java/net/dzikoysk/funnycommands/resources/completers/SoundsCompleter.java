@@ -19,7 +19,7 @@ public final class SoundsCompleter implements Completer {
 
     @Override
     public String getName() {
-        return "time-units";
+        return "sounds";
     }
 
 }
