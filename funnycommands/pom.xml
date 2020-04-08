@@ -20,7 +20,7 @@
     <parent>
         <artifactId>funnycommands-parent</artifactId>
         <groupId>net.dzikoysk</groupId>
-        <version>0.1.3</version>
+        <version>0.1.4</version>
     </parent>
 
     <artifactId>funnycommands</artifactId>
