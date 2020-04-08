@@ -24,6 +24,7 @@ import org.panda_lang.utilities.commons.text.ContentJoiner;
 import org.panda_lang.utilities.commons.text.MessageFormatter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
@@ -55,6 +56,10 @@ public final class CommandUtils {
         }
 
         return completions;
+    }
+
+    public static <T extends Enum<T>> List<String> collectCompletions(Enum<T>[] elements, String prefix, int limit, Function<Integer, List<String>> listFunction) {
+        return CommandUtils.collectCompletions(Arrays.asList(elements), prefix, limit, listFunction, element -> element.name().toLowerCase());
     }
 
     static String[] normalize(String[] arguments) {
