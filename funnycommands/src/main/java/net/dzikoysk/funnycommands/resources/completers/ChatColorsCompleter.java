@@ -13,7 +13,7 @@ import java.util.List;
 public final class ChatColorsCompleter implements Completer {
 
     @Override
-    public List<String> apply(final Origin origin, final String prefix, final Integer limit) {
+    public List<String> apply(Origin origin, String prefix, Integer limit) {
         return CommandUtils.collectCompletions(ChatColor.values(), prefix, limit, ArrayList::new);
     }
 

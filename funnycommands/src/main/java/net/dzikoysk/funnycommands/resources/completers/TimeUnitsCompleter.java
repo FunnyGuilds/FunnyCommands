@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 public final class TimeUnitsCompleter implements Completer {
 
     @Override
-    public List<String> apply(final Origin origin, final String prefix, final Integer limit) {
+    public List<String> apply(Origin origin, String prefix, Integer limit) {
         return CommandUtils.collectCompletions(TimeUnit.values(), prefix, limit, ArrayList::new);
     }
 
