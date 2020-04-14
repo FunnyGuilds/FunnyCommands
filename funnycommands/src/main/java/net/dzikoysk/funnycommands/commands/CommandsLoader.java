@@ -40,10 +40,12 @@ public final class CommandsLoader {
 
     private final FunnyCommands funnyCommands;
     private final CommandMapInjector commandMapInjector;
+    private final Supplier<JavaPlugin> plugin;
 
     public CommandsLoader(FunnyCommands funnyCommands, Supplier<JavaPlugin> plugin) {
         this.funnyCommands = funnyCommands;
         this.commandMapInjector = new CommandMapInjector(plugin);
+        this.plugin = plugin;
     }
 
     public Collection<DynamicCommand> registerCommands(Iterable<Object> commands) {
@@ -58,7 +60,7 @@ public final class CommandsLoader {
     }
 
     protected DynamicCommand registerCommand(FunnyCommands funnyCommands, CommandStructure commandStructure) {
-        DynamicCommand dynamicCommand = new DynamicCommand(funnyCommands, commandStructure, commandStructure.getMetadata().getCommandInfo());
+        DynamicCommand dynamicCommand = new DynamicCommand(funnyCommands, plugin, commandStructure, commandStructure.getMetadata().getCommandInfo());
         return commandMapInjector.register(dynamicCommand);
     }
 
@@ -116,7 +118,8 @@ public final class CommandsLoader {
                 CommandUtils.format(formatter, funnyCommand.aliases()),
                 mapCompleters(CommandUtils.format(formatter, funnyCommand.completer())),
                 mapParameters(parameters),
-                mapMappers(commandMethod, parameters)
+                mapMappers(commandMethod, parameters),
+                funnyCommand.async()
         );
 
         return new CommandMetadata(commandInstance, bukkitCommandInfo, commandMethod, null);
@@ -145,17 +148,24 @@ public final class CommandsLoader {
         return mappedCompleters;
     }
 
-    private Map<String, Integer> mapParameters(List<String> parameters) {
-        Map<String, Integer> parametersMappings = new HashMap<>(parameters.size());
+    private Map<String, CommandParameter> mapParameters(List<String> parameters) {
+        Map<String, CommandParameter> parametersMappings = new HashMap<>(parameters.size());
 
         for (int index = 0; index < parameters.size(); index++) {
-            String[] elements = parameters.get(index).split(":");
+            String parameter = parameters.get(index);
+
+            String mappedParameter = unmapOptional(parameter);
+            boolean optional = mappedParameter.length() < parameter.length();
+            parameter = mappedParameter;
+
+            String[] elements = parameter.split(":");
 
             if (elements.length != 2) {
-                throw new FunnyCommandsException("Invalid format of parameter: " + parameters.get(index));
+                throw new FunnyCommandsException("Invalid format of parameter: " + parameter);
             }
 
-            parametersMappings.put(elements[1], index);
+            String name = elements[1];
+            parametersMappings.put(name, new CommandParameter(index, name, optional));
         }
 
         return parametersMappings;
@@ -165,7 +175,7 @@ public final class CommandsLoader {
         Map<String, TypeMapper<?>> mappers = new HashMap<>(commandMethod.getParameterCount());
 
         for (String parameter : parameters) {
-            String[] elements = parameter.split(":");
+            String[] elements = unmapOptional(parameter).split(":");
 
             if (elements.length != 2) {
                 throw new FunnyCommandsException("Invalid format of parameter: " + parameter);
@@ -188,6 +198,18 @@ public final class CommandsLoader {
         }
 
         return mappers;
+    }
+
+    private String unmapOptional(String parameter) {
+        if (parameter.startsWith("[") || parameter.endsWith("]")) {
+            if (!parameter.startsWith("[") || !parameter.endsWith("]")) {
+                throw new FunnyCommandsException("Invalid format of optional parameter: " + parameter);
+            }
+
+            return parameter.substring(1, parameter.length() - 1);
+        }
+
+        return parameter;
     }
 
     public void unloadCommands() {

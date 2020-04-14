@@ -14,15 +14,30 @@
  * limitations under the License.
  */
 
-package net.dzikoysk.funnycommands.stereotypes;
+package net.dzikoysk.funnycommands.commands;
 
-import org.jetbrains.annotations.Nullable;
+public final class CommandParameter {
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+    private final int index;
+    private final String name;
+    private final boolean optional;
 
-@Nullable
-@Documented
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Nillable { }
+    CommandParameter(int index, String name, boolean optional) {
+        this.index = index;
+        this.name = name;
+        this.optional = optional;
+    }
+
+    public boolean isOptional() {
+        return optional;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+}

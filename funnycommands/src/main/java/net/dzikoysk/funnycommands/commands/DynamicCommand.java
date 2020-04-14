@@ -24,6 +24,7 @@ import net.dzikoysk.funnycommands.resources.binds.ArgumentsBind;
 import net.dzikoysk.funnycommands.stereotypes.Arg;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.StringUtil;
 import org.panda_lang.utilities.commons.ArrayUtils;
 import org.panda_lang.utilities.commons.ObjectUtils;
@@ -37,15 +38,18 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
+import java.util.function.Supplier;
 
 final class DynamicCommand extends Command {
 
     private final FunnyCommands funnyCommands;
+    private final Supplier<JavaPlugin> plugin;
     private final CommandStructure root;
 
-    protected DynamicCommand(FunnyCommands funnyCommands, CommandStructure root, CommandInfo commandInfo) {
+    protected DynamicCommand(FunnyCommands funnyCommands, Supplier<JavaPlugin> plugin, CommandStructure root, CommandInfo commandInfo) {
         super(commandInfo.getName(), commandInfo.getDescription(), commandInfo.getUsageMessage(), new ArrayList<>(commandInfo.getAliases()));
         this.funnyCommands = funnyCommands;
+        this.plugin = plugin;
         this.root = root;
     }
 
@@ -62,14 +66,31 @@ final class DynamicCommand extends Command {
         CommandStructure matchedCommand = origin.getCommandStructure();
         CommandInfo commandInfo = matchedCommand.getMetadata().getCommandInfo();
 
-        if (!sender.hasPermission(commandInfo.getPermission())) {
-            funnyCommands.getPermissionHandler().accept(origin, commandInfo.getPermission());
+        if (commandInfo.isAsync()) {
+            sender.getServer().getScheduler().runTaskAsynchronously(plugin.get(), () -> execute(sender, origin, matchedCommand, commandInfo));
             return true;
         }
 
-        if (commandInfo.getParameters().size() != origin.getArguments().length) {
+        execute(sender, origin, matchedCommand, commandInfo);
+        return true;
+    }
+
+    private void execute(CommandSender sender, Origin origin, CommandStructure matchedCommand, CommandInfo commandInfo) {
+        if (!sender.hasPermission(commandInfo.getPermission())) {
+            funnyCommands.getPermissionHandler().accept(origin, commandInfo.getPermission());
+            return;
+        }
+
+        int argumentsCount = origin.getArguments().length;
+
+        if (argumentsCount < commandInfo.getAmountOfRequiredParameters()) {
             funnyCommands.getUsageHandler().accept(sender, matchedCommand);
-            return true;
+            return;
+        }
+
+        if (argumentsCount > commandInfo.getParameters().size()) {
+            funnyCommands.getUsageHandler().accept(sender, matchedCommand);
+            return;
         }
 
         Object result = invoke(matchedCommand.getMetadata().getCommandMethod(), resources -> {
@@ -83,7 +104,7 @@ final class DynamicCommand extends Command {
 
         if (result == null) {
             funnyCommands.getUsageHandler().accept(sender, matchedCommand);
-            return true;
+            return;
         }
 
         BiFunction<Origin, Object, Boolean> handler = ObjectUtils.cast(funnyCommands.getResponseHandlers().get(result.getClass()));
@@ -97,8 +118,6 @@ final class DynamicCommand extends Command {
         if (success == null || !success) {
             funnyCommands.getUsageHandler().accept(sender, matchedCommand);
         }
-
-        return true;
     }
 
     @Override

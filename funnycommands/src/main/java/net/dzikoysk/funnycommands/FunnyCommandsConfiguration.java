@@ -70,7 +70,7 @@ public final class FunnyCommandsConfiguration {
         this.plugin = new CachedSupplier<>(plugin);
     }
 
-    public FunnyCommands create() {
+    public FunnyCommands hook() {
         FunnyCommandsFactory factory = new FunnyCommandsFactory();
         return factory.createFunnyCommands(this);
     }

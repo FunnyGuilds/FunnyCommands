@@ -37,10 +37,12 @@ public @interface FunnyCommand {
 
     String usage() default StringUtils.EMPTY;
 
-    String[] aliases() default  { };
+    String[] aliases() default { };
 
-    String[] completer() default  { };
+    String[] completer() default { };
 
     String[] parameters() default { };
+
+    boolean async() default false;
 
 }

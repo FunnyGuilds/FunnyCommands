@@ -27,12 +27,12 @@ import net.dzikoysk.funnycommands.resources.types.PlayerType;
 import net.dzikoysk.funnycommands.stereotypes.Arg;
 import net.dzikoysk.funnycommands.stereotypes.FunnyCommand;
 import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
-import net.dzikoysk.funnycommands.stereotypes.Nillable;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.panda_lang.utilities.commons.collection.Maps;
 import org.panda_lang.utilities.commons.text.ContentJoiner;
 
+import javax.annotation.Nullable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -82,7 +82,7 @@ public final class FunnyCommandsAcceptanceTestPlugin extends FunnyCommandsPlugin
                 .completer("guilds", (origin, prefix, limit) -> {
                     return CommandUtils.collectCompletions(guildService.guilds.values(), prefix, limit, ArrayList::new, guild -> guild.name);
                 })
-                .create();
+                .hook();
     }
 
     @Override
@@ -97,13 +97,14 @@ public final class FunnyCommandsAcceptanceTestPlugin extends FunnyCommandsPlugin
             name = "${name}",
             description = "Test ${name} command",
             permission = "funnycommands.test",
-            usage = "/${name} <player> <guild>",
+            usage = "/${name} <player> [<guild>]",
             completer = { "online-players:5", "guilds:5"},
-            parameters = { "player:target", "guild:arg-guild" }
+            parameters = { "player:target", "[guild:arg-guild]" },
+            async = true
         )
-        MultilineResponse test(Origin origin, CommandSender sender, @Arg @Nillable Player target, @Arg("arg-guild") Option<Guild> guild) {
+        MultilineResponse test(Origin origin, CommandSender sender, @Arg @Nullable Player target, @Arg("arg-guild") Option<Guild> guild) {
             return new MultilineResponse(
-                    "Test ${time} > " + sender + " called " + target + " and " + guild.getOrNull(),
+                    "Test ${time} > " + sender + " called " + target + " and " + guild.getOrNull() + " in " + Thread.currentThread().getName(),
                     "Subcommands: ",
                     ContentJoiner.on(", ").join(origin.getCommandStructure().getSubcommandsNames())
             );
@@ -111,7 +112,7 @@ public final class FunnyCommandsAcceptanceTestPlugin extends FunnyCommandsPlugin
 
         @FunnyCommand(name = "${name} version", description = "Test subcommand", usage = "/${name} version")
         protected String version() {
-            return "&a" + FunnyCommandsConstants.VERSION;
+            return "&a" + FunnyCommandsConstants.VERSION + " in " + Thread.currentThread().getName();
         }
 
     }

@@ -16,6 +16,7 @@
 
 package net.dzikoysk.funnycommands.commands;
 
+import io.vavr.collection.Stream;
 import net.dzikoysk.funnycommands.resources.types.TypeMapper;
 
 import java.util.List;
@@ -29,12 +30,13 @@ public final class CommandInfo {
     private final String usageMessage;
     private final List<String> aliases;
     private final List<CustomizedCompleter> completers;
-    private final Map<String, Integer> parameters;
+    private final Map<String, CommandParameter> parameters;
     private final Map<String, TypeMapper<?>> mappers;
+    private final boolean async;
 
     CommandInfo(
             String name, String description, String permission, String usageMessage, List<String> aliases,
-            List<CustomizedCompleter> completers, Map<String, Integer> parameters, Map<String, TypeMapper<?>> mappers
+            List<CustomizedCompleter> completers, Map<String, CommandParameter> parameters, Map<String, TypeMapper<?>> mappers, boolean async
     ) {
         this.name = name;
         this.description = description;
@@ -44,14 +46,25 @@ public final class CommandInfo {
         this.completers = completers;
         this.parameters = parameters;
         this.mappers = mappers;
+        this.async = async;
+    }
+
+    public boolean isAsync() {
+        return async;
+    }
+
+    public int getAmountOfRequiredParameters() {
+        return Stream.ofAll(getParameters().values())
+                .filterNot(CommandParameter::isOptional)
+                .length();
+    }
+
+    public Map<? extends String, ? extends CommandParameter> getParameters() {
+        return parameters;
     }
 
     public Map<? extends String, ? extends TypeMapper<?>> getMappers() {
         return mappers;
-    }
-
-    public Map<? extends String, ? extends Integer> getParameters() {
-        return parameters;
     }
 
     public List<? extends CustomizedCompleter> getCompleters() {

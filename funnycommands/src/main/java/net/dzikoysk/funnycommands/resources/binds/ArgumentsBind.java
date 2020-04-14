@@ -19,10 +19,10 @@ package net.dzikoysk.funnycommands.resources.binds;
 import io.vavr.control.Option;
 import net.dzikoysk.funnycommands.FunnyCommandsException;
 import net.dzikoysk.funnycommands.commands.CommandInfo;
+import net.dzikoysk.funnycommands.commands.CommandParameter;
 import net.dzikoysk.funnycommands.resources.DynamicBind;
 import net.dzikoysk.funnycommands.resources.Origin;
 import net.dzikoysk.funnycommands.stereotypes.Arg;
-import net.dzikoysk.funnycommands.stereotypes.Nillable;
 import org.jetbrains.annotations.Nullable;
 import org.panda_lang.utilities.inject.InjectorResources;
 
@@ -53,15 +53,28 @@ public final class ArgumentsBind implements DynamicBind, BiFunction<Parameter, A
             parameter = required.getName();
         }
 
-        @Nullable Integer parameterIndex = command.getParameters().get(parameter);
+        @Nullable CommandParameter commandParameter = command.getParameters().get(parameter);
 
-        if (parameterIndex == null) {
+        if (commandParameter == null) {
             throw new FunnyCommandsException("Unknown parameter: " + arg.value() + " (inferred: " + parameter + ")");
         }
 
-        Object result = command.getMappers()
-                .get(parameter)
-                .map(origin, required, origin.getArguments()[parameterIndex]);
+        String argument = null;
+
+        if (commandParameter.getIndex() < origin.getArguments().length) {
+            argument = origin.getArguments()[commandParameter.getIndex()];
+        }
+        else if (!commandParameter.isOptional()) {
+            throw new FunnyCommandsException(commandParameter + " is not marked as optional"); // should not happen
+        }
+
+        Object result = null;
+
+        if (argument != null) {
+            result = command.getMappers()
+                    .get(parameter)
+                    .map(origin, required, argument);
+        }
 
         if (required.getType().isAssignableFrom(Option.class)) {
             return Option.of(result);
@@ -75,7 +88,7 @@ public final class ArgumentsBind implements DynamicBind, BiFunction<Parameter, A
             return result;
         }
 
-        if (required.getAnnotation(Nillable.class) != null) {
+        if (required.getAnnotation(javax.annotation.Nullable.class) != null) {
             return null;
         }
 
