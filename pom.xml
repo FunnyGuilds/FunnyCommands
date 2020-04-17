@@ -20,7 +20,7 @@
 
     <groupId>net.dzikoysk</groupId>
     <artifactId>funnycommands-parent</artifactId>
-    <version>0.1.5</version>
+    <version>0.1.6</version>
     <modules>
         <module>funnycommands</module>
         <module>funnycommands-test</module>

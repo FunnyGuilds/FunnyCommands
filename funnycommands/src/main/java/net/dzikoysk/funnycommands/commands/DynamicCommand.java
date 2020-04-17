@@ -93,7 +93,9 @@ final class DynamicCommand extends Command {
             return;
         }
 
-        Object result = invoke(matchedCommand.getMetadata().getCommandMethod(), resources -> {
+        CommandMetadata metadata = matchedCommand.getMetadata();
+
+        Object result = invoke(metadata, metadata.getCommandMethod(), resources -> {
             resources.on(Origin.class).assignInstance(origin);
             resources.annotatedWith(Arg.class).assignHandler(new ArgumentsBind(commandInfo, origin));
 
@@ -124,7 +126,7 @@ final class DynamicCommand extends Command {
     public List<String> tabComplete(CommandSender sender, String alias, String[] arguments) throws IllegalArgumentException {
         // custom tab complete
         if (root.getMetadata().getTabCompleteMethod().isDefined()) {
-            return invoke(root.getMetadata().getTabCompleteMethod().get(), resources -> {});
+            return invoke(root.getMetadata(), root.getMetadata().getTabCompleteMethod().get(), resources -> {});
         }
 
         Option<Origin> subcommandOrigin = fetchOrigin(sender, alias, arguments);
@@ -196,15 +198,15 @@ final class DynamicCommand extends Command {
         return Option.of(origin);
     }
 
-    private <T> T invoke(Method method, InjectorController controller) {
+    private <T> T invoke(CommandMetadata metadata, Method method, InjectorController controller) {
         try {
             return funnyCommands.getInjector()
                     .fork(controller)
-                    .invokeMethod(method, root.getMetadata().getCommandInstance());
+                    .invokeMethod(method, metadata.getCommandInstance());
         } catch (InjectorException e) {
             throw new FunnyCommandsException("Lack of resources to invoke command method " + e.getMessage(), e);
         } catch (Throwable throwable) {
-            throw new FunnyCommandsException("Failed to invoke method " + method, throwable);
+            throw new FunnyCommandsException("Failed to invoke method " + metadata.getCommandMethod(), throwable);
         }
     }
 
