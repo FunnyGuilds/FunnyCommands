@@ -21,6 +21,7 @@ import org.bukkit.ChatColor;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.function.Function;
 
 public final class FunnyCommandsUtils {
 
@@ -38,5 +39,12 @@ public final class FunnyCommandsUtils {
         }
     }
 
+    public static <T extends Number> T parseNumber(String str, Function<String, T> parser) {
+        try {
+            return parser.apply(str);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
 
 }
