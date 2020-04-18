@@ -77,7 +77,18 @@ public final class CommandStructure {
     }
 
     public Option<CommandStructure> getSubcommandStructure(String nodeName) {
-        return Option.of(children.get(nodeName));
+        for (CommandStructure child : children.values()) {
+            if (child.getSimpleName().equalsIgnoreCase(nodeName)) {
+                return Option.some(child);
+            }
+
+            for (String alias : child.element.getCommandInfo().getAliases()) {
+                if (alias.equalsIgnoreCase(nodeName)) {
+                    return Option.some(child);
+                }
+            }
+        }
+        return Option.none();
     }
 
     public Collection<CommandStructure> getSubcommands() {
