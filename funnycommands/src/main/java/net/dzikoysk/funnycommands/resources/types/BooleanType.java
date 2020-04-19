@@ -23,8 +23,7 @@ public final class BooleanType implements CommandDataType<Boolean> {
     }
 
     public BooleanType() {
-        this.trueValues = DEFAULT_TRUE_VALUES;
-        this.falseValues = DEFAULT_FALSE_VALUES;
+        this(DEFAULT_TRUE_VALUES, DEFAULT_FALSE_VALUES);
     }
 
     @Override
