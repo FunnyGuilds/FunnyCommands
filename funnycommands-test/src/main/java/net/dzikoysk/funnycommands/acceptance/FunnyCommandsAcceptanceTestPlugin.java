@@ -115,6 +115,26 @@ public final class FunnyCommandsAcceptanceTestPlugin extends FunnyCommandsPlugin
             return "&a" + FunnyCommandsConstants.VERSION + " in " + Thread.currentThread().getName();
         }
 
+        @FunnyCommand(name = "root")
+        protected String root() {
+            return "root";
+        }
+
+        @FunnyCommand(name = "root sub1")
+        protected String rootSub1() {
+            return "root sub1";
+        }
+
+        @FunnyCommand(name = "root sub2")
+        protected String rootSub2() {
+            return "root sub2";
+        }
+
+        @FunnyCommand(name = "root sub2 sub1")
+        protected String rootSub3() {
+            return "root sub2 sub1";
+        }
+
     }
 
 }

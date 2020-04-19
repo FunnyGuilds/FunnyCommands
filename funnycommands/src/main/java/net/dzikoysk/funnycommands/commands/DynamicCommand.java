@@ -183,7 +183,7 @@ final class DynamicCommand extends Command {
         int index = 0;
 
         for (; index < normalizedArguments.length; index++) {
-            Option<CommandStructure> nextStructure = root.getSubcommandStructure(normalizedArguments[index]);
+            Option<CommandStructure> nextStructure = commandStructure.getSubcommandStructure(normalizedArguments[index]);
 
             if (nextStructure.isEmpty()) {
                 break;
