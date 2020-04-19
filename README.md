@@ -32,7 +32,7 @@ Requirements:
 * Panda Utilities
 
 ### Preview
-As an example, we can take pointless `/test <player> <guild>` command.
+As an example, we can take pointless `/test <player> [guild]` command.
 
 ```java
 @FunnyComponent
@@ -42,11 +42,11 @@ private static final class TestCommand {
         name = "${fc.test-alias}",
         description = "Test command",
         permission = "fc.test",
-        usage = "/${fc.test-alias} <player> <guild>",
+        usage = "/${fc.test-alias} <player> [guild]",
         completer = { "online-players:5", "guilds:5"},
-        parameters = { "player:target", "guild:arg-guild" }
+        parameters = { "player:target", "[guild:arg-guild]" }
     )
-    SenderResponse test(CommandSender sender, @Arg("target") @Nillable Player target, @Arg("arg-guild") Option<Guild> guild) {
+    SenderResponse test(CommandSender sender, @Arg("target") @Nullable Player target, @Arg("arg-guild") Option<Guild> guild) {
         return new SenderResponse(target, "Test ${fc.time} > " + sender + " called " + target + " and " + guild.getOrNull());
     }
 
@@ -61,7 +61,7 @@ this.funnyCommands = FunnyCommands.configuration(() -> this)
         .registerProcessedComponents()
         .type(new PlayerType(super.getServer()))
         .type("guild", ((origin, required, guild) -> guildService.guilds.get(guild)))
-        .create();
+        .hook();
 ```
 
 ### Guides
