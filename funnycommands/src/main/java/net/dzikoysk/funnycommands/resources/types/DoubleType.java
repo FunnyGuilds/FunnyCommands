@@ -11,7 +11,7 @@ import java.lang.reflect.Parameter;
 public final class DoubleType implements CommandDataType<Double> {
 
     @Override
-    public Double apply(final Origin origin, final Parameter parameter, final String argument) {
+    public Double apply(Origin origin, Parameter parameter, String argument) {
         return FunnyCommandsUtils.parseNumber(argument, Double::parseDouble);
     }
 

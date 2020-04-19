@@ -11,7 +11,7 @@ import java.lang.reflect.Parameter;
 public final class LongType implements CommandDataType<Long> {
 
     @Override
-    public Long apply(final Origin origin, final Parameter parameter, final String argument) {
+    public Long apply(Origin origin, Parameter parameter, String argument) {
         return FunnyCommandsUtils.parseNumber(argument, Long::parseLong);
     }
 

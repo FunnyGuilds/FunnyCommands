@@ -28,7 +28,7 @@ public final class BooleanType implements CommandDataType<Boolean> {
     }
 
     @Override
-    public Boolean apply(final Origin origin, final Parameter parameter, final String argument) {
+    public Boolean apply(Origin origin, Parameter parameter, String argument) {
         if (containsIgnoreCase(trueValues, argument)) {
             return true;
         }

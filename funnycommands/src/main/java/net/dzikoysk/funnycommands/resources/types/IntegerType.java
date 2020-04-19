@@ -11,7 +11,7 @@ import java.lang.reflect.Parameter;
 public final class IntegerType implements CommandDataType<Integer> {
 
     @Override
-    public Integer apply(final Origin origin, final Parameter parameter, final String argument) {
+    public Integer apply(Origin origin, Parameter parameter, String argument) {
         return FunnyCommandsUtils.parseNumber(argument, Integer::parseInt);
     }
 
