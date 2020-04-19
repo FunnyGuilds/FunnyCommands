@@ -20,7 +20,7 @@
     <parent>
         <artifactId>funnycommands-parent</artifactId>
         <groupId>net.dzikoysk</groupId>
-        <version>0.1.6</version>
+        <version>0.1.7</version>
     </parent>
 
     <artifactId>funnycommands</artifactId>
@@ -29,7 +29,7 @@
     <dependencies>
         <dependency>
             <groupId>org.panda-lang</groupId>
-            <artifactId>panda</artifactId>
+            <artifactId>panda-utilities</artifactId>
             <version>indev-20.4.5</version>
         </dependency>
         <dependency>
@@ -42,6 +42,11 @@
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>jsr305</artifactId>
             <version>3.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.atteo.classindex</groupId>
+            <artifactId>classindex</artifactId>
+            <version>3.9</version>
         </dependency>
 
         <!-- Tests -->
