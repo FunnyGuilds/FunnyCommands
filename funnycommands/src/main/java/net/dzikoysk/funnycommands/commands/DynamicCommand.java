@@ -76,7 +76,7 @@ final class DynamicCommand extends Command {
     }
 
     private void execute(CommandSender sender, Origin origin, CommandStructure matchedCommand, CommandInfo commandInfo) {
-        if (!sender.hasPermission(commandInfo.getPermission())) {
+        if (!commandInfo.getPermission().isEmpty() && !sender.hasPermission(commandInfo.getPermission())) {
             funnyCommands.getPermissionHandler().accept(origin, commandInfo.getPermission());
             return;
         }
