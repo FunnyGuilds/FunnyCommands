@@ -104,6 +104,10 @@ final class DynamicCommand extends Command {
             });
         });
 
+        if (metadata.getCommandMethod().getReturnType() == void.class) {
+            return;
+        }
+
         if (result == null) {
             funnyCommands.getUsageHandler().accept(sender, matchedCommand);
             return;

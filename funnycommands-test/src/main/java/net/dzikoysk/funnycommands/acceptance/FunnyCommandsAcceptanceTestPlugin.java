@@ -135,6 +135,11 @@ public final class FunnyCommandsAcceptanceTestPlugin extends FunnyCommandsPlugin
             return "root sub2 sub1";
         }
 
+        @FunnyCommand(name = "kerneltest")
+        protected void test(CommandSender sender) {
+            sender.sendMessage("Siema, to dziala");
+        }
+
     }
 
 }
