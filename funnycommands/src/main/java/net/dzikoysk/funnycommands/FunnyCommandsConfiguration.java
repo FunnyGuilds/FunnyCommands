@@ -156,11 +156,11 @@ public final class FunnyCommandsConfiguration {
     }
 
     public <T> FunnyCommandsConfiguration type(CommandDataType<T> commandDataType) {
-        return type(commandDataType.getName(), commandDataType);
+        return type(commandDataType.getName(), commandDataType.getType(), commandDataType);
     }
 
-    public <T> FunnyCommandsConfiguration type(String typeName, TriFunction<Origin, Parameter, String, T> deserializer) {
-        this.typeMappers.put(typeName, new TypeMapper<>(typeName, deserializer));
+    public <T> FunnyCommandsConfiguration type(String typeName, Class<T> type, TriFunction<Origin, Parameter, String, T> deserializer) {
+        this.typeMappers.put(typeName, new TypeMapper<>(typeName, type, deserializer));
         return this;
     }
 

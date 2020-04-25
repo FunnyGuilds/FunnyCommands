@@ -17,23 +17,20 @@
 package net.dzikoysk.funnycommands.resources.types;
 
 import net.dzikoysk.funnycommands.resources.Origin;
-import org.bukkit.Server;
-import org.bukkit.entity.Player;
+import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
 
 import java.lang.reflect.Parameter;
 
-public final class PlayerType extends AbstractType<Player> {
+@FunnyComponent
+public final class StringType extends AbstractType<String> {
 
-    private final Server server;
-
-    public PlayerType(Server server) {
-        super("player", Player.class);
-        this.server = server;
+    public StringType() {
+        super("string", String.class);
     }
 
     @Override
-    public Player apply(Origin origin, Parameter parameter, String argument) {
-        return server.getPlayer(argument);
+    public String apply(Origin origin, Parameter parameter, String argument) {
+        return argument;
     }
 
 }

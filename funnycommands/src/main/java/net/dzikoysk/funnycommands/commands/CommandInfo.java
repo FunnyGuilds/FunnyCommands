@@ -33,10 +33,12 @@ public final class CommandInfo {
     private final Map<String, CommandParameter> parameters;
     private final Map<String, TypeMapper<?>> mappers;
     private final boolean async;
+    private final boolean varargs;
 
     CommandInfo(
             String name, String description, String permission, String usageMessage, List<String> aliases,
-            List<CustomizedCompleter> completers, Map<String, CommandParameter> parameters, Map<String, TypeMapper<?>> mappers, boolean async
+            List<CustomizedCompleter> completers, Map<String, CommandParameter> parameters, Map<String, TypeMapper<?>> mappers,
+            boolean async, boolean varargs
     ) {
         this.name = name;
         this.description = description;
@@ -47,6 +49,11 @@ public final class CommandInfo {
         this.parameters = parameters;
         this.mappers = mappers;
         this.async = async;
+        this.varargs = varargs;
+    }
+
+    public boolean isVarargs() {
+        return varargs;
     }
 
     public boolean isAsync() {

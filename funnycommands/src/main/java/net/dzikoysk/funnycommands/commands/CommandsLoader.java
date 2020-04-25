@@ -108,7 +108,17 @@ public final class CommandsLoader {
     private CommandMetadata mapCommand(Object commandInstance, Method commandMethod) {
         FunnyCommand funnyCommand = commandMethod.getAnnotation(FunnyCommand.class);
         MessageFormatter formatter = funnyCommands.getFormatter();
+
         List<String> parameters = CommandUtils.format(formatter, funnyCommand.parameters());
+        Map<String, CommandParameter> commandParameters = mapParameters(parameters);
+        boolean varargs = false;
+
+        if (!commandParameters.isEmpty()) {
+            varargs = Stream.ofAll(commandParameters.values())
+                    .sorted()
+                    .last()
+                    .isVarargs();
+        }
 
         CommandInfo bukkitCommandInfo = new CommandInfo(
                 formatter.format(funnyCommand.name()),
@@ -117,9 +127,10 @@ public final class CommandsLoader {
                 formatter.format(funnyCommand.usage()),
                 CommandUtils.format(formatter, funnyCommand.aliases()),
                 mapCompleters(CommandUtils.format(formatter, funnyCommand.completer())),
-                mapParameters(parameters),
+                commandParameters,
                 mapMappers(commandMethod, parameters),
-                funnyCommand.async()
+                funnyCommand.async(),
+                varargs
         );
 
         return new CommandMetadata(commandInstance, bukkitCommandInfo, commandMethod, null);
@@ -165,7 +176,14 @@ public final class CommandsLoader {
             }
 
             String name = elements[1];
-            parametersMappings.put(name, new CommandParameter(index, name, optional));
+            boolean varargs = false;
+
+            if (name.endsWith("...")) {
+                varargs = true;
+                name = name.substring(0, name.length() - 3);
+            }
+
+            parametersMappings.put(name, new CommandParameter(index, name, optional, varargs));
         }
 
         return parametersMappings;
@@ -189,6 +207,10 @@ public final class CommandsLoader {
             }
 
             String parameterName = elements[1];
+
+            if (parameterName.endsWith("...")) {
+                parameterName = parameterName.substring(0, parameterName.length() - 3);
+            }
 
             if (mappers.containsKey(parameterName)) {
                 throw new FunnyCommandsException("Duplicated parameter name: " + parameterName);

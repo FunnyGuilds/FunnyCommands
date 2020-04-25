@@ -88,12 +88,13 @@ final class DynamicCommand extends Command {
             return;
         }
 
-        if (argumentsCount > commandInfo.getParameters().size()) {
+        CommandMetadata metadata = matchedCommand.getMetadata();
+        boolean varargs = metadata.getCommandInfo().isVarargs();
+
+        if (!varargs && (argumentsCount > commandInfo.getParameters().size())) {
             funnyCommands.getUsageHandler().accept(sender, matchedCommand);
             return;
         }
-
-        CommandMetadata metadata = matchedCommand.getMetadata();
 
         Object result = invoke(metadata, metadata.getCommandMethod(), resources -> {
             resources.on(Origin.class).assignInstance(origin);

@@ -14,25 +14,28 @@
  * limitations under the License.
  */
 
-package net.dzikoysk.funnycommands.resources.binds;
+package net.dzikoysk.funnycommands.resources.types;
 
 import net.dzikoysk.funnycommands.resources.CommandDataType;
-import net.dzikoysk.funnycommands.resources.Origin;
-import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
 
-import java.lang.reflect.Parameter;
+abstract class AbstractType<T> implements CommandDataType<T> {
 
-@FunnyComponent
-public final class StringBind implements CommandDataType<String> {
+    private final String name;
+    private final Class<T> type;
+
+    protected AbstractType(String name, Class<T> type) {
+        this.name = name;
+        this.type = type;
+    }
 
     @Override
-    public String apply(Origin origin, Parameter parameter, String argument) {
-        return argument;
+    public Class<T> getType() {
+        return type;
     }
 
     @Override
     public String getName() {
-        return "string";
+        return name;
     }
 
 }

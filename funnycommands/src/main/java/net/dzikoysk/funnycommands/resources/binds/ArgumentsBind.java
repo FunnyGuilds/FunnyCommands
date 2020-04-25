@@ -22,10 +22,13 @@ import net.dzikoysk.funnycommands.commands.CommandInfo;
 import net.dzikoysk.funnycommands.commands.CommandParameter;
 import net.dzikoysk.funnycommands.resources.DynamicBind;
 import net.dzikoysk.funnycommands.resources.Origin;
+import net.dzikoysk.funnycommands.resources.types.TypeMapper;
 import net.dzikoysk.funnycommands.stereotypes.Arg;
 import org.jetbrains.annotations.Nullable;
+import org.panda_lang.utilities.commons.StringUtils;
 import org.panda_lang.utilities.inject.InjectorResources;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Parameter;
 import java.util.Optional;
 import java.util.function.BiFunction;
@@ -59,21 +62,43 @@ public final class ArgumentsBind implements DynamicBind, BiFunction<Parameter, A
             throw new FunnyCommandsException("Unknown parameter: " + arg.value() + " (inferred: " + parameter + ")");
         }
 
-        String argument = null;
+        String[] arguments = origin.getArguments();
+        String[] selected = StringUtils.EMPTY_ARRAY;
 
-        if (commandParameter.getIndex() < origin.getArguments().length) {
-            argument = origin.getArguments()[commandParameter.getIndex()];
+        if (commandParameter.getIndex() < arguments.length) {
+            if (commandParameter.isVarargs()) {
+                selected = new String[arguments.length - commandParameter.getIndex()];
+                System.arraycopy(arguments, commandParameter.getIndex(), selected, 0, selected.length);
+            }
+            else {
+                selected = new String[] { arguments[commandParameter.getIndex()] };
+            }
         }
         else if (!commandParameter.isOptional()) {
             throw new FunnyCommandsException(commandParameter + " is not marked as optional"); // should not happen
         }
 
-        Object result = null;
+        TypeMapper<?> mapper = command.getMappers().get(parameter);
+        Object[] mappedArguments = (Object[]) Array.newInstance(mapper.getType(), selected.length);
 
-        if (argument != null) {
-            result = command.getMappers()
+        for (int index = 0; index < selected.length; index++) {
+            mappedArguments[index] = command.getMappers()
                     .get(parameter)
-                    .map(origin, required, argument);
+                    .map(origin, required, selected[index]);
+        }
+
+        Object result = mappedArguments;
+
+        if (!commandParameter.isVarargs()) {
+            if (mappedArguments.length == 0) {
+                result = null;
+            }
+            else if (mappedArguments.length == 1) {
+                result = mappedArguments[0];
+            }
+            else {
+                throw new FunnyCommandsException("Invalid amount of command parameters"); // should not happen
+            }
         }
 
         if (required.getType().isAssignableFrom(Option.class)) {

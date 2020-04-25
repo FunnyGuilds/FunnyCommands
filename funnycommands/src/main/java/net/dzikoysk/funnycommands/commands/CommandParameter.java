@@ -16,16 +16,29 @@
 
 package net.dzikoysk.funnycommands.commands;
 
-public final class CommandParameter {
+import org.jetbrains.annotations.NotNull;
+
+public final class CommandParameter implements Comparable<CommandParameter> {
 
     private final int index;
     private final String name;
     private final boolean optional;
+    private final boolean varargs;
 
-    CommandParameter(int index, String name, boolean optional) {
+    CommandParameter(int index, String name, boolean optional, boolean varargs) {
         this.index = index;
         this.name = name;
         this.optional = optional;
+        this.varargs = varargs;
+    }
+
+    @Override
+    public int compareTo(@NotNull CommandParameter o) {
+        return Integer.compare(index, o.getIndex());
+    }
+
+    public boolean isVarargs() {
+        return varargs;
     }
 
     public boolean isOptional() {

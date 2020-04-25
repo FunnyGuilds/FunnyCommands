@@ -22,6 +22,8 @@ import java.lang.reflect.Parameter;
 
 public interface CommandDataType<T> extends TriFunction<Origin, Parameter, String, T> {
 
+    Class<T> getType();
+
     String getName();
 
 }

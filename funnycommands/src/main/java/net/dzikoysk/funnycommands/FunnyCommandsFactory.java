@@ -19,7 +19,7 @@ package net.dzikoysk.funnycommands;
 import net.dzikoysk.funnycommands.commands.CommandStructure;
 import net.dzikoysk.funnycommands.resources.Origin;
 import net.dzikoysk.funnycommands.resources.responses.BooleanResponseHandler;
-import net.dzikoysk.funnycommands.resources.binds.StringBind;
+import net.dzikoysk.funnycommands.resources.types.StringType;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Nullable;
 import org.panda_lang.utilities.commons.text.MessageFormatter;
@@ -56,7 +56,7 @@ final class FunnyCommandsFactory {
         }
 
         if (!configuration.typeMappers.containsKey("string")) {
-            configuration.type(new StringBind());
+            configuration.type(new StringType());
         }
 
         if (!configuration.responseHandlers.containsKey(Boolean.class)) {

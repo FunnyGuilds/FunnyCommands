@@ -78,7 +78,7 @@ public final class FunnyCommandsAcceptanceTestPlugin extends FunnyCommandsPlugin
                 .placeholders(PLACEHOLDERS)
                 .registerProcessedComponents()
                 .type(new PlayerType(super.getServer()))
-                .type("guild", ((origin, required, guild) -> guildService.guilds.get(guild)))
+                .type("guild", Guild.class, ((origin, required, guild) -> guildService.guilds.get(guild)))
                 .completer("guilds", (origin, prefix, limit) -> {
                     return CommandUtils.collectCompletions(guildService.guilds.values(), prefix, limit, ArrayList::new, guild -> guild.name);
                 })
@@ -97,7 +97,7 @@ public final class FunnyCommandsAcceptanceTestPlugin extends FunnyCommandsPlugin
             name = "${name}",
             description = "Test ${name} command",
             permission = "funnycommands.test",
-            usage = "/${name} <player> [<guild>]",
+            usage = "/${name} <player> [guild]",
             completer = { "online-players:5", "guilds:5"},
             parameters = { "player:target", "[guild:arg-guild]" },
             async = true
@@ -138,6 +138,11 @@ public final class FunnyCommandsAcceptanceTestPlugin extends FunnyCommandsPlugin
         @FunnyCommand(name = "kerneltest")
         protected void test(CommandSender sender) {
             sender.sendMessage("Siema, to dziala");
+        }
+
+        @FunnyCommand(name = "varargs", parameters = "string:content...")
+        protected String varargs(@Arg String[] content) {
+            return ContentJoiner.on(", ").join(content).toString();
         }
 
     }

@@ -16,19 +16,17 @@
 
 package net.dzikoysk.funnycommands.resources.types;
 
-import net.dzikoysk.funnycommands.resources.CommandDataType;
 import net.dzikoysk.funnycommands.resources.Origin;
 import org.panda_lang.utilities.commons.function.TriFunction;
 
 import java.lang.reflect.Parameter;
 
-public class CustomType<T> implements CommandDataType<T> {
+public class CustomType<T> extends AbstractType<T> {
 
-    private final String name;
     private final TriFunction<Origin, Parameter, String, T> deserializer;
 
-    public CustomType(String name, TriFunction<Origin, Parameter, String, T> deserializer) {
-        this.name = name;
+    public CustomType(String name, Class<T> type, TriFunction<Origin, Parameter, String, T> deserializer) {
+        super(name, type);
         this.deserializer = deserializer;
     }
 
@@ -37,8 +35,4 @@ public class CustomType<T> implements CommandDataType<T> {
         return deserializer.apply(origin, parameter, argument);
     }
 
-    @Override
-    public String getName() {
-        return name;
-    }
 }
