@@ -31,6 +31,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -160,7 +161,7 @@ public final class CommandsLoader {
     }
 
     private Map<String, CommandParameter> mapParameters(List<String> parameters) {
-        Map<String, CommandParameter> parametersMappings = new HashMap<>(parameters.size());
+        Map<String, CommandParameter> parametersMappings = new LinkedHashMap<>(parameters.size());
 
         for (int index = 0; index < parameters.size(); index++) {
             String parameter = parameters.get(index);
