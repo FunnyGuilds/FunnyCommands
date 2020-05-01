@@ -16,6 +16,7 @@
 
 package net.dzikoysk.funnycommands;
 
+import net.dzikoysk.funnycommands.commands.CommandInfo;
 import net.dzikoysk.funnycommands.commands.CommandStructure;
 import net.dzikoysk.funnycommands.resources.Origin;
 import net.dzikoysk.funnycommands.resources.responses.BooleanResponseHandler;
@@ -72,7 +73,16 @@ final class FunnyCommandsFactory {
         @Nullable BiConsumer<CommandSender, CommandStructure> usageHandler = configuration.usageHandler;
 
         if (usageHandler == null) {
-            usageHandler = (sender, commandTree) -> sender.sendMessage(FunnyCommandsUtils.translate("&cUsage: " + commandTree.getMetadata().getCommandInfo().getUsageMessage()));
+            usageHandler = (sender, commandTree) -> {
+                CommandInfo commandInfo = commandTree.getMetadata().getCommandInfo();
+                String usageMessage = commandInfo.getUsageMessage();
+
+                if (usageMessage.isEmpty()) {
+                    usageMessage = FunnyCommandsUtils.formatUsage(commandInfo.getName(), commandInfo.getParameters().values());
+                }
+
+                sender.sendMessage(FunnyCommandsUtils.translate(usageMessage));
+            };
         }
 
         FunnyCommands funnyCommands = new FunnyCommands(configuration, injector, formatter, permissionHandler, usageHandler);
