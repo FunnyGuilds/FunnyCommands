@@ -24,18 +24,18 @@ import net.dzikoysk.funnycommands.resources.GlobalBind;
 import net.dzikoysk.funnycommands.resources.Origin;
 import net.dzikoysk.funnycommands.resources.PermissionHandler;
 import net.dzikoysk.funnycommands.resources.ResponseHandler;
-import net.dzikoysk.funnycommands.resources.completers.CustomCompleter;
-import net.dzikoysk.funnycommands.resources.types.TypeMapper;
 import net.dzikoysk.funnycommands.resources.UsageHandler;
+import net.dzikoysk.funnycommands.resources.completers.CustomCompleter;
 import net.dzikoysk.funnycommands.resources.exceptions.CustomExceptionHandler;
 import net.dzikoysk.funnycommands.resources.responses.CustomResponseHandler;
+import net.dzikoysk.funnycommands.resources.types.TypeMapper;
 import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
 import org.atteo.classindex.ClassIndex;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.panda_lang.utilities.annotations.AnnotationsScanner;
 import org.panda_lang.utilities.annotations.monads.filters.JavaFilter;
 import org.panda_lang.utilities.commons.ObjectUtils;
-import org.panda_lang.utilities.commons.function.CachedSupplier;
+import org.panda_lang.utilities.commons.function.Lazy;
 import org.panda_lang.utilities.commons.function.TriFunction;
 
 import java.lang.reflect.Constructor;
@@ -67,7 +67,7 @@ public final class FunnyCommandsConfiguration {
     protected UsageHandler usageHandler;
 
     FunnyCommandsConfiguration(Supplier<JavaPlugin> plugin) {
-        this.plugin = new CachedSupplier<>(plugin);
+        this.plugin = new Lazy<>(plugin);
     }
 
     public FunnyCommands hook() {

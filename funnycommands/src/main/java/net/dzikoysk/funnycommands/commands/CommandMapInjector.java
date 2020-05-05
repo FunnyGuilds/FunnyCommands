@@ -25,7 +25,7 @@ import org.bukkit.help.HelpMap;
 import org.bukkit.help.HelpTopic;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.panda_lang.utilities.commons.ObjectUtils;
-import org.panda_lang.utilities.commons.function.CachedSupplier;
+import org.panda_lang.utilities.commons.function.Lazy;
 import org.panda_lang.utilities.commons.function.ThrowingSupplier;
 
 import java.lang.reflect.Field;
@@ -41,7 +41,7 @@ final class CommandMapInjector {
     private final Map<String, HelpTopic> registeredTopics = new HashMap<>();
 
     CommandMapInjector(Supplier<JavaPlugin> plugin) {
-        this.plugin = new CachedSupplier<>(plugin);
+        this.plugin = new Lazy<>(plugin);
     }
 
     protected DynamicCommand register(DynamicCommand command) {

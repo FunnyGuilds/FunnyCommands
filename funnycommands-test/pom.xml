@@ -20,7 +20,7 @@
     <parent>
         <artifactId>funnycommands-parent</artifactId>
         <groupId>net.dzikoysk</groupId>
-        <version>0.1.8</version>
+        <version>0.1.9</version>
     </parent>
 
     <artifactId>funnycommands-test</artifactId>
@@ -30,7 +30,7 @@
         <dependency>
             <groupId>net.dzikoysk</groupId>
             <artifactId>funnycommands</artifactId>
-            <version>0.1.8</version>
+            <version>0.1.9</version>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>

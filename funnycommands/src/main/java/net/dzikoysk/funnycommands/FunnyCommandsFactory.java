@@ -26,9 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import org.panda_lang.utilities.commons.text.MessageFormatter;
 import org.panda_lang.utilities.inject.DependencyInjection;
 import org.panda_lang.utilities.inject.Injector;
-import org.panda_lang.utilities.inject.InjectorException;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.BiConsumer;
@@ -51,7 +49,7 @@ final class FunnyCommandsFactory {
         for (Class<?> commandClass : configuration.commandsClasses) {
             try {
                 commands.add(injector.newInstance(commandClass));
-            } catch (InstantiationException | InjectorException | InvocationTargetException | IllegalAccessException e) {
+            } catch (Throwable e) {
                 throw new FunnyCommandsException("Failed to instantiate command class " + commandClass, e);
             }
         }
