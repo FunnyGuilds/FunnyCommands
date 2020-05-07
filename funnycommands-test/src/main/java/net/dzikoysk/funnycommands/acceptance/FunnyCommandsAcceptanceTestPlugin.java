@@ -31,8 +31,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.panda_lang.utilities.commons.collection.Maps;
 import org.panda_lang.utilities.commons.text.ContentJoiner;
+import org.panda_lang.utilities.inject.annotations.Injectable;
 
 import javax.annotation.Nullable;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -60,10 +63,16 @@ public final class FunnyCommandsAcceptanceTestPlugin extends FunnyCommandsPlugin
 
     private static final class Guild {
         private final String name;
+        public Guild(String name) { this.name = name; }
+    }
 
-        public Guild(String name) {
-            this.name = name;
-        }
+    @Injectable
+    @Retention(RetentionPolicy.RUNTIME)
+    private @interface PluginInstance { }
+
+    @Retention(RetentionPolicy.RUNTIME)
+    private @interface ArrayLengthValidator {
+        int maxLength();
     }
 
     // Example plugin
@@ -72,16 +81,38 @@ public final class FunnyCommandsAcceptanceTestPlugin extends FunnyCommandsPlugin
 
     @Override
     public void onEnable() {
+        FunnyCommandsAcceptanceTestPlugin plugin = this;
         GuildService guildService = new GuildService();
 
         this.funnyCommands = FunnyCommands.configuration(() -> this)
                 .placeholders(PLACEHOLDERS)
                 .registerProcessedComponents()
                 .type(new PlayerType(super.getServer()))
-                .type("guild", Guild.class, ((origin, required, guild) -> guildService.guilds.get(guild)))
+                .type("guild", Guild.class, ((origin, required, guild) ->  {
+                    return guildService.guilds.get(guild);
+                }))
+                .bind(resources -> {
+                    resources.annotatedWith(PluginInstance.class).assignHandler(((parameter, pluginInstance, injectorArgs) -> {
+                        return plugin;
+                    }));
+                })
                 .completer("guilds", (origin, prefix, limit) -> {
                     return CommandUtils.collectCompletions(guildService.guilds.values(), prefix, limit, ArrayList::new, guild -> guild.name);
                 })
+                .validator(ArrayLengthValidator.class, null, ((origin, arrayLengthValidator, parameter, value) -> {
+                    if (!parameter.getType().isArray()) {
+                        throw new IllegalArgumentException(parameter + "is not an array");
+                    }
+
+                    Object[] array = (Object[]) value;
+
+                    if (array.length > arrayLengthValidator.maxLength()) {
+                        origin.getCommandSender().sendMessage(origin.format("&cToo many arguments"));
+                        return false;
+                    }
+
+                    return true;
+                }))
                 .hook();
     }
 
@@ -136,12 +167,12 @@ public final class FunnyCommandsAcceptanceTestPlugin extends FunnyCommandsPlugin
         }
 
         @FunnyCommand(name = "kerneltest")
-        protected void test(CommandSender sender) {
-            sender.sendMessage("Siema, to dziala");
+        protected void test(CommandSender sender, @PluginInstance FunnyCommandsAcceptanceTestPlugin plugin) {
+            sender.sendMessage("Siema, to dziala " + plugin.getName());
         }
 
         @FunnyCommand(name = "varargs", parameters = "string:content...")
-        protected String varargs(@Arg String[] content) {
+        protected String varargs(@Arg @ArrayLengthValidator(maxLength = 4) String[] content) {
             return ContentJoiner.on(", ").join(content).toString();
         }
 

@@ -21,4 +21,4 @@ import org.panda_lang.utilities.inject.InjectorResources;
 import java.util.function.Consumer;
 
 @FunctionalInterface
-public interface GlobalBind extends Consumer<InjectorResources> { }
+public interface Bind extends Consumer<InjectorResources> { }

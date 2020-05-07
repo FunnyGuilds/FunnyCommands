@@ -1,4 +1,4 @@
 name: FunnyCommandsIntegrationPlugin
 main: net.dzikoysk.funnycommands.acceptance.FunnyCommandsAcceptanceTestPlugin
-version: 0.1.9
+version: 0.2.0
 author: dzikoysk

@@ -134,7 +134,7 @@ public final class CommandsLoader {
                 varargs
         );
 
-        return new CommandMetadata(commandInstance, bukkitCommandInfo, commandMethod, null);
+        return new CommandMetadata(commandInstance, bukkitCommandInfo, funnyCommands.getInjector().forMethod(commandMethod), null);
     }
 
     private List<CustomizedCompleter> mapCompleters(Iterable<String> completersData) {

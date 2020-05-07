@@ -18,17 +18,16 @@ package net.dzikoysk.funnycommands.commands;
 
 import io.vavr.control.Option;
 import org.jetbrains.annotations.Nullable;
-
-import java.lang.reflect.Method;
+import org.panda_lang.utilities.inject.MethodInjector;
 
 public final class CommandMetadata implements Comparable<CommandMetadata> {
 
     private final Object commandInstance;
     private final CommandInfo commandInfo;
-    private final Method commandMethod;
-    private final @Nullable Method tabCompleteMethod;
+    private final MethodInjector commandMethod;
+    private final @Nullable MethodInjector tabCompleteMethod;
 
-    CommandMetadata(Object commandInstance, CommandInfo commandInfo, Method commandMethod, @Nullable Method tabCompleteMethod) {
+    CommandMetadata(Object commandInstance, CommandInfo commandInfo, MethodInjector commandMethod, @Nullable MethodInjector tabCompleteMethod) {
         this.commandInstance = commandInstance;
         this.commandInfo = commandInfo;
         this.commandMethod = commandMethod;
@@ -40,11 +39,11 @@ public final class CommandMetadata implements Comparable<CommandMetadata> {
         return commandInfo.getName().compareTo(o.getName());
     }
 
-    protected Option<Method> getTabCompleteMethod() {
+    protected Option<MethodInjector> getTabCompleteMethod() {
         return Option.of(tabCompleteMethod);
     }
 
-    protected Method getCommandMethod() {
+    protected MethodInjector getCommandMethod() {
         return commandMethod;
     }
 

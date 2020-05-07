@@ -18,11 +18,14 @@ package net.dzikoysk.funnycommands;
 
 import net.dzikoysk.funnycommands.commands.CommandInfo;
 import net.dzikoysk.funnycommands.commands.CommandStructure;
+import net.dzikoysk.funnycommands.commands.CommandUtils;
 import net.dzikoysk.funnycommands.resources.Origin;
+import net.dzikoysk.funnycommands.resources.ValidationException;
 import net.dzikoysk.funnycommands.resources.responses.BooleanResponseHandler;
 import net.dzikoysk.funnycommands.resources.types.StringType;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Nullable;
+import org.panda_lang.utilities.commons.ObjectUtils;
 import org.panda_lang.utilities.commons.text.MessageFormatter;
 import org.panda_lang.utilities.inject.DependencyInjection;
 import org.panda_lang.utilities.inject.Injector;
@@ -41,7 +44,19 @@ final class FunnyCommandsFactory {
         });
 
         Injector injector = DependencyInjection.createInjector(resources -> {
-            configuration.globalBinds.forEach(bind -> bind.accept(resources));
+            configuration.binds.forEach(bind -> bind.accept(resources));
+        });
+
+        configuration.validators.forEach(validator -> {
+            injector.getResources().processAnnotatedType(validator.getAnnotation(), validator.getType(), (annotation, parameter, value, injectorArgs) -> {
+                boolean success = validator.validate(CommandUtils.getOrigin(injectorArgs), ObjectUtils.cast(annotation), parameter, ObjectUtils.cast(value));
+
+                if (!success) {
+                    throw new ValidationException();
+                }
+
+                return value;
+            });
         });
 
         Collection<Object> commands = new ArrayList<>(configuration.commandsInstances);

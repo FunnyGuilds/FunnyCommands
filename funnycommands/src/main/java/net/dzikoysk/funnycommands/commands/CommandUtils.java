@@ -16,6 +16,7 @@
 
 package net.dzikoysk.funnycommands.commands;
 
+import net.dzikoysk.funnycommands.resources.Origin;
 import org.panda_lang.utilities.commons.CharacterUtils;
 import org.panda_lang.utilities.commons.StringUtils;
 import org.panda_lang.utilities.commons.collection.FixedStack;
@@ -109,6 +110,14 @@ public final class CommandUtils {
         return Stream.of(array)
                 .map(formatter::format)
                 .collect(Collectors.toList());
+    }
+
+    public static Origin getOrigin(Object... injectorArgs) {
+        return (Origin) injectorArgs[1];
+    }
+
+    public static CommandInfo getCommandInfo(Object... injectorArgs) {
+        return (CommandInfo) injectorArgs[0];
     }
 
 }

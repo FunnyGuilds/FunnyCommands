@@ -16,20 +16,26 @@
 
 package net.dzikoysk.funnycommands.resources.binds;
 
-import net.dzikoysk.funnycommands.commands.CommandUtils;
 import net.dzikoysk.funnycommands.resources.Bind;
+import net.dzikoysk.funnycommands.resources.Origin;
 import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
-import org.bukkit.command.CommandSender;
+import org.panda_lang.utilities.commons.function.TriFunction;
 import org.panda_lang.utilities.inject.InjectorResources;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Parameter;
+
 @FunnyComponent
-public final class CommandSenderBind implements Bind {
+public final class OriginBind implements Bind, TriFunction<Parameter, Annotation, Object[], Object> {
 
     @Override
     public void accept(InjectorResources resources) {
-        resources.on(CommandSender.class).assignHandler(((parameter, annotation, objects) -> {
-            return CommandUtils.getOrigin(objects).getCommandSender();
-        }));
+        resources.on(Origin.class).assignHandler(this::apply);
+    }
+
+    @Override
+    public Object apply(Parameter parameter, Annotation annotation, Object[] objects) {
+        return objects[1];
     }
 
 }

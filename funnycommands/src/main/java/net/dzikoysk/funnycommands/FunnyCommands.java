@@ -19,13 +19,13 @@ package net.dzikoysk.funnycommands;
 import net.dzikoysk.funnycommands.commands.CommandStructure;
 import net.dzikoysk.funnycommands.commands.CommandsLoader;
 import net.dzikoysk.funnycommands.resources.Completer;
-import net.dzikoysk.funnycommands.resources.types.TypeMapper;
 import net.dzikoysk.funnycommands.resources.Origin;
+import net.dzikoysk.funnycommands.resources.Validator;
+import net.dzikoysk.funnycommands.resources.types.TypeMapper;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.panda_lang.utilities.commons.text.MessageFormatter;
 import org.panda_lang.utilities.inject.Injector;
-import org.panda_lang.utilities.inject.InjectorResources;
 
 import java.util.Collection;
 import java.util.Map;
@@ -68,8 +68,8 @@ public final class FunnyCommands {
         return configuration.responseHandlers;
     }
 
-    public Collection<? extends BiConsumer<Origin, InjectorResources>> getDynamicBinds() {
-        return configuration.dynamicBinds;
+    public Collection<? extends Validator<?, ?, ?>> getValidators() {
+        return configuration.validators;
     }
 
     public Map<? extends String, ? extends Function<String, String>> getPlaceholders() {

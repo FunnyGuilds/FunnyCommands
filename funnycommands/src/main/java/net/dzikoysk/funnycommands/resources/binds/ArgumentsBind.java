@@ -20,36 +20,33 @@ import io.vavr.control.Option;
 import net.dzikoysk.funnycommands.FunnyCommandsException;
 import net.dzikoysk.funnycommands.commands.CommandInfo;
 import net.dzikoysk.funnycommands.commands.CommandParameter;
-import net.dzikoysk.funnycommands.resources.DynamicBind;
+import net.dzikoysk.funnycommands.commands.CommandUtils;
+import net.dzikoysk.funnycommands.resources.Bind;
 import net.dzikoysk.funnycommands.resources.Origin;
 import net.dzikoysk.funnycommands.resources.types.TypeMapper;
 import net.dzikoysk.funnycommands.stereotypes.Arg;
+import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
 import org.jetbrains.annotations.Nullable;
 import org.panda_lang.utilities.commons.StringUtils;
+import org.panda_lang.utilities.commons.function.TriFunction;
 import org.panda_lang.utilities.inject.InjectorResources;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Parameter;
 import java.util.Optional;
-import java.util.function.BiFunction;
 
-public final class ArgumentsBind implements DynamicBind, BiFunction<Parameter, Arg, Object> {
-
-    private final CommandInfo command;
-    private final Origin origin;
-
-    public ArgumentsBind(CommandInfo command, Origin origin) {
-        this.command = command;
-        this.origin = origin;
-    }
+@FunnyComponent
+public final class ArgumentsBind implements Bind, TriFunction<Parameter, Arg, Object[], Object> {
 
     @Override
-    public void accept(Origin origin, InjectorResources resources) {
+    public void accept(InjectorResources resources) {
         resources.annotatedWith(Arg.class).assignHandler(this);
     }
 
     @Override
-    public @Nullable Object apply(Parameter required, Arg arg) {
+    public @Nullable Object apply(Parameter required, Arg arg, Object... injectorArgs) {
+        CommandInfo command = CommandUtils.getCommandInfo(injectorArgs);
+        Origin origin = CommandUtils.getOrigin(injectorArgs);
         String parameter = arg.value();
 
         if (parameter.isEmpty()) {

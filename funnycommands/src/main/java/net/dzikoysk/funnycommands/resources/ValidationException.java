@@ -16,9 +16,10 @@
 
 package net.dzikoysk.funnycommands.resources;
 
-import org.panda_lang.utilities.inject.InjectorResources;
+public final class ValidationException extends RuntimeException {
 
-import java.util.function.BiConsumer;
+    public ValidationException() {
+        super("", null, false, false);
+    }
 
-@FunctionalInterface
-public interface DynamicBind extends BiConsumer<Origin, InjectorResources> { }
+}

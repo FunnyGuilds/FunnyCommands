@@ -16,7 +16,7 @@
 
 package net.dzikoysk.funnycommands.resources.binds;
 
-import net.dzikoysk.funnycommands.resources.GlobalBind;
+import net.dzikoysk.funnycommands.resources.Bind;
 import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
 import org.panda_lang.utilities.inject.InjectorResources;
 import org.panda_lang.utilities.inject.annotations.Injectable;
@@ -26,7 +26,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.UUID;
 
 @FunnyComponent
-public final class RandomUUIDBind implements GlobalBind {
+public final class RandomUUIDBind implements Bind {
 
     @Injectable
     @Retention(RetentionPolicy.RUNTIME)

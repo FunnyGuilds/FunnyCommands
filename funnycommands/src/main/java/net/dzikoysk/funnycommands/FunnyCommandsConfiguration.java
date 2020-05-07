@@ -18,26 +18,30 @@ package net.dzikoysk.funnycommands;
 
 import net.dzikoysk.funnycommands.resources.CommandDataType;
 import net.dzikoysk.funnycommands.resources.Completer;
-import net.dzikoysk.funnycommands.resources.DynamicBind;
 import net.dzikoysk.funnycommands.resources.ExceptionHandler;
-import net.dzikoysk.funnycommands.resources.GlobalBind;
+import net.dzikoysk.funnycommands.resources.Bind;
 import net.dzikoysk.funnycommands.resources.Origin;
 import net.dzikoysk.funnycommands.resources.PermissionHandler;
 import net.dzikoysk.funnycommands.resources.ResponseHandler;
 import net.dzikoysk.funnycommands.resources.UsageHandler;
+import net.dzikoysk.funnycommands.resources.Validator;
 import net.dzikoysk.funnycommands.resources.completers.CustomCompleter;
 import net.dzikoysk.funnycommands.resources.exceptions.CustomExceptionHandler;
 import net.dzikoysk.funnycommands.resources.responses.CustomResponseHandler;
 import net.dzikoysk.funnycommands.resources.types.TypeMapper;
+import net.dzikoysk.funnycommands.resources.validators.CustomValidator;
 import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
 import org.atteo.classindex.ClassIndex;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.Nullable;
 import org.panda_lang.utilities.annotations.AnnotationsScanner;
 import org.panda_lang.utilities.annotations.monads.filters.JavaFilter;
 import org.panda_lang.utilities.commons.ObjectUtils;
 import org.panda_lang.utilities.commons.function.Lazy;
+import org.panda_lang.utilities.commons.function.ThrowingQuadFunction;
 import org.panda_lang.utilities.commons.function.TriFunction;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Parameter;
@@ -59,8 +63,8 @@ public final class FunnyCommandsConfiguration {
     protected final Collection<Object> commandsInstances = new ArrayList<>();
     protected final Map<String, Completer> completers = new HashMap<>();
     protected final Map<String, TypeMapper<?>> typeMappers = new HashMap<>();
-    protected final Collection<GlobalBind> globalBinds = new ArrayList<>();
-    protected final Collection<DynamicBind> dynamicBinds = new ArrayList<>();
+    protected final Collection<Bind> binds = new ArrayList<>();
+    protected final Collection<Validator<?, ?, ?>> validators = new ArrayList<>();
     protected final Map<Class<? extends Exception>, ExceptionHandler<? extends Exception>> exceptionHandlers = new HashMap<>();
     protected final Map<Class<?>, ResponseHandler<?>> responseHandlers = new HashMap<>();
     protected PermissionHandler permissionHandler;
@@ -117,12 +121,12 @@ public final class FunnyCommandsConfiguration {
             return completer(ObjectUtils.cast(componentInstance));
         }
 
-        if (GlobalBind.class.isAssignableFrom(componentType)) {
-            return globalBind(ObjectUtils.cast(componentInstance));
+        if (Bind.class.isAssignableFrom(componentType)) {
+            return bind(ObjectUtils.cast(componentInstance));
         }
 
-        if (DynamicBind.class.isAssignableFrom(componentType)) {
-            return dynamicBind(ObjectUtils.cast(componentInstance));
+        if (Validator.class.isAssignableFrom(componentType)) {
+            return validator(ObjectUtils.cast(componentInstance));
         }
 
         if (ResponseHandler.class.isAssignableFrom(componentType)) {
@@ -164,13 +168,17 @@ public final class FunnyCommandsConfiguration {
         return this;
     }
 
-    public FunnyCommandsConfiguration globalBind(GlobalBind bind) {
-        this.globalBinds.add(bind);
+    public FunnyCommandsConfiguration bind(Bind bind) {
+        this.binds.add(bind);
         return this;
     }
 
-    public FunnyCommandsConfiguration dynamicBind(DynamicBind bind) {
-        this.dynamicBinds.add(bind);
+    public <A extends Annotation, V, E extends Exception> FunnyCommandsConfiguration validator(@Nullable  Class<A> annotation, @Nullable Class<V> type, ThrowingQuadFunction<Origin, A, Parameter, V, Boolean, E> function) {
+        return validator(new CustomValidator<>(annotation, type, function));
+    }
+
+    public <A extends Annotation, V, E extends Exception> FunnyCommandsConfiguration validator(Validator<A, V, E> validator) {
+        validators.add(validator);
         return this;
     }
 

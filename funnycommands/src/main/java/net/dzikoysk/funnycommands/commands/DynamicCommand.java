@@ -20,8 +20,7 @@ import io.vavr.control.Option;
 import net.dzikoysk.funnycommands.FunnyCommands;
 import net.dzikoysk.funnycommands.FunnyCommandsException;
 import net.dzikoysk.funnycommands.resources.Origin;
-import net.dzikoysk.funnycommands.resources.binds.ArgumentsBind;
-import net.dzikoysk.funnycommands.stereotypes.Arg;
+import net.dzikoysk.funnycommands.resources.ValidationException;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -29,10 +28,9 @@ import org.bukkit.util.StringUtil;
 import org.panda_lang.utilities.commons.ArrayUtils;
 import org.panda_lang.utilities.commons.ObjectUtils;
 import org.panda_lang.utilities.commons.StringUtils;
-import org.panda_lang.utilities.inject.InjectorController;
-import org.panda_lang.utilities.inject.InjectorException;
+import org.panda_lang.utilities.inject.DependencyInjectionException;
+import org.panda_lang.utilities.inject.MethodInjector;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -96,16 +94,17 @@ final class DynamicCommand extends Command {
             return;
         }
 
-        Object result = invoke(metadata, metadata.getCommandMethod(), resources -> {
-            resources.on(Origin.class).assignInstance(origin);
-            resources.annotatedWith(Arg.class).assignHandler(new ArgumentsBind(commandInfo, origin));
+        Object result;
 
-            funnyCommands.getDynamicBinds().forEach(bind -> {
-                bind.accept(origin, resources);
-            });
-        });
+        try {
+            result = invoke(metadata, metadata.getCommandMethod(), origin);
+        } catch (ValidationException e) {
+            return;
+        } catch (Throwable e) {
+            throw new FunnyCommandsException("Cannot invoke command", e);
+        }
 
-        if (metadata.getCommandMethod().getReturnType() == void.class) {
+        if (metadata.getCommandMethod().getMethod().getReturnType() == void.class) {
             return;
         }
 
@@ -131,7 +130,11 @@ final class DynamicCommand extends Command {
     public List<String> tabComplete(CommandSender sender, String alias, String[] arguments) throws IllegalArgumentException {
         // custom tab complete
         if (root.getMetadata().getTabCompleteMethod().isDefined()) {
-            return invoke(root.getMetadata(), root.getMetadata().getTabCompleteMethod().get(), resources -> {});
+            try {
+                return invoke(root.getMetadata(), root.getMetadata().getTabCompleteMethod().get(), null);
+            } catch (Throwable e) {
+                throw new FunnyCommandsException("Cannot invoke command", e);
+            }
         }
 
         Option<Origin> subcommandOrigin = fetchOrigin(sender, alias, arguments);
@@ -203,15 +206,11 @@ final class DynamicCommand extends Command {
         return Option.of(origin);
     }
 
-    private <T> T invoke(CommandMetadata metadata, Method method, InjectorController controller) {
+    private <T> T invoke(CommandMetadata metadata, MethodInjector method, Origin origin) throws Throwable {
         try {
-            return funnyCommands.getInjector()
-                    .fork(controller)
-                    .invokeMethod(method, metadata.getCommandInstance());
-        } catch (InjectorException e) {
-            throw new FunnyCommandsException("Lack of resources to invoke command method " + e.getMessage(), e);
-        } catch (Throwable throwable) {
-            throw new FunnyCommandsException("Failed to invoke method " + metadata.getCommandMethod(), throwable);
+            return method.invoke(metadata.getCommandInstance(), metadata.getCommandInfo(), origin);
+        } catch (DependencyInjectionException e) {
+            throw new FunnyCommandsException("Dependency Injection failed due to: " + e.getMessage(), e);
         }
     }
 

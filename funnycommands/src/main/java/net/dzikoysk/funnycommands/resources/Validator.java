@@ -14,10 +14,23 @@
  * limitations under the License.
  */
 
-package net.dzikoysk.funnycommands;
+package net.dzikoysk.funnycommands.resources;
 
-public final class FunnyCommandsConstants {
+import org.jetbrains.annotations.Nullable;
 
-    public static final String VERSION = "0.2.0";
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Parameter;
+
+public interface Validator<A extends Annotation, V, E extends Exception> {
+
+    boolean validate(Origin origin, A annotation, Parameter parameter, V value) throws E;
+
+    default @Nullable Class<A> getAnnotation() {
+        return null;
+    }
+
+    default @Nullable Class<V> getType() {
+        return null;
+    }
 
 }
