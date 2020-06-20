@@ -17,8 +17,8 @@
 package net.dzikoysk.funnycommands.commands;
 
 import net.dzikoysk.funnycommands.resources.Origin;
+import org.apache.commons.lang.StringUtils;
 import org.panda_lang.utilities.commons.CharacterUtils;
-import org.panda_lang.utilities.commons.StringUtils;
 import org.panda_lang.utilities.commons.collection.FixedStack;
 import org.panda_lang.utilities.commons.collection.IStack;
 import org.panda_lang.utilities.commons.text.ContentJoiner;
@@ -45,7 +45,7 @@ public final class CommandUtils {
         for (T element : collection) {
             String text = toStringFunction.apply(element);
 
-            if (!text.startsWith(prefix)) {
+            if (!StringUtils.startsWithIgnoreCase(text, prefix)) {
                 continue;
             }
 
@@ -103,7 +103,7 @@ public final class CommandUtils {
             }
         }
 
-        return normalizedArguments.toArray(StringUtils.EMPTY_ARRAY);
+        return normalizedArguments.toArray(new String[0]);
     }
 
     static List<String> format(MessageFormatter formatter, String[] array) {
