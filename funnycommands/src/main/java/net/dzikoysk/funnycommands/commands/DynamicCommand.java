@@ -19,6 +19,7 @@ package net.dzikoysk.funnycommands.commands;
 import io.vavr.control.Option;
 import net.dzikoysk.funnycommands.FunnyCommands;
 import net.dzikoysk.funnycommands.FunnyCommandsException;
+import net.dzikoysk.funnycommands.resources.ExceptionHandler;
 import net.dzikoysk.funnycommands.resources.Origin;
 import net.dzikoysk.funnycommands.resources.ValidationException;
 import org.bukkit.command.Command;
@@ -101,7 +102,14 @@ final class DynamicCommand extends Command {
         } catch (ValidationException e) {
             return;
         } catch (Throwable e) {
-            throw new FunnyCommandsException("Cannot invoke command", e);
+            ExceptionHandler<? extends Exception> exceptionHandler = funnyCommands.getExceptionHandlers().get(e.getClass());
+
+            if (exceptionHandler == null) {
+                throw new FunnyCommandsException("Cannot invoke command", e);
+            }
+
+            exceptionHandler.apply(ObjectUtils.cast(e));
+            return;
         }
 
         if (metadata.getCommandMethod().getMethod().getReturnType() == void.class) {

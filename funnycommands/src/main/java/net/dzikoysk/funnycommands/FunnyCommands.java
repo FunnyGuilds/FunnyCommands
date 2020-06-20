@@ -19,6 +19,7 @@ package net.dzikoysk.funnycommands;
 import net.dzikoysk.funnycommands.commands.CommandStructure;
 import net.dzikoysk.funnycommands.commands.CommandsLoader;
 import net.dzikoysk.funnycommands.resources.Completer;
+import net.dzikoysk.funnycommands.resources.ExceptionHandler;
 import net.dzikoysk.funnycommands.resources.Origin;
 import net.dzikoysk.funnycommands.resources.Validator;
 import net.dzikoysk.funnycommands.resources.types.TypeMapper;
@@ -62,6 +63,10 @@ public final class FunnyCommands {
 
     public BiConsumer<Origin, String> getPermissionHandler() {
         return permissionHandler;
+    }
+
+    public Map<Class<? extends Exception>, ExceptionHandler<? extends Exception>> getExceptionHandlers() {
+        return configuration.exceptionHandlers;
     }
 
     public Map<? extends Class<?>, ? extends BiFunction<Origin, ?, Boolean>> getResponseHandlers() {
