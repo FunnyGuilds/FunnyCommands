@@ -45,7 +45,7 @@ public final class CommandUtils {
         for (T element : collection) {
             String text = toStringFunction.apply(element);
 
-            if (!text.startsWith(prefix)) {
+            if (!org.apache.commons.lang.StringUtils.startsWithIgnoreCase(text, prefix)) {
                 continue;
             }
 
