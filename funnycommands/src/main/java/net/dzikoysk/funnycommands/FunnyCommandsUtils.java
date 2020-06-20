@@ -33,7 +33,7 @@ public final class FunnyCommandsUtils {
     public static final String ARGUMENT_SEPARATOR = " ";
 
     private static final String USAGE_REQUIRED_PARAMETER_OPEN = "<";
-    private static final String USAGE_REQUIRED_PAREMETER_CLOSE = ">";
+    private static final String USAGE_REQUIRED_PARAMETER_CLOSE = ">";
 
     private static final String USAGE_OPTIONAL_PARAMETER_OPEN = "[";
     private static final String USAGE_OPTIONAL_PARAMETER_CLOSE = "]";
@@ -79,7 +79,7 @@ public final class FunnyCommandsUtils {
     }
 
     public static String formatUsageRequiredParameter(String parameterName) {
-        return formatUsageParameter(parameterName, USAGE_REQUIRED_PARAMETER_OPEN, USAGE_REQUIRED_PAREMETER_CLOSE);
+        return formatUsageParameter(parameterName, USAGE_REQUIRED_PARAMETER_OPEN, USAGE_REQUIRED_PARAMETER_CLOSE);
     }
 
     public static String formatUsageOptionalParameter(String parameterName) {
