@@ -12,7 +12,7 @@ FunnyCommands artifact is available in Panda repository. Add these declarations 
 <dependency>
   <groupId>net.dzikoysk</groupId>
   <artifactId>funnycommands</artifactId>
-  <version>0.2.0</version>
+  <version>0.2.1</version>
 </dependency>
 ```
 
