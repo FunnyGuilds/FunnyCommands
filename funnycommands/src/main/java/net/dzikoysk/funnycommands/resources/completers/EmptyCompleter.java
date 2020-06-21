@@ -17,7 +17,7 @@ public final class EmptyCompleter implements Completer {
 
     @Override
     public String getName() {
-        return "";
+        return "empty";
     }
 
 }

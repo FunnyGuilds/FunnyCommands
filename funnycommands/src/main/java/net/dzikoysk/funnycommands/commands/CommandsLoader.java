@@ -20,10 +20,12 @@ import io.vavr.collection.Stream;
 import net.dzikoysk.funnycommands.FunnyCommands;
 import net.dzikoysk.funnycommands.FunnyCommandsException;
 import net.dzikoysk.funnycommands.resources.Completer;
+import net.dzikoysk.funnycommands.resources.completers.EmptyCompleter;
 import net.dzikoysk.funnycommands.resources.types.TypeMapper;
 import net.dzikoysk.funnycommands.stereotypes.FunnyCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
+import org.panda_lang.utilities.commons.ArrayUtils;
 import org.panda_lang.utilities.commons.ReflectionUtils;
 import org.panda_lang.utilities.commons.text.MessageFormatter;
 
@@ -143,17 +145,14 @@ public final class CommandsLoader {
         for (String completerData : completersData) {
             String[] elements = completerData.split(":");
 
-            if (elements.length != 2) {
-                throw new FunnyCommandsException("Invalid format of completer data: " + completerData);
-            }
-
             Completer completer = funnyCommands.getCompleters().get(elements[0]);
 
             if (completer == null) {
                 throw new FunnyCommandsException("Cannot find completer declared as " + completerData);
             }
 
-            Integer limit = Integer.parseInt(elements[1]);
+            int limit = ArrayUtils.contains(elements, ":") ? Integer.parseInt(elements[1]) : -1;
+
             mappedCompleters.add(((origin, prefix) -> completer.apply(origin, prefix, limit)));
         }
         
