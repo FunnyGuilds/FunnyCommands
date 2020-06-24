@@ -39,9 +39,9 @@ public @interface FunnyCommand {
 
     String[] aliases() default { };
 
-    String[] completer() default { };
+    String completer() default StringUtils.EMPTY;
 
-    String[] parameters() default { };
+    String parameters() default StringUtils.EMPTY;
 
     boolean async() default false;
 

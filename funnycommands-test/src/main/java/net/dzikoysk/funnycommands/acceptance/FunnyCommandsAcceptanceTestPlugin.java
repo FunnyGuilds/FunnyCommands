@@ -129,8 +129,8 @@ public final class FunnyCommandsAcceptanceTestPlugin extends FunnyCommandsPlugin
             description = "Test ${name} command",
             permission = "funnycommands.test",
             usage = "/${name} <player> [guild]",
-            completer = { "online-players:5", "guilds:5"},
-            parameters = { "player:target", "[guild:arg-guild]" },
+            completer = "online-players:5 guilds:5",
+            parameters = "player:target [guild:arg-guild]",
             async = true
         )
         MultilineResponse test(Origin origin, CommandSender sender, @Arg @Nullable Player target, @Arg("arg-guild") Option<Guild> guild) {
