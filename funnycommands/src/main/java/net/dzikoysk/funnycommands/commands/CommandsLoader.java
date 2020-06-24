@@ -151,7 +151,7 @@ public final class CommandsLoader {
                 throw new FunnyCommandsException("Cannot find completer declared as " + completerData);
             }
 
-            int limit = ArrayUtils.contains(elements, ":") ? Integer.parseInt(elements[1]) : -1;
+            int limit = completerData.contains(":") ? Integer.parseInt(elements[1]) : -1;
 
             mappedCompleters.add(((origin, prefix) -> completer.apply(origin, prefix, limit)));
         }
