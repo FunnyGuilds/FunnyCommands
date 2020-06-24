@@ -43,8 +43,8 @@ private static final class TestCommand {
         description = "Test command",
         permission = "fc.test",
         usage = "/${fc.test-alias} <player> [guild]",
-        completer = { "online-players:5", "guilds:5"},
-        parameters = { "player:target", "[guild:arg-guild]" }
+        completer = "online-players:5 guilds:5",
+        parameters = "player:target [guild:arg-guild]"
     )
     SenderResponse test(CommandSender sender, @Arg("target") @Nullable Player target, @Arg("arg-guild") Option<Guild> guild) {
         return new SenderResponse(target, "Test ${fc.time} > " + sender + " called " + target + " and " + guild.getOrNull());

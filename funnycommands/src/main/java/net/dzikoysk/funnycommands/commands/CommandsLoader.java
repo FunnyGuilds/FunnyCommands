@@ -112,7 +112,7 @@ public final class CommandsLoader {
         FunnyCommand funnyCommand = commandMethod.getAnnotation(FunnyCommand.class);
         MessageFormatter formatter = funnyCommands.getFormatter();
 
-        List<String> parameters = CommandUtils.format(formatter, funnyCommand.parameters());
+        List<String> parameters = CommandUtils.format(formatter, funnyCommand.parameters().split(" "));
         Map<String, CommandParameter> commandParameters = mapParameters(parameters);
         boolean varargs = false;
 
@@ -129,7 +129,7 @@ public final class CommandsLoader {
                 formatter.format(funnyCommand.permission()),
                 formatter.format(funnyCommand.usage()),
                 CommandUtils.format(formatter, funnyCommand.aliases()),
-                mapCompleters(CommandUtils.format(formatter, funnyCommand.completer())),
+                mapCompleters(CommandUtils.format(formatter, funnyCommand.completer().split(" "))),
                 commandParameters,
                 mapMappers(commandMethod, parameters),
                 funnyCommand.async(),
