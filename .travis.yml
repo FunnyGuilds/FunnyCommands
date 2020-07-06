@@ -4,7 +4,6 @@ sudo: true
 
 jdk:
   - openjdk8
-  - openjdk13
 
 install:
   - mvn test-compile -Dmaven.javadoc.skip=true -B -V
