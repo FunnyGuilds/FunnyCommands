@@ -18,21 +18,20 @@ package net.dzikoysk.funnycommands.resources.types;
 
 import net.dzikoysk.funnycommands.resources.Origin;
 import org.panda_lang.utilities.commons.function.TriFunction;
-
-import java.lang.reflect.Parameter;
+import org.panda_lang.utilities.inject.InjectorProperty;
 
 public class CustomType<T> extends AbstractType<T> {
 
-    private final TriFunction<Origin, Parameter, String, T> deserializer;
+    private final TriFunction<Origin, InjectorProperty, String, T> deserializer;
 
-    public CustomType(String name, Class<T> type, TriFunction<Origin, Parameter, String, T> deserializer) {
+    public CustomType(String name, Class<T> type, TriFunction<Origin, InjectorProperty, String, T> deserializer) {
         super(name, type);
         this.deserializer = deserializer;
     }
 
     @Override
-    public T apply(Origin origin, Parameter parameter, String argument) {
-        return deserializer.apply(origin, parameter, argument);
+    public T apply(Origin origin, InjectorProperty required, String argument) {
+        return deserializer.apply(origin, required, argument);
     }
 
 }

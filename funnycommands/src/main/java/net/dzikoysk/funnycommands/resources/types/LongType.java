@@ -3,8 +3,7 @@ package net.dzikoysk.funnycommands.resources.types;
 import net.dzikoysk.funnycommands.FunnyCommandsUtils;
 import net.dzikoysk.funnycommands.resources.Origin;
 import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
-
-import java.lang.reflect.Parameter;
+import org.panda_lang.utilities.inject.InjectorProperty;
 
 @FunnyComponent
 public final class LongType extends AbstractType<Long> {
@@ -14,7 +13,7 @@ public final class LongType extends AbstractType<Long> {
     }
 
     @Override
-    public Long apply(Origin origin, Parameter parameter, String argument) {
+    public Long apply(Origin origin, InjectorProperty required, String argument) {
         return FunnyCommandsUtils.parseNumber(argument, Long::parseLong);
     }
 

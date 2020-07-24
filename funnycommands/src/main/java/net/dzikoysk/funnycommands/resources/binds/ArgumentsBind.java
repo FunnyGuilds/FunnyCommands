@@ -29,14 +29,14 @@ import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
 import org.jetbrains.annotations.Nullable;
 import org.panda_lang.utilities.commons.StringUtils;
 import org.panda_lang.utilities.commons.function.TriFunction;
+import org.panda_lang.utilities.inject.InjectorProperty;
 import org.panda_lang.utilities.inject.InjectorResources;
 
 import java.lang.reflect.Array;
-import java.lang.reflect.Parameter;
 import java.util.Optional;
 
 @FunnyComponent
-public final class ArgumentsBind implements Bind, TriFunction<Parameter, Arg, Object[], Object> {
+public final class ArgumentsBind implements Bind, TriFunction<InjectorProperty, Arg, Object[], Object> {
 
     @Override
     public void accept(InjectorResources resources) {
@@ -44,7 +44,7 @@ public final class ArgumentsBind implements Bind, TriFunction<Parameter, Arg, Ob
     }
 
     @Override
-    public @Nullable Object apply(Parameter required, Arg arg, Object... injectorArgs) {
+    public @Nullable Object apply(InjectorProperty required, Arg arg, Object... injectorArgs) {
         CommandInfo command = CommandUtils.getCommandInfo(injectorArgs);
         Origin origin = CommandUtils.getOrigin(injectorArgs);
         String parameter = arg.value();

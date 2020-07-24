@@ -17,13 +17,13 @@
 package net.dzikoysk.funnycommands.resources;
 
 import org.jetbrains.annotations.Nullable;
+import org.panda_lang.utilities.inject.InjectorProperty;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Parameter;
 
 public interface Validator<A extends Annotation, V, E extends Exception> {
 
-    boolean validate(Origin origin, A annotation, Parameter parameter, V value) throws E;
+    boolean validate(Origin origin, A annotation, InjectorProperty property, V value) throws E;
 
     default @Nullable Class<A> getAnnotation() {
         return null;

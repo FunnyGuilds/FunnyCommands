@@ -19,8 +19,7 @@ package net.dzikoysk.funnycommands.resources.types;
 import net.dzikoysk.funnycommands.resources.Origin;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
-
-import java.lang.reflect.Parameter;
+import org.panda_lang.utilities.inject.InjectorProperty;
 
 public final class PlayerType extends AbstractType<Player> {
 
@@ -32,7 +31,7 @@ public final class PlayerType extends AbstractType<Player> {
     }
 
     @Override
-    public Player apply(Origin origin, Parameter parameter, String argument) {
+    public Player apply(Origin origin, InjectorProperty required, String argument) {
         return server.getPlayer(argument);
     }
 

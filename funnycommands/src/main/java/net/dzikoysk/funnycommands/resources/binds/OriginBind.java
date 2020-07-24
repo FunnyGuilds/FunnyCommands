@@ -20,13 +20,13 @@ import net.dzikoysk.funnycommands.resources.Bind;
 import net.dzikoysk.funnycommands.resources.Origin;
 import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
 import org.panda_lang.utilities.commons.function.TriFunction;
+import org.panda_lang.utilities.inject.InjectorProperty;
 import org.panda_lang.utilities.inject.InjectorResources;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Parameter;
 
 @FunnyComponent
-public final class OriginBind implements Bind, TriFunction<Parameter, Annotation, Object[], Object> {
+public final class OriginBind implements Bind, TriFunction<InjectorProperty, Annotation, Object[], Object> {
 
     @Override
     public void accept(InjectorResources resources) {
@@ -34,7 +34,7 @@ public final class OriginBind implements Bind, TriFunction<Parameter, Annotation
     }
 
     @Override
-    public Object apply(Parameter parameter, Annotation annotation, Object[] objects) {
+    public Object apply(InjectorProperty parameter, Annotation annotation, Object[] objects) {
         return objects[1];
     }
 

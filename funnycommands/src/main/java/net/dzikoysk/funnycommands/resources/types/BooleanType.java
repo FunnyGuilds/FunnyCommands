@@ -2,8 +2,9 @@ package net.dzikoysk.funnycommands.resources.types;
 
 import net.dzikoysk.funnycommands.resources.Origin;
 import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
+import org.jetbrains.annotations.Nullable;
+import org.panda_lang.utilities.inject.InjectorProperty;
 
-import java.lang.reflect.Parameter;
 import java.util.Arrays;
 import java.util.List;
 
@@ -27,7 +28,7 @@ public final class BooleanType extends AbstractType<Boolean> {
     }
 
     @Override
-    public Boolean apply(Origin origin, Parameter parameter, String argument) {
+    public @Nullable Boolean apply(Origin origin, InjectorProperty required, String argument) {
         if (containsIgnoreCase(trueValues, argument)) {
             return true;
         }
@@ -39,7 +40,7 @@ public final class BooleanType extends AbstractType<Boolean> {
         return null;
     }
 
-    private boolean containsIgnoreCase(List<String> values, String argument) {
+    private boolean containsIgnoreCase(Iterable<String> values, String argument) {
         for (String value : values) {
             if (value.equalsIgnoreCase(argument)) {
                 return true;

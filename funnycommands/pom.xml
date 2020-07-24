@@ -20,23 +20,41 @@
     <parent>
         <artifactId>funnycommands-parent</artifactId>
         <groupId>net.dzikoysk</groupId>
-        <version>0.2.2</version>
+        <version>0.3.0</version>
     </parent>
 
     <artifactId>funnycommands</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
+        <!-- Panda stack -->
+        <dependency>
+            <groupId>org.panda-lang.utilities</groupId>
+            <artifactId>di</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.panda-lang.utilities</groupId>
+            <artifactId>annotations</artifactId>
+            <version>1.0.0</version>
+        </dependency>
         <dependency>
             <groupId>org.panda-lang</groupId>
             <artifactId>panda-utilities</artifactId>
-            <version>indev-20.5.7</version>
+            <version>0.1.2-alpha</version>
         </dependency>
+
+        <!-- General -->
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>1.15-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.vavr</groupId>
+            <artifactId>vavr</artifactId>
+            <version>1.0.0-alpha-3</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.findbugs</groupId>
