@@ -1,5 +1,6 @@
 package net.dzikoysk.funnycommands.resources.types;
 
+import net.dzikoysk.funnycommands.resources.CommandDataType;
 import net.dzikoysk.funnycommands.resources.Origin;
 import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
 import org.jetbrains.annotations.Nullable;
@@ -9,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @FunnyComponent
-public final class BooleanType extends AbstractType<Boolean> {
+public final class BooleanType extends AbstractType<Boolean> implements CommandDataType<Boolean> {
 
     private static final List<String> DEFAULT_TRUE_VALUES = Arrays.asList("true", "yes", "prawda", "tak", "y", "1");
     private static final List<String> DEFAULT_FALSE_VALUES = Arrays.asList("false", "no", "falsz", "nie", "n", "0");

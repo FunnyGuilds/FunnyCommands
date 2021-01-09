@@ -18,7 +18,7 @@ package net.dzikoysk.funnycommands.resources.types;
 
 import net.dzikoysk.funnycommands.resources.CommandDataType;
 
-abstract class AbstractType<T> implements CommandDataType<T> {
+public abstract class AbstractType<T> implements CommandDataType<T> {
 
     private final String name;
     private final Class<T> type;

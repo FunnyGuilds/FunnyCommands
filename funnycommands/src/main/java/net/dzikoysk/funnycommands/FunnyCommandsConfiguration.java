@@ -19,6 +19,7 @@ package net.dzikoysk.funnycommands;
 import net.dzikoysk.funnycommands.resources.Bind;
 import net.dzikoysk.funnycommands.resources.CommandDataType;
 import net.dzikoysk.funnycommands.resources.Completer;
+import net.dzikoysk.funnycommands.resources.DefaultResources;
 import net.dzikoysk.funnycommands.resources.ExceptionHandler;
 import net.dzikoysk.funnycommands.resources.Origin;
 import net.dzikoysk.funnycommands.resources.PermissionHandler;
@@ -31,11 +32,8 @@ import net.dzikoysk.funnycommands.resources.responses.CustomResponseHandler;
 import net.dzikoysk.funnycommands.resources.types.TypeMapper;
 import net.dzikoysk.funnycommands.resources.validators.CustomValidator;
 import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
-import org.atteo.classindex.ClassIndex;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
-import org.panda_lang.utilities.annotations.AnnotationsScanner;
-import org.panda_lang.utilities.annotations.monads.filters.JavaFilter;
 import org.panda_lang.utilities.commons.ObjectUtils;
 import org.panda_lang.utilities.commons.function.Lazy;
 import org.panda_lang.utilities.commons.function.ThrowingQuadFunction;
@@ -79,38 +77,23 @@ public final class FunnyCommandsConfiguration {
         return factory.createFunnyCommands(this);
     }
 
-    public FunnyCommandsConfiguration registerAllComponents(Class<?> pluginClass) {
-        Collection<Class<?>> components = AnnotationsScanner.configuration()
-                .includeResources(FunnyCommandsUtils.getURL(pluginClass))
-                .build()
-                .createProcess()
-                .addURLFilters(new JavaFilter())
-                .fetch()
-                .createSelector()
-                .selectTypesAnnotatedWith(FunnyComponent.class);
-
-        return registerComponents(components);
+    public FunnyCommandsConfiguration registerDefaultComponents() {
+        return registerComponents(DefaultResources.ALL);
     }
 
-    public FunnyCommandsConfiguration registerProcessedComponents() {
-        return registerComponents(ClassIndex.getAnnotated(FunnyComponent.class, FunnyCommands.class.getClassLoader()));
+    public FunnyCommandsConfiguration registerComponents(Object... components) {
+        return registerComponents(Arrays.asList(components));
     }
 
-    private FunnyCommandsConfiguration registerComponents(Iterable<Class<?>> components) {
-        for (Class<?> componentClass : components) {
-            try {
-                Constructor<?> constructor = componentClass.getDeclaredConstructor();
-                constructor.setAccessible(true);
-                registerComponent(constructor.newInstance());
-            } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-                throw new FunnyCommandsException("Cannot create component " + componentClass, e);
-            }
+    public FunnyCommandsConfiguration registerComponents(Iterable<? extends Object> components) {
+        for (Object component : components) {
+            registerComponent(component);
         }
 
         return this;
     }
 
-    private <T> FunnyCommandsConfiguration registerComponent(Object componentInstance) {
+    public FunnyCommandsConfiguration registerComponent(Object componentInstance) {
         Class<?> componentType = componentInstance.getClass();
 
         if (CommandDataType.class.isAssignableFrom(componentType)) {

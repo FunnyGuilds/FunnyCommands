@@ -16,11 +16,12 @@
 
 package net.dzikoysk.funnycommands.resources.types;
 
+import net.dzikoysk.funnycommands.resources.CommandDataType;
 import net.dzikoysk.funnycommands.resources.Origin;
 import org.panda_lang.utilities.commons.function.TriFunction;
 import org.panda_lang.utilities.inject.InjectorProperty;
 
-public class CustomType<T> extends AbstractType<T> {
+public class CustomType<T> extends AbstractType<T> implements CommandDataType<T> {
 
     private final TriFunction<Origin, InjectorProperty, String, T> deserializer;
 

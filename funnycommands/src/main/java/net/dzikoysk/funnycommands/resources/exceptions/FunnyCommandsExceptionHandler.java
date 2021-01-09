@@ -24,8 +24,8 @@ import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
 public final class FunnyCommandsExceptionHandler implements ExceptionHandler<FunnyCommandsException> {
 
     @Override
-    public Boolean apply(FunnyCommandsException e) {
-        e.printStackTrace();
+    public Boolean apply(FunnyCommandsException funnyCommandsException) {
+        funnyCommandsException.printStackTrace();
         return true;
     }
 

@@ -16,12 +16,13 @@
 
 package net.dzikoysk.funnycommands.resources.types;
 
+import net.dzikoysk.funnycommands.resources.CommandDataType;
 import net.dzikoysk.funnycommands.resources.Origin;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.panda_lang.utilities.inject.InjectorProperty;
 
-public final class PlayerType extends AbstractType<Player> {
+public final class PlayerType extends AbstractType<Player> implements CommandDataType<Player> {
 
     private final Server server;
 

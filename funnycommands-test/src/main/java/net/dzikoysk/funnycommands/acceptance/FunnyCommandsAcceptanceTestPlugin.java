@@ -86,7 +86,7 @@ public final class FunnyCommandsAcceptanceTestPlugin extends FunnyCommandsPlugin
 
         this.funnyCommands = FunnyCommands.configuration(() -> this)
                 .placeholders(PLACEHOLDERS)
-                .registerProcessedComponents()
+                .registerDefaultComponents()
                 .type(new PlayerType(super.getServer()))
                 .type("guild", Guild.class, ((origin, required, guild) ->  {
                     return guildService.guilds.get(guild);
