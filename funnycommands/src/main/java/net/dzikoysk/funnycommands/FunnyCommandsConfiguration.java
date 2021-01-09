@@ -49,6 +49,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -94,29 +95,31 @@ public final class FunnyCommandsConfiguration {
     }
 
     public FunnyCommandsConfiguration registerComponent(Object componentInstance) {
-        Class<?> componentType = componentInstance.getClass();
+        if (componentInstance == null) {
+            throw new IllegalArgumentException("Component instance cannot be null");
+        }
 
-        if (CommandDataType.class.isAssignableFrom(componentType)) {
+        if (componentInstance instanceof CommandDataType) {
             return type(ObjectUtils.cast(componentInstance));
         }
 
-        if (Completer.class.isAssignableFrom(componentType)) {
+        if (componentInstance instanceof Completer) {
             return completer(ObjectUtils.cast(componentInstance));
         }
 
-        if (Bind.class.isAssignableFrom(componentType)) {
+        if (componentInstance instanceof Bind) {
             return bind(ObjectUtils.cast(componentInstance));
         }
 
-        if (Validator.class.isAssignableFrom(componentType)) {
+        if (componentInstance instanceof Validator) {
             return validator(ObjectUtils.cast(componentInstance));
         }
 
-        if (ResponseHandler.class.isAssignableFrom(componentType)) {
+        if (componentInstance instanceof ResponseHandler) {
             return responseHandler(ObjectUtils.cast(componentInstance));
         }
 
-        if (ExceptionHandler.class.isAssignableFrom(componentType))  {
+        if (componentInstance instanceof ExceptionHandler)  {
             return exceptionHandler(ObjectUtils.cast(componentInstance));
         }
 

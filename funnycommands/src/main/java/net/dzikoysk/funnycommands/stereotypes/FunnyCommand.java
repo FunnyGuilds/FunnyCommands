@@ -45,4 +45,6 @@ public @interface FunnyCommand {
 
     boolean async() default false;
 
+    boolean playerOnly() default false;
+
 }

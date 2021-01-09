@@ -24,6 +24,7 @@ import net.dzikoysk.funnycommands.resources.Origin;
 import net.dzikoysk.funnycommands.resources.ValidationException;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.StringUtil;
 import org.panda_lang.utilities.commons.ArrayUtils;
@@ -65,6 +66,11 @@ final class DynamicCommand extends Command {
         CommandStructure matchedCommand = origin.getCommandStructure();
         CommandInfo commandInfo = matchedCommand.getMetadata().getCommandInfo();
 
+        if (commandInfo.isPlayerOnly() && !(sender instanceof Player)) {
+            sender.sendMessage("This command can be executed only by player");
+            return true;
+        }
+
         if (commandInfo.isAsync()) {
             sender.getServer().getScheduler().runTaskAsynchronously(plugin.get(), () -> execute(sender, origin, matchedCommand, commandInfo));
             return true;
@@ -101,14 +107,14 @@ final class DynamicCommand extends Command {
             result = invoke(metadata, metadata.getCommandMethod(), origin);
         } catch (ValidationException e) {
             return;
-        } catch (Throwable e) {
-            ExceptionHandler<? extends Exception> exceptionHandler = funnyCommands.getExceptionHandlers().get(e.getClass());
+        } catch (Throwable throwable) {
+            ExceptionHandler<? extends Exception> exceptionHandler = funnyCommands.getExceptionHandlers().get(throwable.getClass());
 
             if (exceptionHandler == null) {
-                throw new FunnyCommandsException("Cannot invoke command", e);
+                throw new FunnyCommandsException("Cannot invoke command", throwable);
             }
 
-            exceptionHandler.apply(ObjectUtils.cast(e));
+            exceptionHandler.apply(ObjectUtils.cast(throwable));
             return;
         }
 
@@ -140,8 +146,8 @@ final class DynamicCommand extends Command {
         if (root.getMetadata().getTabCompleteMethod().isDefined()) {
             try {
                 return invoke(root.getMetadata(), root.getMetadata().getTabCompleteMethod().get(), null);
-            } catch (Throwable e) {
-                throw new FunnyCommandsException("Cannot invoke command", e);
+            } catch (Throwable throwable) {
+                throw new FunnyCommandsException("Cannot invoke command", throwable);
             }
         }
 
@@ -167,13 +173,13 @@ final class DynamicCommand extends Command {
         CommandInfo commandInfo = origin.getCommandStructure().getMetadata().getCommandInfo();
 
         // skip undefined completions
-        if (commandInfo.getCompleters().isEmpty()) {
+        if (commandInfo.getCompletes().isEmpty()) {
             return Collections.emptyList();
         }
         // System.out.println("|" + ContentJoiner.on(",").join(normalizedArguments) + "|");
 
         // skip completion for exceeded arguments
-        if (normalizedArguments.length > commandInfo.getCompleters().size()) {
+        if (normalizedArguments.length > commandInfo.getCompletes().size()) {
             return Collections.emptyList();
         }
 
@@ -183,7 +189,7 @@ final class DynamicCommand extends Command {
             completerIndex = 0;
         }
 
-        CustomizedCompleter completer = commandInfo.getCompleters().get(completerIndex);
+        CustomizedCompleter completer = commandInfo.getCompletes().get(completerIndex);
 
         // edge case to handle empty args array
         if (ArrayUtils.isEmpty(normalizedArguments)) {
@@ -217,8 +223,8 @@ final class DynamicCommand extends Command {
     private <T> T invoke(CommandMetadata metadata, MethodInjector method, Origin origin) throws Throwable {
         try {
             return method.invoke(metadata.getCommandInstance(), metadata.getCommandInfo(), origin);
-        } catch (DependencyInjectionException e) {
-            throw new FunnyCommandsException("Dependency Injection failed due to: " + e.getMessage(), e);
+        } catch (DependencyInjectionException dependencyInjectionException) {
+            throw new FunnyCommandsException("Dependency Injection failed due to: " + dependencyInjectionException.getMessage(), dependencyInjectionException);
         }
     }
 

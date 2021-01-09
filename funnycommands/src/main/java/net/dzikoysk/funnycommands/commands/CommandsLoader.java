@@ -132,6 +132,7 @@ public final class CommandsLoader {
                 mapCompleters(CommandUtils.format(formatter, funnyCommand.completer().split(" "))),
                 commandParameters,
                 mapMappers(commandMethod, parameters),
+                funnyCommand.playerOnly(),
                 funnyCommand.async(),
                 varargs
         );
@@ -144,14 +145,15 @@ public final class CommandsLoader {
 
         for (String completerData : completersData) {
             String[] elements = completerData.split(":");
-
             Completer completer = funnyCommands.getCompleters().get(elements[0]);
 
             if (completer == null) {
                 throw new FunnyCommandsException("Cannot find completer declared as " + completerData);
             }
 
-            int limit = completerData.contains(":") ? Integer.parseInt(elements[1]) : -1;
+            int limit = completerData.contains(":")
+                    ? Integer.parseInt(elements[1])
+                    : -1;
 
             mappedCompleters.add(((origin, prefix) -> completer.apply(origin, prefix, limit)));
         }

@@ -29,25 +29,35 @@ public final class CommandInfo {
     private final String permission;
     private final String usageMessage;
     private final List<String> aliases;
-    private final List<CustomizedCompleter> completers;
+    private final List<CustomizedCompleter> completes;
     private final Map<String, CommandParameter> parameters;
     private final Map<String, TypeMapper<?>> mappers;
+    private final boolean playerOnly;
     private final boolean async;
     private final boolean varargs;
 
     CommandInfo(
-            String name, String description, String permission, String usageMessage, List<String> aliases,
-            List<CustomizedCompleter> completers, Map<String, CommandParameter> parameters, Map<String, TypeMapper<?>> mappers,
-            boolean async, boolean varargs
-    ) {
+            String name,
+            String description,
+            String permission,
+            String usageMessage,
+            List<String> aliases,
+            List<CustomizedCompleter> completes,
+            Map<String, CommandParameter> parameters,
+            Map<String, TypeMapper<?>> mappers,
+            boolean playerOnly,
+            boolean async,
+            boolean varargs) {
+
         this.name = name;
         this.description = description;
         this.permission = permission;
         this.usageMessage = usageMessage;
         this.aliases = aliases;
-        this.completers = completers;
+        this.completes = completes;
         this.parameters = parameters;
         this.mappers = mappers;
+        this.playerOnly = playerOnly;
         this.async = async;
         this.varargs = varargs;
     }
@@ -58,6 +68,10 @@ public final class CommandInfo {
 
     public boolean isAsync() {
         return async;
+    }
+
+    public boolean isPlayerOnly() {
+        return playerOnly;
     }
 
     public int getAmountOfRequiredParameters() {
@@ -74,8 +88,8 @@ public final class CommandInfo {
         return mappers;
     }
 
-    public List<? extends CustomizedCompleter> getCompleters() {
-        return completers;
+    public List<? extends CustomizedCompleter> getCompletes() {
+        return completes;
     }
 
     public List<? extends String> getAliases() {
