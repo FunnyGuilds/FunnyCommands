@@ -108,8 +108,10 @@ public final class CommandUtils {
 
     static List<String> format(MessageFormatter formatter, String[] array) {
         return Stream.of(array)
-                .filter(s -> !s.isEmpty())
+                .filter(value -> !value.isEmpty())
                 .map(formatter::format)
+                .flatMap(value -> Arrays.stream(value.split(",")))
+                .map(String::trim)
                 .collect(Collectors.toList());
     }
 

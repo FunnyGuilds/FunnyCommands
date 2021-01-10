@@ -47,9 +47,9 @@ public final class FunnyCommandsAcceptanceTestPlugin extends FunnyCommandsPlugin
 
     // Test classes
 
-    private static final Map<String, String> CONFIGURATION = Maps.of("name", "test");
     private static final Map<String, Function<String, String>> PLACEHOLDERS = new HashMap<String, Function<String, String>>() {{
-        put("name", CONFIGURATION::get);
+        put("name", key -> "test");
+        put("aliases", key -> "t1, t2");
         put("time", key -> new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime()));
     }};
 
@@ -87,6 +87,7 @@ public final class FunnyCommandsAcceptanceTestPlugin extends FunnyCommandsPlugin
         this.funnyCommands = FunnyCommands.configuration(() -> this)
                 .placeholders(PLACEHOLDERS)
                 .registerDefaultComponents()
+                .registerComponent(new TestCommand())
                 .type(new PlayerType(super.getServer()))
                 .type("guild", Guild.class, ((origin, required, guild) ->  {
                     return guildService.guilds.get(guild);
@@ -126,6 +127,7 @@ public final class FunnyCommandsAcceptanceTestPlugin extends FunnyCommandsPlugin
 
         @FunnyCommand(
             name = "${name}",
+            aliases = "${aliases}",
             description = "Test ${name} command",
             permission = "funnycommands.test",
             usage = "/${name} <player> [guild]",
