@@ -29,8 +29,7 @@ import net.dzikoysk.funnycommands.stereotypes.FunnyCommand;
 import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.panda_lang.utilities.commons.collection.Maps;
-import org.panda_lang.utilities.commons.text.ContentJoiner;
+import org.panda_lang.utilities.commons.text.Joiner;
 import org.panda_lang.utilities.inject.annotations.Injectable;
 
 import javax.annotation.Nullable;
@@ -139,7 +138,7 @@ public final class FunnyCommandsAcceptanceTestPlugin extends FunnyCommandsPlugin
             return new MultilineResponse(
                     "Test ${time} > " + sender + " called " + target + " and " + guild.getOrNull() + " in " + Thread.currentThread().getName(),
                     "Subcommands: ",
-                    ContentJoiner.on(", ").join(origin.getCommandStructure().getSubcommandsNames())
+                    Joiner.on(", ").join(origin.getCommandStructure().getSubcommandsNames())
             );
         }
 
@@ -175,7 +174,12 @@ public final class FunnyCommandsAcceptanceTestPlugin extends FunnyCommandsPlugin
 
         @FunnyCommand(name = "varargs", parameters = "string:content...")
         protected String varargs(@Arg @ArrayLengthValidator(maxLength = 4) String[] content) {
-            return ContentJoiner.on(", ").join(content).toString();
+            return Joiner.on(", ").join(content).toString();
+        }
+
+        @FunnyCommand(name = "exceeded", acceptsExceeded = true)
+        protected void exceeded(String[] args) {
+            System.out.println("Exceeded: " + Joiner.on(", ").join(args));
         }
 
     }

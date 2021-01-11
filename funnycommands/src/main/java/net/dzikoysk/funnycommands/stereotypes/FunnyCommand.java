@@ -43,8 +43,10 @@ public @interface FunnyCommand {
 
     String parameters() default StringUtils.EMPTY;
 
-    boolean async() default false;
-
     boolean playerOnly() default false;
+
+    boolean acceptsExceeded() default false;
+
+    boolean async() default false;
 
 }
