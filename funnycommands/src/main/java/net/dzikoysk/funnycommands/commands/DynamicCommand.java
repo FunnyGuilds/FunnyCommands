@@ -22,6 +22,7 @@ import net.dzikoysk.funnycommands.FunnyCommandsException;
 import net.dzikoysk.funnycommands.resources.ExceptionHandler;
 import net.dzikoysk.funnycommands.resources.Origin;
 import net.dzikoysk.funnycommands.resources.ValidationException;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -94,7 +95,7 @@ final class DynamicCommand extends Command {
         }
 
         CommandMetadata metadata = matchedCommand.getMetadata();
-        boolean varargs = metadata.getCommandInfo().isVarargs();
+        boolean varargs = metadata.getCommandInfo().isVarargs() || commandInfo.acceptsExceeded();
 
         if (!varargs && (argumentsCount > commandInfo.getParameters().size())) {
             funnyCommands.getUsageHandler().accept(sender, matchedCommand);
@@ -105,7 +106,8 @@ final class DynamicCommand extends Command {
 
         try {
             result = invoke(metadata, metadata.getCommandMethod(), origin);
-        } catch (ValidationException e) {
+        } catch (ValidationException validationException) {
+            validationException.getValidationMessage().peek(message -> sender.sendMessage(ChatColor.translateAlternateColorCodes('&', message)));
             return;
         } catch (Throwable throwable) {
             ExceptionHandler<? extends Exception> exceptionHandler = funnyCommands.getExceptionHandlers().get(throwable.getClass());

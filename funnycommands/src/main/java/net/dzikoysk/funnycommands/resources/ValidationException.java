@@ -16,10 +16,20 @@
 
 package net.dzikoysk.funnycommands.resources;
 
+import org.panda_lang.utilities.commons.function.Option;
+
 public final class ValidationException extends RuntimeException {
 
+    public ValidationException(String message) {
+        super(message, null, false, false);
+    }
+
     public ValidationException() {
-        super("", null, false, false);
+        this(null);
+    }
+
+    public Option<String> getValidationMessage() {
+        return Option.of(super.getMessage());
     }
 
 }

@@ -25,7 +25,7 @@ import net.dzikoysk.funnycommands.resources.Validator;
 import net.dzikoysk.funnycommands.resources.types.TypeMapper;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.panda_lang.utilities.commons.text.MessageFormatter;
+import org.panda_lang.utilities.commons.text.Formatter;
 import org.panda_lang.utilities.inject.Injector;
 
 import java.util.Collection;
@@ -39,12 +39,12 @@ public final class FunnyCommands {
 
     private final FunnyCommandsConfiguration configuration;
     private final CommandsLoader commandsLoader;
-    private final MessageFormatter formatter;
+    private final Formatter formatter;
     private final Injector injector;
     private final BiConsumer<Origin, String> permissionHandler;
     private final BiConsumer<CommandSender, CommandStructure> usageHandler;
 
-    FunnyCommands(FunnyCommandsConfiguration configuration, Injector injector, MessageFormatter formatter, BiConsumer<Origin, String> permissionHandler, BiConsumer<CommandSender, CommandStructure> usageHandler) {
+    FunnyCommands(FunnyCommandsConfiguration configuration, Injector injector, Formatter formatter, BiConsumer<Origin, String> permissionHandler, BiConsumer<CommandSender, CommandStructure> usageHandler) {
         this.injector = injector;
         this.formatter = formatter;
         this.configuration = configuration;
@@ -93,7 +93,7 @@ public final class FunnyCommands {
         return commandsLoader;
     }
 
-    public MessageFormatter getFormatter() {
+    public Formatter getFormatter() {
         return formatter;
     }
 

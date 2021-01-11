@@ -1,6 +1,7 @@
 package net.dzikoysk.funnycommands.resources;
 
-import net.dzikoysk.funnycommands.resources.binds.ArgumentsBind;
+import net.dzikoysk.funnycommands.resources.binds.ArgsBind;
+import net.dzikoysk.funnycommands.resources.binds.ArgumentBind;
 import net.dzikoysk.funnycommands.resources.binds.CommandSenderBind;
 import net.dzikoysk.funnycommands.resources.binds.OriginBind;
 import net.dzikoysk.funnycommands.resources.binds.RandomUUIDBind;
@@ -35,7 +36,8 @@ import java.util.Collections;
 public final class DefaultResources {
 
     public static Iterable<? extends Bind> BINDS = Arrays.asList(
-            new ArgumentsBind(),
+            new ArgsBind(),
+            new ArgumentBind(),
             new CommandSenderBind(),
             new OriginBind(),
             new RandomUUIDBind()

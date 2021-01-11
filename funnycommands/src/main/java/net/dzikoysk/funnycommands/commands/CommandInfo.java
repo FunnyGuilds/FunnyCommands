@@ -33,6 +33,7 @@ public final class CommandInfo {
     private final Map<String, CommandParameter> parameters;
     private final Map<String, TypeMapper<?>> mappers;
     private final boolean playerOnly;
+    private final boolean acceptsExceeded;
     private final boolean async;
     private final boolean varargs;
 
@@ -46,6 +47,7 @@ public final class CommandInfo {
             Map<String, CommandParameter> parameters,
             Map<String, TypeMapper<?>> mappers,
             boolean playerOnly,
+            boolean acceptsExceeded,
             boolean async,
             boolean varargs) {
 
@@ -58,6 +60,7 @@ public final class CommandInfo {
         this.parameters = parameters;
         this.mappers = mappers;
         this.playerOnly = playerOnly;
+        this.acceptsExceeded = acceptsExceeded;
         this.async = async;
         this.varargs = varargs;
     }
@@ -68,6 +71,10 @@ public final class CommandInfo {
 
     public boolean isAsync() {
         return async;
+    }
+
+    public boolean acceptsExceeded() {
+        return acceptsExceeded;
     }
 
     public boolean isPlayerOnly() {

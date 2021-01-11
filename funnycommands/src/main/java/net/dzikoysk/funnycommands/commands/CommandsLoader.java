@@ -20,14 +20,12 @@ import io.vavr.collection.Stream;
 import net.dzikoysk.funnycommands.FunnyCommands;
 import net.dzikoysk.funnycommands.FunnyCommandsException;
 import net.dzikoysk.funnycommands.resources.Completer;
-import net.dzikoysk.funnycommands.resources.completers.EmptyCompleter;
 import net.dzikoysk.funnycommands.resources.types.TypeMapper;
 import net.dzikoysk.funnycommands.stereotypes.FunnyCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
-import org.panda_lang.utilities.commons.ArrayUtils;
 import org.panda_lang.utilities.commons.ReflectionUtils;
-import org.panda_lang.utilities.commons.text.MessageFormatter;
+import org.panda_lang.utilities.commons.text.Formatter;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -110,7 +108,7 @@ public final class CommandsLoader {
 
     private CommandMetadata mapCommand(Object commandInstance, Method commandMethod) {
         FunnyCommand funnyCommand = commandMethod.getAnnotation(FunnyCommand.class);
-        MessageFormatter formatter = funnyCommands.getFormatter();
+        Formatter formatter = funnyCommands.getFormatter();
 
         List<String> parameters = CommandUtils.format(formatter, funnyCommand.parameters().split(" "));
         Map<String, CommandParameter> commandParameters = mapParameters(parameters);
@@ -133,6 +131,7 @@ public final class CommandsLoader {
                 commandParameters,
                 mapMappers(commandMethod, parameters),
                 funnyCommand.playerOnly(),
+                funnyCommand.acceptsExceeded(),
                 funnyCommand.async(),
                 varargs
         );
@@ -140,10 +139,10 @@ public final class CommandsLoader {
         return new CommandMetadata(commandInstance, bukkitCommandInfo, funnyCommands.getInjector().forMethod(commandMethod), null);
     }
 
-    private List<CustomizedCompleter> mapCompleters(Iterable<String> completersData) {
-        List<CustomizedCompleter> mappedCompleters = new ArrayList<>();
+    private List<CustomizedCompleter> mapCompleters(Iterable<String> completesData) {
+        List<CustomizedCompleter> mappedCompletes = new ArrayList<>();
 
-        for (String completerData : completersData) {
+        for (String completerData : completesData) {
             String[] elements = completerData.split(":");
             Completer completer = funnyCommands.getCompleters().get(elements[0]);
 
@@ -155,10 +154,10 @@ public final class CommandsLoader {
                     ? Integer.parseInt(elements[1])
                     : -1;
 
-            mappedCompleters.add(((origin, prefix) -> completer.apply(origin, prefix, limit)));
+            mappedCompletes.add(((origin, prefix) -> completer.apply(origin, prefix, limit)));
         }
         
-        return mappedCompleters;
+        return mappedCompletes;
     }
 
     private Map<String, CommandParameter> mapParameters(List<String> parameters) {

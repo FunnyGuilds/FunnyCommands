@@ -36,7 +36,7 @@ import java.lang.reflect.Array;
 import java.util.Optional;
 
 @FunnyComponent
-public final class ArgumentsBind implements Bind, TriFunction<InjectorProperty, Arg, Object[], Object> {
+public final class ArgumentBind implements Bind, TriFunction<InjectorProperty, Arg, Object[], Object> {
 
     @Override
     public void accept(InjectorResources resources) {

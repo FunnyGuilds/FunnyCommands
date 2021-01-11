@@ -21,8 +21,8 @@ import org.apache.commons.lang.StringUtils;
 import org.panda_lang.utilities.commons.CharacterUtils;
 import org.panda_lang.utilities.commons.collection.FixedStack;
 import org.panda_lang.utilities.commons.collection.IStack;
-import org.panda_lang.utilities.commons.text.ContentJoiner;
-import org.panda_lang.utilities.commons.text.MessageFormatter;
+import org.panda_lang.utilities.commons.text.Formatter;
+import org.panda_lang.utilities.commons.text.Joiner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -95,7 +95,7 @@ public final class CommandUtils {
             Objects.requireNonNull(cache).add(raw);
 
             if (CharacterUtils.belongsTo(lastCharacter, TEXT_OPERATORS) && lock.peek() == lastCharacter) {
-                String joinedArgument = ContentJoiner.on(" ").join(cache).toString(); // join cached arguments
+                String joinedArgument = Joiner.on(" ").join(cache).toString(); // join cached arguments
                 joinedArgument = joinedArgument.substring(1, joinedArgument.length() - 1); // remove text operators
 
                 normalizedArguments.add(joinedArgument);
@@ -106,7 +106,7 @@ public final class CommandUtils {
         return normalizedArguments.toArray(new String[0]);
     }
 
-    static List<String> format(MessageFormatter formatter, String[] array) {
+    static List<String> format(Formatter formatter, String[] array) {
         return Stream.of(array)
                 .filter(value -> !value.isEmpty())
                 .map(formatter::format)

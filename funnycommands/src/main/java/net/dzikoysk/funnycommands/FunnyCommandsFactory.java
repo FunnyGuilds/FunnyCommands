@@ -26,7 +26,8 @@ import net.dzikoysk.funnycommands.resources.types.StringType;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Nullable;
 import org.panda_lang.utilities.commons.ObjectUtils;
-import org.panda_lang.utilities.commons.text.MessageFormatter;
+import org.panda_lang.utilities.commons.function.Option;
+import org.panda_lang.utilities.commons.text.Formatter;
 import org.panda_lang.utilities.inject.DependencyInjection;
 import org.panda_lang.utilities.inject.Injector;
 
@@ -37,7 +38,7 @@ import java.util.function.BiConsumer;
 final class FunnyCommandsFactory {
 
     protected FunnyCommands createFunnyCommands(FunnyCommandsConfiguration configuration) {
-        MessageFormatter formatter = new MessageFormatter();
+        Formatter formatter = new Formatter(message -> Option.when(message.contains("${"), () -> new ValidationException("Message '" + message + "' contains unresolved placeholders")));
 
         configuration.placeholders.forEach((key, value) -> {
             formatter.register("${" + key + "}", () -> value.apply(key));
@@ -64,8 +65,8 @@ final class FunnyCommandsFactory {
         for (Class<?> commandClass : configuration.commandsClasses) {
             try {
                 commands.add(injector.newInstance(commandClass));
-            } catch (Throwable e) {
-                throw new FunnyCommandsException("Failed to instantiate command class " + commandClass, e);
+            } catch (Throwable throwable) {
+                throw new FunnyCommandsException("Failed to instantiate command class " + commandClass, throwable);
             }
         }
 
