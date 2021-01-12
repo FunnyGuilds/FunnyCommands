@@ -26,7 +26,6 @@ import net.dzikoysk.funnycommands.resources.Origin;
 import net.dzikoysk.funnycommands.resources.types.TypeMapper;
 import net.dzikoysk.funnycommands.stereotypes.Arg;
 import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
-import org.jetbrains.annotations.Nullable;
 import org.panda_lang.utilities.commons.StringUtils;
 import org.panda_lang.utilities.commons.function.TriFunction;
 import org.panda_lang.utilities.inject.InjectorProperty;
@@ -44,7 +43,7 @@ public final class ArgumentBind implements Bind, TriFunction<InjectorProperty, A
     }
 
     @Override
-    public @Nullable Object apply(InjectorProperty required, Arg arg, Object... injectorArgs) {
+    public Object apply(InjectorProperty required, Arg arg, Object... injectorArgs) {
         CommandInfo command = CommandUtils.getCommandInfo(injectorArgs);
         Origin origin = CommandUtils.getOrigin(injectorArgs);
         String parameter = arg.value();
@@ -53,7 +52,7 @@ public final class ArgumentBind implements Bind, TriFunction<InjectorProperty, A
             parameter = required.getName();
         }
 
-        @Nullable CommandParameter commandParameter = command.getParameters().get(parameter);
+        CommandParameter commandParameter = command.getParameters().get(parameter);
 
         if (commandParameter == null) {
             throw new FunnyCommandsException("Unknown parameter: " + arg.value() + " (inferred: " + parameter + ")");
