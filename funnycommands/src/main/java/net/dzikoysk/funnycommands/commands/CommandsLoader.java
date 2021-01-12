@@ -30,6 +30,7 @@ import org.panda_lang.utilities.commons.text.Formatter;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -100,13 +101,14 @@ public final class CommandsLoader {
         Collection<CommandMetadata> metadata = new ArrayList<>(commandMethods.size());
 
         for (Method commandMethod : commandMethods) {
-            metadata.add(mapCommand(command, commandMethod));
+            metadata.addAll(mapCommand(command, commandMethod));
         }
 
         return metadata;
     }
 
-    private CommandMetadata mapCommand(Object commandInstance, Method commandMethod) {
+    private Collection<? extends CommandMetadata> mapCommand(Object commandInstance, Method commandMethod) {
+        List<CommandMetadata> result = new ArrayList<>();
         FunnyCommand funnyCommand = commandMethod.getAnnotation(FunnyCommand.class);
         Formatter formatter = funnyCommands.getFormatter();
 
@@ -121,22 +123,29 @@ public final class CommandsLoader {
                     .isVarargs();
         }
 
-        CommandInfo bukkitCommandInfo = new CommandInfo(
-                formatter.format(funnyCommand.name()),
-                formatter.format(funnyCommand.description()),
-                formatter.format(funnyCommand.permission()),
-                formatter.format(funnyCommand.usage()),
-                CommandUtils.format(formatter, funnyCommand.aliases()),
-                mapCompleters(CommandUtils.format(formatter, funnyCommand.completer().split(" "))),
-                commandParameters,
-                mapMappers(commandMethod, parameters),
-                funnyCommand.playerOnly(),
-                funnyCommand.acceptsExceeded(),
-                funnyCommand.async(),
-                varargs
-        );
+        List<String> names = CommandUtils.format(formatter, funnyCommand.aliases());
+        names.add(formatter.format(funnyCommand.name()));
 
-        return new CommandMetadata(commandInstance, bukkitCommandInfo, funnyCommands.getInjector().forMethod(commandMethod), null);
+        for (String name : names) {
+            CommandInfo bukkitCommandInfo = new CommandInfo(
+                    name,
+                    formatter.format(funnyCommand.description()),
+                    formatter.format(funnyCommand.permission()),
+                    formatter.format(funnyCommand.usage()),
+                    Collections.emptyList(),
+                    mapCompleters(CommandUtils.format(formatter, funnyCommand.completer().split(" "))),
+                    commandParameters,
+                    mapMappers(commandMethod, parameters),
+                    funnyCommand.playerOnly(),
+                    funnyCommand.acceptsExceeded(),
+                    funnyCommand.async(),
+                    varargs
+            );
+
+            result.add(new CommandMetadata(commandInstance, bukkitCommandInfo, funnyCommands.getInjector().forMethod(commandMethod), null));
+        }
+
+        return result;
     }
 
     private List<CustomizedCompleter> mapCompleters(Iterable<String> completesData) {

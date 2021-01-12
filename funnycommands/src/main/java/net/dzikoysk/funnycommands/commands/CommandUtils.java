@@ -21,6 +21,7 @@ import org.apache.commons.lang.StringUtils;
 import org.panda_lang.utilities.commons.CharacterUtils;
 import org.panda_lang.utilities.commons.collection.FixedStack;
 import org.panda_lang.utilities.commons.collection.IStack;
+import org.panda_lang.utilities.commons.function.PandaStream;
 import org.panda_lang.utilities.commons.text.Formatter;
 import org.panda_lang.utilities.commons.text.Joiner;
 
@@ -108,9 +109,12 @@ public final class CommandUtils {
 
     static List<String> format(Formatter formatter, String[] array) {
         return Stream.of(array)
-                .filter(value -> !value.isEmpty())
+                .filter(value -> !value.trim().isEmpty())
                 .map(formatter::format)
-                .flatMap(value -> Arrays.stream(value.split(",")))
+                .flatMap(value -> PandaStream.of(value.split(","))
+                        .map(String::trim)
+                        .filterNot(String::isEmpty)
+                        .toStream())
                 .map(String::trim)
                 .collect(Collectors.toList());
     }

@@ -34,6 +34,7 @@ import org.panda_lang.utilities.commons.StringUtils;
 import org.panda_lang.utilities.inject.DependencyInjectionException;
 import org.panda_lang.utilities.inject.MethodInjector;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -225,7 +226,11 @@ final class DynamicCommand extends Command {
     private <T> T invoke(CommandMetadata metadata, MethodInjector method, Origin origin) throws Throwable {
         try {
             return method.invoke(metadata.getCommandInstance(), metadata.getCommandInfo(), origin);
-        } catch (DependencyInjectionException dependencyInjectionException) {
+        }
+        catch (InvocationTargetException invocationTargetException) {
+            throw invocationTargetException.getTargetException();
+        }
+        catch (DependencyInjectionException dependencyInjectionException) {
             throw new FunnyCommandsException("Dependency Injection failed due to: " + dependencyInjectionException.getMessage(), dependencyInjectionException);
         }
     }
