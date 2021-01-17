@@ -20,6 +20,7 @@ import net.dzikoysk.funnycommands.FunnyCommandsException;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
+import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.help.GenericCommandHelpTopic;
 import org.bukkit.help.HelpMap;
 import org.bukkit.help.HelpTopic;
@@ -76,7 +77,7 @@ final class CommandMapInjector {
         return fetch(() -> {
             CommandMap commandMap = fetchCommandMap();
 
-            Field knownCommandMapField = commandMap.getClass().getDeclaredField("knownCommands");
+            Field knownCommandMapField = SimpleCommandMap.class.getDeclaredField("knownCommands");
             knownCommandMapField.setAccessible(true);
 
             return ObjectUtils.cast(knownCommandMapField.get(commandMap));
