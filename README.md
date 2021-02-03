@@ -57,8 +57,8 @@ The configuration for this kind of command may look like this:
 
 ```java
 this.funnyCommands = FunnyCommands.configuration(() -> this)
+        .registerDefaultComponents()
         .placeholders(PLACEHOLDERS)
-        .registerProcessedComponents()
         .type(new PlayerType(super.getServer()))
         .type("guild", ((origin, required, guild) -> guildService.guilds.get(guild)))
         .hook();
