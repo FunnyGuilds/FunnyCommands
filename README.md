@@ -68,31 +68,3 @@ this.funnyCommands = FunnyCommands.configuration(() -> this)
 `#soon™`
 
 At this moment you can see full and up-to-date example in [FunnyCommandsAcceptanceTestPlugin](https://github.com/FunnyGuilds/FunnyCommands/blob/master/funnycommands-test/src/main/java/net/dzikoysk/funnycommands/acceptance/FunnyCommandsAcceptanceTestPlugin.java) class
-
-### FAQ
-**Q**: The `configuration.registerProcessedComponents()` does not detect my component classes <br>
-**A**: To use processed components (these components are collected at compile time) you have to add transformer to your maven shade plugin:
-```xml
-<configuration>
-    <transformers>
-        <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
-            <resource>META-INF/annotations/net.dzikoysk.funnycommands.stereotypes.FunnyComponent</resource>
-        </transformer>
-    </transformers>
-</configuration>
-```
-In case of any problems there is always possibility to use `configuration.registerAllComponents(<Plugin Class>)`.
-
-**Q**: I've used transformer, but some of my components does not exist in my production build <br>
-**A**: Make sure, that you are not using minimizing jar option from maven shade plugin. In that case, you have to exclude packages with components from shading:
-```xml
-<minimizeJar>true</minimizeJar>
-<filters>
-    <filter>
-        <artifact>net.dzikoysk:funnycommands</artifact>
-        <includes>
-            <include>**</include>
-        </includes>
-    </filter>
-</filters>
-```
