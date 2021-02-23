@@ -16,8 +16,8 @@
 
 package net.dzikoysk.funnycommands.commands;
 
-import io.vavr.control.Option;
 import org.panda_lang.utilities.commons.StringUtils;
+import org.panda_lang.utilities.commons.function.Option;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -49,7 +49,7 @@ public final class CommandStructure {
     }
 
     public CommandStructure computeIfAbsent(String name, Function<String, CommandMetadata> function) {
-        return getSubcommandStructure(name).getOrElse(() -> add(function.apply(name)));
+        return getSubcommandStructure(name).orElseGet(() -> add(function.apply(name)));
     }
 
     public CommandStructure add(CommandMetadata element) {
@@ -79,12 +79,12 @@ public final class CommandStructure {
     public Option<CommandStructure> getSubcommandStructure(String nodeName) {
         for (CommandStructure child : children.values()) {
             if (child.getSimpleName().equalsIgnoreCase(nodeName)) {
-                return Option.some(child);
+                return Option.of(child);
             }
 
             for (String alias : child.element.getCommandInfo().getAliases()) {
                 if (alias.equalsIgnoreCase(nodeName)) {
-                    return Option.some(child);
+                    return Option.of(child);
                 }
             }
         }

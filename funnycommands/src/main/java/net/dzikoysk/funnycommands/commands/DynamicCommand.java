@@ -16,7 +16,6 @@
 
 package net.dzikoysk.funnycommands.commands;
 
-import io.vavr.control.Option;
 import net.dzikoysk.funnycommands.FunnyCommands;
 import net.dzikoysk.funnycommands.FunnyCommandsException;
 import net.dzikoysk.funnycommands.resources.ExceptionHandler;
@@ -29,8 +28,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.StringUtil;
 import org.panda_lang.utilities.commons.ArrayUtils;
+import org.panda_lang.utilities.commons.ClassUtils;
 import org.panda_lang.utilities.commons.ObjectUtils;
 import org.panda_lang.utilities.commons.StringUtils;
+import org.panda_lang.utilities.commons.function.Option;
 import org.panda_lang.utilities.inject.DependencyInjectionException;
 import org.panda_lang.utilities.inject.MethodInjector;
 
@@ -39,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
@@ -111,13 +113,10 @@ final class DynamicCommand extends Command {
             validationException.getValidationMessage().peek(message -> sender.sendMessage(ChatColor.translateAlternateColorCodes('&', message)));
             return;
         } catch (Throwable throwable) {
-            ExceptionHandler<? extends Exception> exceptionHandler = funnyCommands.getExceptionHandlers().get(throwable.getClass());
+            resolveExceptionHandler(throwable.getClass())
+                    .orThrow(() -> new FunnyCommandsException("Cannot invoke command", throwable))
+                    .apply(ObjectUtils.cast(throwable));
 
-            if (exceptionHandler == null) {
-                throw new FunnyCommandsException("Cannot invoke command", throwable);
-            }
-
-            exceptionHandler.apply(ObjectUtils.cast(throwable));
             return;
         }
 
@@ -233,6 +232,11 @@ final class DynamicCommand extends Command {
         catch (DependencyInjectionException dependencyInjectionException) {
             throw new FunnyCommandsException("Dependency Injection failed due to: " + dependencyInjectionException.getMessage(), dependencyInjectionException);
         }
+    }
+
+    private Option<ExceptionHandler<? extends Exception>> resolveExceptionHandler(Class<? extends Throwable> throwableClass) {
+        Map<Class<? extends Exception>, ExceptionHandler<? extends Exception>> exceptionHandlers = funnyCommands.getExceptionHandlers();
+        return ClassUtils.selectMostRelated(exceptionHandlers.keySet(), throwableClass).map(exceptionHandlers::get);
     }
 
 }

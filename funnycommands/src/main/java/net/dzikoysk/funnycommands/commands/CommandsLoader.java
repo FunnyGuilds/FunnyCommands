@@ -81,7 +81,7 @@ public final class CommandsLoader {
             for (int index = 0; index < units.length - 1; index++) {
                 String unit = units[index];
 
-                parent = parent.getSubcommandStructure(unit).getOrElseThrow(() -> {
+                parent = parent.getSubcommandStructure(unit).orThrow(() -> {
                     throw new FunnyCommandsException("Unknown command root '" + unit + "' of '" + meta.getName() + "'");
                 });
             }
