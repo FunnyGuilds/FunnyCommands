@@ -49,6 +49,10 @@ final class FunnyCommandsFactory {
         });
 
         configuration.validators.forEach(validator -> {
+            if (validator.getType() == null && validator.getAnnotation() == null) {
+                throw new IllegalStateException("Invalid validator configuration - you have to associate at least a type or annotation");
+            }
+
             injector.getResources().processAnnotatedType(validator.getAnnotation(), validator.getType(), (annotation, parameter, value, injectorArgs) -> {
                 boolean success = validator.validate(CommandUtils.getOrigin(injectorArgs), ObjectUtils.cast(annotation), parameter, ObjectUtils.cast(value));
 

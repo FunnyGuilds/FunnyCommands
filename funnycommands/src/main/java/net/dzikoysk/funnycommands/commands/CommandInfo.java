@@ -16,8 +16,8 @@
 
 package net.dzikoysk.funnycommands.commands;
 
-import io.vavr.collection.Stream;
 import net.dzikoysk.funnycommands.resources.types.TypeMapper;
+import org.panda_lang.utilities.commons.function.PandaStream;
 
 import java.util.List;
 import java.util.Map;
@@ -82,9 +82,9 @@ public final class CommandInfo {
     }
 
     public int getAmountOfRequiredParameters() {
-        return Stream.ofAll(getParameters().values())
+        return Math.toIntExact(PandaStream.of(getParameters().values())
                 .filterNot(CommandParameter::isOptional)
-                .length();
+                .count());
     }
 
     public Map<? extends String, ? extends CommandParameter> getParameters() {

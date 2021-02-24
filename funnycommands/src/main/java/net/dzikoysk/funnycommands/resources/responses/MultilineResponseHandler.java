@@ -28,7 +28,7 @@ public final class MultilineResponseHandler implements ResponseHandler<Multiline
     @Override
     public Boolean apply(Origin origin, MultilineResponse multilineResponse) {
         Arrays.stream(multilineResponse.getLines()).forEach(line -> multilineResponse.getTarget()
-                .getOrElse(origin.getCommandSender())
+                .orElseGet(origin.getCommandSender())
                 .sendMessage(origin.format(line)));
 
         return true;

@@ -26,7 +26,7 @@ public final class SenderResponseHandler implements ResponseHandler<SenderRespon
     @Override
     public Boolean apply(Origin origin, SenderResponse senderResponse) {
         senderResponse.getSender()
-                .getOrElse(origin::getCommandSender)
+                .orElseGet(origin::getCommandSender)
                 .sendMessage(origin.format(senderResponse));
 
         return true;

@@ -16,7 +16,6 @@
 
 package net.dzikoysk.funnycommands.commands;
 
-import io.vavr.collection.Stream;
 import net.dzikoysk.funnycommands.FunnyCommands;
 import net.dzikoysk.funnycommands.FunnyCommandsException;
 import net.dzikoysk.funnycommands.resources.Completer;
@@ -25,6 +24,7 @@ import net.dzikoysk.funnycommands.stereotypes.FunnyCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 import org.panda_lang.utilities.commons.ReflectionUtils;
+import org.panda_lang.utilities.commons.function.PandaStream;
 import org.panda_lang.utilities.commons.text.Formatter;
 
 import java.lang.reflect.Method;
@@ -67,10 +67,10 @@ public final class CommandsLoader {
     }
 
     protected CommandStructure loadCommands(Iterable<Object> commands) {
-        List<CommandMetadata> metadata = Stream.ofAll(commands)
+        List<CommandMetadata> metadata = PandaStream.of(commands)
                 .flatMap(this::mapCommandInstance)
                 .sorted()
-                .toJavaList();
+                .toList();
 
         CommandStructure metadataTree = new CommandStructure(null);
 
@@ -117,10 +117,12 @@ public final class CommandsLoader {
         boolean varargs = false;
 
         if (!commandParameters.isEmpty()) {
-            varargs = Stream.ofAll(commandParameters.values())
+            varargs = PandaStream.of(commandParameters.values())
                     .sorted()
-                    .last()
-                    .isVarargs();
+                    .toStream()
+                    .reduce((first, second) -> second)
+                    .filter(CommandParameter::isVarargs)
+                    .isPresent();
         }
 
         List<String> names = CommandUtils.format(formatter, funnyCommand.aliases());

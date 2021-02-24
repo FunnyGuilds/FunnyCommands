@@ -16,9 +16,9 @@
 
 package net.dzikoysk.funnycommands.resources.responses;
 
-import io.vavr.control.Option;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Nullable;
+import org.panda_lang.utilities.commons.function.Option;
 
 public final class SenderResponse {
 

@@ -16,8 +16,8 @@
 
 package net.dzikoysk.funnycommands.commands;
 
-import io.vavr.control.Option;
 import org.jetbrains.annotations.Nullable;
+import org.panda_lang.utilities.commons.function.Option;
 import org.panda_lang.utilities.inject.MethodInjector;
 
 public final class CommandMetadata implements Comparable<CommandMetadata> {

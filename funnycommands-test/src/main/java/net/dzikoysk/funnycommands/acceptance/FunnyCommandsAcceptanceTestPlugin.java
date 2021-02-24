@@ -16,7 +16,6 @@
 
 package net.dzikoysk.funnycommands.acceptance;
 
-import io.vavr.control.Option;
 import net.dzikoysk.funnycommands.FunnyCommands;
 import net.dzikoysk.funnycommands.FunnyCommandsConstants;
 import net.dzikoysk.funnycommands.FunnyCommandsPlugin;
@@ -29,6 +28,7 @@ import net.dzikoysk.funnycommands.stereotypes.FunnyCommand;
 import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.panda_lang.utilities.commons.function.Option;
 import org.panda_lang.utilities.commons.text.Joiner;
 import org.panda_lang.utilities.inject.annotations.Injectable;
 
