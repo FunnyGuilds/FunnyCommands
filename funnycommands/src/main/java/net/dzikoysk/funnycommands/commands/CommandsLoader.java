@@ -135,7 +135,7 @@ public final class CommandsLoader {
                     formatter.format(funnyCommand.permission()),
                     formatter.format(funnyCommand.usage()),
                     Collections.emptyList(),
-                    mapCompleters(CommandUtils.format(formatter, funnyCommand.completer().split(" "))),
+                    mapCompletes(CommandUtils.format(formatter, funnyCommand.completer().split(" "))),
                     commandParameters,
                     mapMappers(commandMethod, parameters),
                     funnyCommand.playerOnly(),
@@ -150,12 +150,12 @@ public final class CommandsLoader {
         return result;
     }
 
-    private List<CustomizedCompleter> mapCompleters(Iterable<String> completesData) {
+    private List<CustomizedCompleter> mapCompletes(Iterable<String> completesData) {
         List<CustomizedCompleter> mappedCompletes = new ArrayList<>();
 
         for (String completerData : completesData) {
             String[] elements = completerData.split(":");
-            Completer completer = funnyCommands.getCompleters().get(elements[0]);
+            Completer completer = funnyCommands.getCompletes().get(elements[0]);
 
             if (completer == null) {
                 throw new FunnyCommandsException("Cannot find completer declared as " + completerData);
@@ -165,7 +165,7 @@ public final class CommandsLoader {
                     ? Integer.parseInt(elements[1])
                     : -1;
 
-            mappedCompletes.add(((origin, prefix) -> completer.apply(origin, prefix, limit)));
+            mappedCompletes.add(((context, prefix) -> completer.apply(context, prefix, limit)));
         }
         
         return mappedCompletes;

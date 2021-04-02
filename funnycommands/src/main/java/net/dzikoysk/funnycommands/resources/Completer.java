@@ -20,7 +20,7 @@ import org.panda_lang.utilities.commons.function.TriFunction;
 
 import java.util.List;
 
-public interface Completer extends TriFunction<Origin, String, Integer, List<String>> {
+public interface Completer extends TriFunction<Context, String, Integer, List<String>> {
 
     String getName();
 

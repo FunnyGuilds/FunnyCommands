@@ -17,7 +17,7 @@
 package net.dzikoysk.funnycommands.resources.types;
 
 import net.dzikoysk.funnycommands.resources.CommandDataType;
-import net.dzikoysk.funnycommands.resources.Origin;
+import net.dzikoysk.funnycommands.resources.Context;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.panda_lang.utilities.inject.InjectorProperty;
@@ -32,7 +32,7 @@ public final class PlayerType extends AbstractType<Player> implements CommandDat
     }
 
     @Override
-    public Player apply(Origin origin, InjectorProperty required, String argument) {
+    public Player apply(Context context, InjectorProperty required, String argument) {
         return server.getPlayer(argument);
     }
 

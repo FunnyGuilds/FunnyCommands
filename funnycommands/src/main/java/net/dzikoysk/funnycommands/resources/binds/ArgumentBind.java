@@ -21,7 +21,7 @@ import net.dzikoysk.funnycommands.commands.CommandInfo;
 import net.dzikoysk.funnycommands.commands.CommandParameter;
 import net.dzikoysk.funnycommands.commands.CommandUtils;
 import net.dzikoysk.funnycommands.resources.Bind;
-import net.dzikoysk.funnycommands.resources.Origin;
+import net.dzikoysk.funnycommands.resources.Context;
 import net.dzikoysk.funnycommands.resources.types.TypeMapper;
 import net.dzikoysk.funnycommands.stereotypes.Arg;
 import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
@@ -45,7 +45,7 @@ public final class ArgumentBind implements Bind, TriFunction<InjectorProperty, A
     @Override
     public Object apply(InjectorProperty required, Arg arg, Object... injectorArgs) {
         CommandInfo command = CommandUtils.getCommandInfo(injectorArgs);
-        Origin origin = CommandUtils.getOrigin(injectorArgs);
+        Context context = CommandUtils.getContext(injectorArgs);
         String parameter = arg.value();
 
         if (parameter.isEmpty()) {
@@ -58,7 +58,7 @@ public final class ArgumentBind implements Bind, TriFunction<InjectorProperty, A
             throw new FunnyCommandsException("Unknown parameter: " + arg.value() + " (inferred: " + parameter + ")");
         }
 
-        String[] arguments = origin.getArguments();
+        String[] arguments = context.getArguments();
         String[] selected = StringUtils.EMPTY_ARRAY;
 
         if (commandParameter.getIndex() < arguments.length) {
@@ -80,7 +80,7 @@ public final class ArgumentBind implements Bind, TriFunction<InjectorProperty, A
         for (int index = 0; index < selected.length; index++) {
             mappedArguments[index] = command.getMappers()
                     .get(parameter)
-                    .map(origin, required, selected[index]);
+                    .map(context, required, selected[index]);
         }
 
         Object result = mappedArguments;

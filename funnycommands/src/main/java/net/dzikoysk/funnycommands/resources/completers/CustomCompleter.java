@@ -17,7 +17,7 @@
 package net.dzikoysk.funnycommands.resources.completers;
 
 import net.dzikoysk.funnycommands.resources.Completer;
-import net.dzikoysk.funnycommands.resources.Origin;
+import net.dzikoysk.funnycommands.resources.Context;
 import org.panda_lang.utilities.commons.function.TriFunction;
 
 import java.util.List;
@@ -25,16 +25,16 @@ import java.util.List;
 public class CustomCompleter implements Completer {
 
     private final String name;
-    private final TriFunction<Origin, String, Integer, List<String>> completer;
+    private final TriFunction<Context, String, Integer, List<String>> completer;
 
-    public CustomCompleter(String name, TriFunction<Origin, String, Integer, List<String>> completer) {
+    public CustomCompleter(String name, TriFunction<Context, String, Integer, List<String>> completer) {
         this.name = name;
         this.completer = completer;
     }
 
     @Override
-    public List<String> apply(Origin origin, String prefix, Integer limit) {
-        return completer.apply(origin, prefix, limit);
+    public List<String> apply(Context context, String prefix, Integer limit) {
+        return completer.apply(context, prefix, limit);
     }
 
     @Override

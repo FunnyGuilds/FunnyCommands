@@ -2,7 +2,7 @@ package net.dzikoysk.funnycommands.resources.types;
 
 import net.dzikoysk.funnycommands.FunnyCommandsUtils;
 import net.dzikoysk.funnycommands.resources.CommandDataType;
-import net.dzikoysk.funnycommands.resources.Origin;
+import net.dzikoysk.funnycommands.resources.Context;
 import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
 import org.panda_lang.utilities.inject.InjectorProperty;
 
@@ -14,7 +14,7 @@ public final class IntegerType extends AbstractType<Integer> implements CommandD
     }
 
     @Override
-    public Integer apply(Origin origin, InjectorProperty required, String argument) {
+    public Integer apply(Context context, InjectorProperty required, String argument) {
         return FunnyCommandsUtils.parseNumber(argument, Integer::parseInt);
     }
 

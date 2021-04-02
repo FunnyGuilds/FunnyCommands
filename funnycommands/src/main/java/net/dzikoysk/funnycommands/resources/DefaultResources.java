@@ -3,7 +3,7 @@ package net.dzikoysk.funnycommands.resources;
 import net.dzikoysk.funnycommands.resources.binds.ArgsBind;
 import net.dzikoysk.funnycommands.resources.binds.ArgumentBind;
 import net.dzikoysk.funnycommands.resources.binds.CommandSenderBind;
-import net.dzikoysk.funnycommands.resources.binds.OriginBind;
+import net.dzikoysk.funnycommands.resources.binds.ContextBind;
 import net.dzikoysk.funnycommands.resources.binds.PlayerBind;
 import net.dzikoysk.funnycommands.resources.binds.RandomUUIDBind;
 import net.dzikoysk.funnycommands.resources.completers.ChatColorsCompleter;
@@ -40,7 +40,7 @@ public final class DefaultResources {
             new ArgsBind(),
             new ArgumentBind(),
             new CommandSenderBind(),
-            new OriginBind(),
+            new ContextBind(),
             new PlayerBind(),
             new RandomUUIDBind()
     );

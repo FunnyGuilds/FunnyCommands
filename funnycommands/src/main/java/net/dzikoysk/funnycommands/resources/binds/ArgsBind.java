@@ -18,7 +18,6 @@ package net.dzikoysk.funnycommands.resources.binds;
 
 import net.dzikoysk.funnycommands.commands.CommandUtils;
 import net.dzikoysk.funnycommands.resources.Bind;
-import net.dzikoysk.funnycommands.resources.Origin;
 import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
 import org.panda_lang.utilities.commons.function.TriFunction;
 import org.panda_lang.utilities.inject.InjectorProperty;
@@ -36,7 +35,7 @@ public final class ArgsBind implements Bind, TriFunction<InjectorProperty, Annot
 
     @Override
     public Object apply(InjectorProperty parameter, Annotation annotation, Object[] injectorArgs) {
-        return CommandUtils.getOrigin(injectorArgs).getArguments();
+        return CommandUtils.getContext(injectorArgs).getArguments();
     }
 
 }

@@ -21,7 +21,7 @@ import net.dzikoysk.funnycommands.resources.CommandDataType;
 import net.dzikoysk.funnycommands.resources.Completer;
 import net.dzikoysk.funnycommands.resources.DefaultResources;
 import net.dzikoysk.funnycommands.resources.ExceptionHandler;
-import net.dzikoysk.funnycommands.resources.Origin;
+import net.dzikoysk.funnycommands.resources.Context;
 import net.dzikoysk.funnycommands.resources.PermissionHandler;
 import net.dzikoysk.funnycommands.resources.ResponseHandler;
 import net.dzikoysk.funnycommands.resources.UsageHandler;
@@ -31,7 +31,6 @@ import net.dzikoysk.funnycommands.resources.exceptions.CustomExceptionHandler;
 import net.dzikoysk.funnycommands.resources.responses.CustomResponseHandler;
 import net.dzikoysk.funnycommands.resources.types.TypeMapper;
 import net.dzikoysk.funnycommands.resources.validators.CustomValidator;
-import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 import org.panda_lang.utilities.commons.ObjectUtils;
@@ -41,15 +40,12 @@ import org.panda_lang.utilities.commons.function.TriFunction;
 import org.panda_lang.utilities.inject.InjectorProperty;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -60,7 +56,7 @@ public final class FunnyCommandsConfiguration {
     protected final Map<String, Function<String, String>> placeholders = new HashMap<>();
     protected final Collection<Class<?>> commandsClasses = new ArrayList<>();
     protected final Collection<Object> commandsInstances = new ArrayList<>();
-    protected final Map<String, Completer> completers = new HashMap<>();
+    protected final Map<String, Completer> completes = new HashMap<>();
     protected final Map<String, TypeMapper<?>> typeMappers = new HashMap<>();
     protected final Collection<Bind> binds = new ArrayList<>();
     protected final Collection<Validator<?, ?, ?>> validators = new ArrayList<>();
@@ -73,7 +69,7 @@ public final class FunnyCommandsConfiguration {
         this.plugin = new Lazy<>(plugin);
     }
 
-    public FunnyCommands hook() {
+    public FunnyCommands install() {
         FunnyCommandsFactory factory = new FunnyCommandsFactory();
         return factory.createFunnyCommands(this);
     }
@@ -149,7 +145,7 @@ public final class FunnyCommandsConfiguration {
         return type(commandDataType.getName(), commandDataType.getType(), commandDataType);
     }
 
-    public <T> FunnyCommandsConfiguration type(String typeName, Class<T> type, TriFunction<Origin, InjectorProperty, String, T> deserializer) {
+    public <T> FunnyCommandsConfiguration type(String typeName, Class<T> type, TriFunction<Context, InjectorProperty, String, T> deserializer) {
         this.typeMappers.put(typeName, new TypeMapper<>(typeName, type, deserializer));
         return this;
     }
@@ -159,7 +155,7 @@ public final class FunnyCommandsConfiguration {
         return this;
     }
 
-    public <A extends Annotation, V, E extends Exception> FunnyCommandsConfiguration validator(@Nullable  Class<A> annotation, @Nullable Class<V> type, ThrowingQuadFunction<Origin, A, InjectorProperty, V, Boolean, E> function) {
+    public <A extends Annotation, V, E extends Exception> FunnyCommandsConfiguration validator(@Nullable  Class<A> annotation, @Nullable Class<V> type, ThrowingQuadFunction<Context, A, InjectorProperty, V, Boolean, E> function) {
         return validator(new CustomValidator<>(annotation, type, function));
     }
 
@@ -168,12 +164,12 @@ public final class FunnyCommandsConfiguration {
         return this;
     }
 
-    public FunnyCommandsConfiguration completer(String name, TriFunction<Origin, String, Integer, List<String>> completer) {
+    public FunnyCommandsConfiguration completer(String name, TriFunction<Context, String, Integer, List<String>> completer) {
         return completer(new CustomCompleter(name, completer));
     }
 
     public FunnyCommandsConfiguration completer(Completer completer) {
-        this.completers.put(completer.getName(), completer);
+        this.completes.put(completer.getName(), completer);
         return this;
     }
 
@@ -191,7 +187,7 @@ public final class FunnyCommandsConfiguration {
         return this;
     }
 
-    public <R> FunnyCommandsConfiguration responseHandler(Class<R> responseType, BiFunction<Origin, R, Boolean> responseHandler) {
+    public <R> FunnyCommandsConfiguration responseHandler(Class<R> responseType, BiFunction<Context, R, Boolean> responseHandler) {
         return responseHandler(new CustomResponseHandler<>(responseType, responseHandler));
     }
 

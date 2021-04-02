@@ -29,7 +29,7 @@ class CommandsLoaderTest {
     void loadCommands() {
         FunnyCommands funnyCommands = FunnyCommands.configuration(() -> {
             throw new UnsupportedOperationException();
-        }).hook();
+        }).install();
 
         CommandStructure tree = funnyCommands.getCommandsLoader().loadCommands(Arrays.asList(
                 new CommandA(),

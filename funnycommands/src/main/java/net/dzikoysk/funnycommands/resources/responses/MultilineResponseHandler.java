@@ -16,7 +16,7 @@
 
 package net.dzikoysk.funnycommands.resources.responses;
 
-import net.dzikoysk.funnycommands.resources.Origin;
+import net.dzikoysk.funnycommands.resources.Context;
 import net.dzikoysk.funnycommands.resources.ResponseHandler;
 import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
 
@@ -26,10 +26,10 @@ import java.util.Arrays;
 public final class MultilineResponseHandler implements ResponseHandler<MultilineResponse> {
 
     @Override
-    public Boolean apply(Origin origin, MultilineResponse multilineResponse) {
+    public Boolean apply(Context context, MultilineResponse multilineResponse) {
         Arrays.stream(multilineResponse.getLines()).forEach(line -> multilineResponse.getTarget()
-                .orElseGet(origin.getCommandSender())
-                .sendMessage(origin.format(line)));
+                .orElseGet(context.getCommandSender())
+                .sendMessage(context.format(line)));
 
         return true;
     }

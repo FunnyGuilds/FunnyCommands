@@ -16,10 +16,10 @@
 
 package net.dzikoysk.funnycommands.commands;
 
-import net.dzikoysk.funnycommands.resources.Origin;
+import net.dzikoysk.funnycommands.resources.Context;
 
 import java.util.List;
 import java.util.function.BiFunction;
 
 @FunctionalInterface
-interface CustomizedCompleter extends BiFunction<Origin, String, List<String>> { }
+interface CustomizedCompleter extends BiFunction<Context, String, List<String>> { }

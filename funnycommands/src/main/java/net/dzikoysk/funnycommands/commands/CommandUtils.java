@@ -16,7 +16,7 @@
 
 package net.dzikoysk.funnycommands.commands;
 
-import net.dzikoysk.funnycommands.resources.Origin;
+import net.dzikoysk.funnycommands.resources.Context;
 import org.apache.commons.lang.StringUtils;
 import org.panda_lang.utilities.commons.CharacterUtils;
 import org.panda_lang.utilities.commons.collection.FixedStack;
@@ -119,8 +119,8 @@ public final class CommandUtils {
                 .collect(Collectors.toList());
     }
 
-    public static Origin getOrigin(Object... injectorArgs) {
-        return (Origin) injectorArgs[1];
+    public static Context getContext(Object... injectorArgs) {
+        return (Context) injectorArgs[1];
     }
 
     public static CommandInfo getCommandInfo(Object... injectorArgs) {

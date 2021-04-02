@@ -20,7 +20,7 @@
     <parent>
         <artifactId>funnycommands-parent</artifactId>
         <groupId>net.dzikoysk</groupId>
-        <version>0.3.9</version>
+        <version>0.3.10</version>
     </parent>
 
     <artifactId>funnycommands</artifactId>
@@ -31,19 +31,19 @@
         <dependency>
             <groupId>org.panda-lang.utilities</groupId>
             <artifactId>di</artifactId>
-            <version>1.1.2</version>
+            <version>1.2.0</version>
         </dependency>
         <dependency>
             <groupId>org.panda-lang</groupId>
             <artifactId>panda-utilities</artifactId>
-            <version>0.3.0-alpha</version>
+            <version>0.4.0-alpha</version>
         </dependency>
 
         <!-- General -->
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.15-R0.1-SNAPSHOT</version>
+            <version>1.16.5-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -71,7 +71,55 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <source>8</source>
+                            <doclint>none</doclint>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+
+            <!-- explicitly define maven-deploy-plugin after other to force exec order -->
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>3.0.0-M1</version>
+                <executions>
+                    <execution>
+                        <id>deploy</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>deploy</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

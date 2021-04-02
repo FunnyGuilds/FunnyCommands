@@ -19,7 +19,7 @@ package net.dzikoysk.funnycommands;
 import net.dzikoysk.funnycommands.commands.CommandInfo;
 import net.dzikoysk.funnycommands.commands.CommandStructure;
 import net.dzikoysk.funnycommands.commands.CommandUtils;
-import net.dzikoysk.funnycommands.resources.Origin;
+import net.dzikoysk.funnycommands.resources.Context;
 import net.dzikoysk.funnycommands.resources.ValidationException;
 import net.dzikoysk.funnycommands.resources.responses.BooleanResponseHandler;
 import net.dzikoysk.funnycommands.resources.types.StringType;
@@ -54,7 +54,7 @@ final class FunnyCommandsFactory {
             }
 
             injector.getResources().processAnnotatedType(validator.getAnnotation(), validator.getType(), (annotation, parameter, value, injectorArgs) -> {
-                boolean success = validator.validate(CommandUtils.getOrigin(injectorArgs), ObjectUtils.cast(annotation), parameter, ObjectUtils.cast(value));
+                boolean success = validator.validate(CommandUtils.getContext(injectorArgs), ObjectUtils.cast(annotation), parameter, ObjectUtils.cast(value));
 
                 if (!success) {
                     throw new ValidationException();
@@ -82,10 +82,10 @@ final class FunnyCommandsFactory {
             configuration.responseHandler(new BooleanResponseHandler());
         }
 
-        @Nullable BiConsumer<Origin, String> permissionHandler = configuration.permissionHandler;
+        @Nullable BiConsumer<Context, String> permissionHandler = configuration.permissionHandler;
 
         if (permissionHandler == null) {
-            permissionHandler = (origin, permission) -> origin.getCommandSender().sendMessage(FunnyCommandsUtils.translate("&cYou don't have permission to perform that command"));
+            permissionHandler = (context, permission) -> context.getCommandSender().sendMessage(FunnyCommandsUtils.translate("&cYou don't have permission to perform that command"));
         }
 
         @Nullable BiConsumer<CommandSender, CommandStructure> usageHandler = configuration.usageHandler;

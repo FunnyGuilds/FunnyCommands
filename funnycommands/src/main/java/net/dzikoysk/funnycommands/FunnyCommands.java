@@ -20,7 +20,7 @@ import net.dzikoysk.funnycommands.commands.CommandStructure;
 import net.dzikoysk.funnycommands.commands.CommandsLoader;
 import net.dzikoysk.funnycommands.resources.Completer;
 import net.dzikoysk.funnycommands.resources.ExceptionHandler;
-import net.dzikoysk.funnycommands.resources.Origin;
+import net.dzikoysk.funnycommands.resources.Context;
 import net.dzikoysk.funnycommands.resources.Validator;
 import net.dzikoysk.funnycommands.resources.types.TypeMapper;
 import org.bukkit.command.CommandSender;
@@ -41,10 +41,10 @@ public final class FunnyCommands {
     private final CommandsLoader commandsLoader;
     private final Formatter formatter;
     private final Injector injector;
-    private final BiConsumer<Origin, String> permissionHandler;
+    private final BiConsumer<Context, String> permissionHandler;
     private final BiConsumer<CommandSender, CommandStructure> usageHandler;
 
-    FunnyCommands(FunnyCommandsConfiguration configuration, Injector injector, Formatter formatter, BiConsumer<Origin, String> permissionHandler, BiConsumer<CommandSender, CommandStructure> usageHandler) {
+    FunnyCommands(FunnyCommandsConfiguration configuration, Injector injector, Formatter formatter, BiConsumer<Context, String> permissionHandler, BiConsumer<CommandSender, CommandStructure> usageHandler) {
         this.injector = injector;
         this.formatter = formatter;
         this.configuration = configuration;
@@ -61,7 +61,7 @@ public final class FunnyCommands {
         return usageHandler;
     }
 
-    public BiConsumer<Origin, String> getPermissionHandler() {
+    public BiConsumer<Context, String> getPermissionHandler() {
         return permissionHandler;
     }
 
@@ -69,7 +69,7 @@ public final class FunnyCommands {
         return configuration.exceptionHandlers;
     }
 
-    public Map<? extends Class<?>, ? extends BiFunction<Origin, ?, Boolean>> getResponseHandlers() {
+    public Map<? extends Class<?>, ? extends BiFunction<Context, ?, Boolean>> getResponseHandlers() {
         return configuration.responseHandlers;
     }
 
@@ -81,8 +81,8 @@ public final class FunnyCommands {
         return configuration.placeholders;
     }
 
-    public Map<? extends String, ? extends Completer> getCompleters() {
-        return configuration.completers;
+    public Map<? extends String, ? extends Completer> getCompletes() {
+        return configuration.completes;
     }
 
     public Map<? extends String, ? extends TypeMapper<?>> getTypeMappers() {

@@ -18,7 +18,7 @@ package net.dzikoysk.funnycommands.resources.completers;
 
 import net.dzikoysk.funnycommands.commands.CommandUtils;
 import net.dzikoysk.funnycommands.resources.Completer;
-import net.dzikoysk.funnycommands.resources.Origin;
+import net.dzikoysk.funnycommands.resources.Context;
 import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -30,7 +30,7 @@ import java.util.List;
 public final class OnlinePlayersCompleter implements Completer {
 
     @Override
-    public List<String> apply(Origin origin, String prefix, Integer limit) {
+    public List<String> apply(Context context, String prefix, Integer limit) {
         return CommandUtils.collectCompletions(Bukkit.getOnlinePlayers(), prefix, limit, ArrayList::new, Player::getName);
     }
 

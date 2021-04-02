@@ -16,7 +16,7 @@
 
 package net.dzikoysk.funnycommands.resources.responses;
 
-import net.dzikoysk.funnycommands.resources.Origin;
+import net.dzikoysk.funnycommands.resources.Context;
 import net.dzikoysk.funnycommands.resources.ResponseHandler;
 import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
 
@@ -24,10 +24,10 @@ import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
 public final class SenderResponseHandler implements ResponseHandler<SenderResponse> {
 
     @Override
-    public Boolean apply(Origin origin, SenderResponse senderResponse) {
+    public Boolean apply(Context context, SenderResponse senderResponse) {
         senderResponse.getSender()
-                .orElseGet(origin::getCommandSender)
-                .sendMessage(origin.format(senderResponse));
+                .orElseGet(context::getCommandSender)
+                .sendMessage(context.format(senderResponse));
 
         return true;
     }

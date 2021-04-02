@@ -23,7 +23,7 @@ import java.lang.annotation.Annotation;
 
 public interface Validator<A extends Annotation, V, E extends Exception> {
 
-    boolean validate(Origin origin, A annotation, InjectorProperty property, V value) throws E;
+    boolean validate(Context context, A annotation, InjectorProperty property, V value) throws E;
 
     default @Nullable Class<A> getAnnotation() {
         return null;

@@ -12,7 +12,7 @@ FunnyCommands artifact is available in Panda repository. Add these declarations 
 <dependency>
   <groupId>net.dzikoysk</groupId>
   <artifactId>funnycommands</artifactId>
-  <version>0.3.9</version>
+  <version>0.3.10</version>
 </dependency>
 ```
 
@@ -60,7 +60,7 @@ this.funnyCommands = FunnyCommands.configuration(() -> this)
         .registerDefaultComponents()
         .placeholders(PLACEHOLDERS)
         .type(new PlayerType(super.getServer()))
-        .type("guild", ((origin, required, guild) -> guildService.guilds.get(guild)))
+        .type("guild", ((context, required, guild) -> guildService.guilds.get(guild)))
         .hook();
 ```
 

@@ -19,4 +19,4 @@ package net.dzikoysk.funnycommands.resources;
 import java.util.function.BiConsumer;
 
 @FunctionalInterface
-public interface PermissionHandler extends BiConsumer<Origin, String> { }
+public interface PermissionHandler extends BiConsumer<Context, String> { }

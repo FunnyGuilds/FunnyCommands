@@ -28,7 +28,7 @@ public final class CommandSenderBind implements Bind {
     @Override
     public void accept(InjectorResources resources) {
         resources.on(CommandSender.class).assignHandler(((parameter, annotation, objects) -> {
-            return CommandUtils.getOrigin(objects).getCommandSender();
+            return CommandUtils.getContext(objects).getCommandSender();
         }));
     }
 

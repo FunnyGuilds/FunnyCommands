@@ -16,7 +16,7 @@
 
 package net.dzikoysk.funnycommands.resources.validators;
 
-import net.dzikoysk.funnycommands.resources.Origin;
+import net.dzikoysk.funnycommands.resources.Context;
 import net.dzikoysk.funnycommands.resources.Validator;
 import org.jetbrains.annotations.Nullable;
 import org.panda_lang.utilities.commons.function.ThrowingQuadFunction;
@@ -28,17 +28,17 @@ public class CustomValidator<A extends Annotation, V, E extends Exception> imple
 
     private final Class<A> annotation;
     private final Class<V> type;
-    private final ThrowingQuadFunction<Origin, A, InjectorProperty, V, Boolean, E> function;
+    private final ThrowingQuadFunction<Context, A, InjectorProperty, V, Boolean, E> function;
 
-    public CustomValidator(Class<A> annotation, Class<V> type, ThrowingQuadFunction<Origin, A, InjectorProperty, V, Boolean, E> function) {
+    public CustomValidator(Class<A> annotation, Class<V> type, ThrowingQuadFunction<Context, A, InjectorProperty, V, Boolean, E> function) {
         this.annotation = annotation;
         this.type = type;
         this.function = function;
     }
 
     @Override
-    public boolean validate(Origin origin, A annotation, InjectorProperty parameter, V value) throws E {
-        return function.apply(origin, annotation, parameter, value);
+    public boolean validate(Context context, A annotation, InjectorProperty parameter, V value) throws E {
+        return function.apply(context, annotation, parameter, value);
     }
 
     @Override

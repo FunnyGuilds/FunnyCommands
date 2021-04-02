@@ -23,7 +23,7 @@ import org.bukkit.command.CommandSender;
 
 import java.util.Objects;
 
-public final class Origin {
+public final class Context {
 
     private final FunnyCommands funnyCommands;
     private final CommandSender commandSender;
@@ -31,7 +31,7 @@ public final class Origin {
     private final String alias;
     private final String[] arguments;
 
-    public Origin(FunnyCommands funnyCommands, CommandSender commandSender, CommandStructure commandStructure, String alias, String[] arguments) {
+    public Context(FunnyCommands funnyCommands, CommandSender commandSender, CommandStructure commandStructure, String alias, String[] arguments) {
         this.funnyCommands = funnyCommands;
         this.commandSender = commandSender;
         this.commandStructure = commandStructure;

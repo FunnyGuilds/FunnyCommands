@@ -16,7 +16,7 @@
 
 package net.dzikoysk.funnycommands.resources.types;
 
-import net.dzikoysk.funnycommands.resources.Origin;
+import net.dzikoysk.funnycommands.resources.Context;
 import org.panda_lang.utilities.commons.function.TriFunction;
 import org.panda_lang.utilities.inject.InjectorProperty;
 
@@ -24,16 +24,16 @@ public final class TypeMapper<T> {
 
     private final String name;
     private final Class<?> type;
-    private final TriFunction<Origin, InjectorProperty, String, T> deserializer;
+    private final TriFunction<Context, InjectorProperty, String, T> deserializer;
 
-    public TypeMapper(String name, Class<?> type, TriFunction<Origin, InjectorProperty, String, T> deserializer) {
+    public TypeMapper(String name, Class<?> type, TriFunction<Context, InjectorProperty, String, T> deserializer) {
         this.name = name;
         this.type = type;
         this.deserializer = deserializer;
     }
 
-    public T map(Origin origin, InjectorProperty parameter, String value) {
-        return deserializer.apply(origin, parameter, value);
+    public T map(Context context, InjectorProperty parameter, String value) {
+        return deserializer.apply(context, parameter, value);
     }
 
     public Class<?> getType() {

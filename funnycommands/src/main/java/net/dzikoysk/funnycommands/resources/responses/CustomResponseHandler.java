@@ -16,7 +16,7 @@
 
 package net.dzikoysk.funnycommands.resources.responses;
 
-import net.dzikoysk.funnycommands.resources.Origin;
+import net.dzikoysk.funnycommands.resources.Context;
 import net.dzikoysk.funnycommands.resources.ResponseHandler;
 
 import java.util.function.BiFunction;
@@ -24,16 +24,16 @@ import java.util.function.BiFunction;
 public class CustomResponseHandler<R> implements ResponseHandler<R> {
 
     private final Class<R> responseType;
-    private final BiFunction<Origin, R, Boolean> responseHandler;
+    private final BiFunction<Context, R, Boolean> responseHandler;
 
-    public CustomResponseHandler(Class<R> responseType, BiFunction<Origin, R, Boolean> responseHandler) {
+    public CustomResponseHandler(Class<R> responseType, BiFunction<Context, R, Boolean> responseHandler) {
         this.responseType = responseType;
         this.responseHandler = responseHandler;
     }
 
     @Override
-    public Boolean apply(Origin origin, R response) {
-        return responseHandler.apply(origin, response);
+    public Boolean apply(Context context, R response) {
+        return responseHandler.apply(context, response);
     }
 
     @Override

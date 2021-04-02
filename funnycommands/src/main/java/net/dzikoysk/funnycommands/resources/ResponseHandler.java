@@ -18,7 +18,7 @@ package net.dzikoysk.funnycommands.resources;
 
 import java.util.function.BiFunction;
 
-public interface ResponseHandler<R> extends BiFunction<Origin, R, Boolean> {
+public interface ResponseHandler<R> extends BiFunction<Context, R, Boolean> {
 
     Class<R> getResponseType();
 

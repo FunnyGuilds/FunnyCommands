@@ -16,7 +16,7 @@
 
 package net.dzikoysk.funnycommands.resources.responses;
 
-import net.dzikoysk.funnycommands.resources.Origin;
+import net.dzikoysk.funnycommands.resources.Context;
 import net.dzikoysk.funnycommands.resources.ResponseHandler;
 import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
 
@@ -24,7 +24,7 @@ import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
 public final class BooleanResponseHandler implements ResponseHandler<Boolean> {
 
     @Override
-    public Boolean apply(Origin origin, Boolean response) {
+    public Boolean apply(Context context, Boolean response) {
         return response;
     }
 

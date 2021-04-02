@@ -1,7 +1,7 @@
 package net.dzikoysk.funnycommands.resources.types;
 
 import net.dzikoysk.funnycommands.resources.CommandDataType;
-import net.dzikoysk.funnycommands.resources.Origin;
+import net.dzikoysk.funnycommands.resources.Context;
 import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
 import org.jetbrains.annotations.Nullable;
 import org.panda_lang.utilities.inject.InjectorProperty;
@@ -29,7 +29,7 @@ public final class BooleanType extends AbstractType<Boolean> implements CommandD
     }
 
     @Override
-    public @Nullable Boolean apply(Origin origin, InjectorProperty required, String argument) {
+    public @Nullable Boolean apply(Context context, InjectorProperty required, String argument) {
         if (containsIgnoreCase(trueValues, argument)) {
             return true;
         }

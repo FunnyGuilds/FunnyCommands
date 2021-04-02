@@ -19,7 +19,7 @@ package net.dzikoysk.funnycommands.commands;
 import net.dzikoysk.funnycommands.FunnyCommands;
 import net.dzikoysk.funnycommands.FunnyCommandsException;
 import net.dzikoysk.funnycommands.resources.ExceptionHandler;
-import net.dzikoysk.funnycommands.resources.Origin;
+import net.dzikoysk.funnycommands.resources.Context;
 import net.dzikoysk.funnycommands.resources.ValidationException;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -27,6 +27,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.StringUtil;
+import org.jetbrains.annotations.NotNull;
 import org.panda_lang.utilities.commons.ArrayUtils;
 import org.panda_lang.utilities.commons.ClassUtils;
 import org.panda_lang.utilities.commons.ObjectUtils;
@@ -58,16 +59,16 @@ final class DynamicCommand extends Command {
     }
 
     @Override
-    public boolean execute(CommandSender sender, String alias, String[] arguments) {
-        Option<Origin> originValue = fetchOrigin(sender, alias, arguments);
+    public boolean execute(@NotNull CommandSender sender, @NotNull String alias, String[] arguments) {
+        Option<Context> contextValue = createContext(sender, alias, arguments);
 
-        if (!originValue.isDefined()) {
+        if (!contextValue.isDefined()) {
             funnyCommands.getUsageHandler().accept(sender, root);
             return true;
         }
 
-        Origin origin = originValue.get();
-        CommandStructure matchedCommand = origin.getCommandStructure();
+        Context context = contextValue.get();
+        CommandStructure matchedCommand = context.getCommandStructure();
         CommandInfo commandInfo = matchedCommand.getMetadata().getCommandInfo();
 
         if (commandInfo.isPlayerOnly() && !(sender instanceof Player)) {
@@ -76,21 +77,21 @@ final class DynamicCommand extends Command {
         }
 
         if (commandInfo.isAsync()) {
-            sender.getServer().getScheduler().runTaskAsynchronously(plugin.get(), () -> execute(sender, origin, matchedCommand, commandInfo));
+            sender.getServer().getScheduler().runTaskAsynchronously(plugin.get(), () -> execute(sender, context, matchedCommand, commandInfo));
             return true;
         }
 
-        execute(sender, origin, matchedCommand, commandInfo);
+        execute(sender, context, matchedCommand, commandInfo);
         return true;
     }
 
-    private void execute(CommandSender sender, Origin origin, CommandStructure matchedCommand, CommandInfo commandInfo) {
+    private void execute(CommandSender sender, Context context, CommandStructure matchedCommand, CommandInfo commandInfo) {
         if (!commandInfo.getPermission().isEmpty() && !sender.hasPermission(commandInfo.getPermission())) {
-            funnyCommands.getPermissionHandler().accept(origin, commandInfo.getPermission());
+            funnyCommands.getPermissionHandler().accept(context, commandInfo.getPermission());
             return;
         }
 
-        int argumentsCount = origin.getArguments().length;
+        int argumentsCount = context.getArguments().length;
 
         if (argumentsCount < commandInfo.getAmountOfRequiredParameters()) {
             funnyCommands.getUsageHandler().accept(sender, matchedCommand);
@@ -108,7 +109,7 @@ final class DynamicCommand extends Command {
         Object result;
 
         try {
-            result = invoke(metadata, metadata.getCommandMethod(), origin);
+            result = invoke(metadata, metadata.getCommandMethod(), context);
         } catch (ValidationException validationException) {
             validationException.getValidationMessage().peek(message -> sender.sendMessage(ChatColor.translateAlternateColorCodes('&', message)));
             return;
@@ -129,13 +130,13 @@ final class DynamicCommand extends Command {
             return;
         }
 
-        BiFunction<Origin, Object, Boolean> handler = ObjectUtils.cast(funnyCommands.getResponseHandlers().get(result.getClass()));
+        BiFunction<Context, Object, Boolean> handler = ObjectUtils.cast(funnyCommands.getResponseHandlers().get(result.getClass()));
 
         if (handler == null) {
             throw new FunnyCommandsException("Missing response handler for " + result.getClass());
         }
 
-        Boolean success = handler.apply(origin, result);
+        Boolean success = handler.apply(context, result);
 
         if (success == null || !success) {
             funnyCommands.getUsageHandler().accept(sender, matchedCommand);
@@ -153,26 +154,26 @@ final class DynamicCommand extends Command {
             }
         }
 
-        Option<Origin> subcommandOrigin = fetchOrigin(sender, alias, arguments);
+        Option<Context> subcommandContext = createContext(sender, alias, arguments);
 
         // list subcommands for root request
-        if (subcommandOrigin.isEmpty()) {
+        if (subcommandContext.isEmpty()) {
             List<String> names = root.getSubcommandsNames();
             return arguments.length == 0 ? names : StringUtil.copyPartialMatches(arguments[arguments.length - 1], names, new ArrayList<>());
         }
 
-        Origin origin = subcommandOrigin.get();
-        String[] normalizedArguments = origin.getArguments();
+        Context context = subcommandContext.get();
+        String[] normalizedArguments = context.getArguments();
 
-        if (origin.getCommandStructure().equals(root) && normalizedArguments.length == 1) {
-            ArrayList<String> subcommands = StringUtil.copyPartialMatches(normalizedArguments[0], origin.getCommandStructure().getSubcommandsNames(), new ArrayList<>());
+        if (context.getCommandStructure().equals(root) && normalizedArguments.length == 1) {
+            ArrayList<String> subcommands = StringUtil.copyPartialMatches(normalizedArguments[0], context.getCommandStructure().getSubcommandsNames(), new ArrayList<>());
 
             if (!subcommands.isEmpty()) {
                 return subcommands;
             }
         }
 
-        CommandInfo commandInfo = origin.getCommandStructure().getMetadata().getCommandInfo();
+        CommandInfo commandInfo = context.getCommandStructure().getMetadata().getCommandInfo();
 
         // skip undefined completions
         if (commandInfo.getCompletes().isEmpty()) {
@@ -195,13 +196,13 @@ final class DynamicCommand extends Command {
 
         // edge case to handle empty args array
         if (ArrayUtils.isEmpty(normalizedArguments)) {
-            return completer.apply(origin, StringUtils.EMPTY);
+            return completer.apply(context, StringUtils.EMPTY);
         }
 
-        return completer.apply(origin, normalizedArguments[completerIndex]);
+        return completer.apply(context, normalizedArguments[completerIndex]);
     }
 
-    private Option<Origin> fetchOrigin(CommandSender commandSender, String alias, String[] arguments) {
+    private Option<Context> createContext(CommandSender commandSender, String alias, String[] arguments) {
         String[] normalizedArguments = CommandUtils.normalize(arguments);
         CommandStructure commandStructure = root;
         int index = 0;
@@ -217,14 +218,14 @@ final class DynamicCommand extends Command {
         }
 
         String[] commandArguments = Arrays.copyOfRange(normalizedArguments, index, normalizedArguments.length);
-        Origin origin = new Origin(funnyCommands, commandSender, commandStructure, alias, commandArguments);
+        Context context = new Context(funnyCommands, commandSender, commandStructure, alias, commandArguments);
 
-        return Option.of(origin);
+        return Option.of(context);
     }
 
-    private <T> T invoke(CommandMetadata metadata, MethodInjector method, Origin origin) throws Throwable {
+    private <T> T invoke(CommandMetadata metadata, MethodInjector method, Context context) throws Throwable {
         try {
-            return method.invoke(metadata.getCommandInstance(), metadata.getCommandInfo(), origin);
+            return method.invoke(metadata.getCommandInstance(), metadata.getCommandInfo(), context);
         }
         catch (InvocationTargetException invocationTargetException) {
             throw invocationTargetException.getTargetException();

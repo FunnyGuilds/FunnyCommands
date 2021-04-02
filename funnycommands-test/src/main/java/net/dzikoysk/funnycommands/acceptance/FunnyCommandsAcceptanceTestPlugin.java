@@ -20,12 +20,11 @@ import net.dzikoysk.funnycommands.FunnyCommands;
 import net.dzikoysk.funnycommands.FunnyCommandsConstants;
 import net.dzikoysk.funnycommands.FunnyCommandsPlugin;
 import net.dzikoysk.funnycommands.commands.CommandUtils;
-import net.dzikoysk.funnycommands.resources.Origin;
+import net.dzikoysk.funnycommands.resources.Context;
 import net.dzikoysk.funnycommands.resources.responses.MultilineResponse;
 import net.dzikoysk.funnycommands.resources.types.PlayerType;
 import net.dzikoysk.funnycommands.stereotypes.Arg;
 import net.dzikoysk.funnycommands.stereotypes.FunnyCommand;
-import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.panda_lang.utilities.commons.function.Option;
@@ -88,18 +87,10 @@ public final class FunnyCommandsAcceptanceTestPlugin extends FunnyCommandsPlugin
                 .registerDefaultComponents()
                 .registerComponent(new TestCommand())
                 .type(new PlayerType(super.getServer()))
-                .type("guild", Guild.class, ((origin, required, guild) ->  {
-                    return guildService.guilds.get(guild);
-                }))
-                .bind(resources -> {
-                    resources.annotatedWith(PluginInstance.class).assignHandler(((parameter, pluginInstance, injectorArgs) -> {
-                        return plugin;
-                    }));
-                })
-                .completer("guilds", (origin, prefix, limit) -> {
-                    return CommandUtils.collectCompletions(guildService.guilds.values(), prefix, limit, ArrayList::new, guild -> guild.name);
-                })
-                .validator(ArrayLengthValidator.class, null, ((origin, arrayLengthValidator, parameter, value) -> {
+                .type("guild", Guild.class, ((context, required, guild) -> guildService.guilds.get(guild)))
+                .bind(resources -> resources.annotatedWith(PluginInstance.class).assignHandler(((parameter, pluginInstance, injectorArgs) -> plugin)))
+                .completer("guilds", (context, prefix, limit) -> CommandUtils.collectCompletions(guildService.guilds.values(), prefix, limit, ArrayList::new, guild -> guild.name))
+                .validator(ArrayLengthValidator.class, null, ((context, arrayLengthValidator, parameter, value) -> {
                     if (!parameter.getType().isArray()) {
                         throw new IllegalArgumentException(parameter + "is not an array");
                     }
@@ -107,13 +98,13 @@ public final class FunnyCommandsAcceptanceTestPlugin extends FunnyCommandsPlugin
                     Object[] array = (Object[]) value;
 
                     if (array.length > arrayLengthValidator.maxLength()) {
-                        origin.getCommandSender().sendMessage(origin.format("&cToo many arguments"));
+                        context.getCommandSender().sendMessage(context.format("&cToo many arguments"));
                         return false;
                     }
 
                     return true;
                 }))
-                .hook();
+                .install();
     }
 
     @Override
@@ -121,65 +112,64 @@ public final class FunnyCommandsAcceptanceTestPlugin extends FunnyCommandsPlugin
         funnyCommands.dispose();
     }
 
-    @FunnyComponent
-    private static final class TestCommand {
-
-        @FunnyCommand(
-            name = "${name}",
-            aliases = "${aliases}",
-            description = "Test ${name} command",
-            permission = "funnycommands.test",
-            usage = "/${name} <player> [guild]",
-            completer = "online-players:5 guilds:5",
-            parameters = "player:target [guild:arg-guild]",
-            async = true
-        )
-        MultilineResponse test(Origin origin, CommandSender sender, @Arg @Nullable Player target, @Arg("arg-guild") Option<Guild> guild) {
-            return new MultilineResponse(
-                    "Test ${time} > " + sender + " called " + target + " and " + guild.getOrNull() + " in " + Thread.currentThread().getName(),
-                    "Subcommands: ",
-                    Joiner.on(", ").join(origin.getCommandStructure().getSubcommandsNames())
-            );
-        }
+    public static final class TestCommand {
 
         @FunnyCommand(name = "${name} version", description = "Test subcommand", usage = "/${name} version")
-        protected String version() {
+        public String version() {
             return "&a" + FunnyCommandsConstants.VERSION + " in " + Thread.currentThread().getName();
         }
 
         @FunnyCommand(name = "root")
-        protected String root() {
+        public String root() {
             return "root";
         }
 
         @FunnyCommand(name = "root sub1")
-        protected String rootSub1() {
+        public String rootSub1() {
             return "root sub1";
         }
 
         @FunnyCommand(name = "root sub2")
-        protected String rootSub2() {
+        public String rootSub2() {
             return "root sub2";
         }
 
         @FunnyCommand(name = "root sub2 sub1")
-        protected String rootSub3() {
+        public String rootSub3() {
             return "root sub2 sub1";
         }
 
         @FunnyCommand(name = "kerneltest")
-        protected void test(CommandSender sender, @PluginInstance FunnyCommandsAcceptanceTestPlugin plugin) {
+        public void test(CommandSender sender, @PluginInstance FunnyCommandsAcceptanceTestPlugin plugin) {
             sender.sendMessage("Siema, to dziala " + plugin.getName());
         }
 
         @FunnyCommand(name = "varargs", parameters = "string:content...")
-        protected String varargs(@Arg @ArrayLengthValidator(maxLength = 4) String[] content) {
+        public String varargs(@Arg @ArrayLengthValidator(maxLength = 4) String[] content) {
             return Joiner.on(", ").join(content).toString();
         }
 
         @FunnyCommand(name = "exceeded", acceptsExceeded = true)
-        protected void exceeded(String[] args) {
+        public void exceeded(String[] args) {
             System.out.println("Exceeded: " + Joiner.on(", ").join(args));
+        }
+
+        @FunnyCommand(
+                name = "${name}",
+                aliases = "${aliases}",
+                description = "Test ${name} command",
+                permission = "funnycommands.test",
+                usage = "/${name} <player> [guild]",
+                completer = "online-players:5 guilds:5",
+                parameters = "player:target [guild:arg-guild]",
+                async = true
+        )
+        public MultilineResponse test(Context context, CommandSender sender, @Arg @Nullable Player target, @Arg("arg-guild") Option<Guild> guild) {
+            return new MultilineResponse(
+                    "Test ${time} > " + sender + " called " + target + " and " + guild.getOrNull() + " in " + Thread.currentThread().getName(),
+                    "Subcommands: ",
+                    Joiner.on(", ").join(context.getCommandStructure().getSubcommandsNames())
+            );
         }
 
     }
