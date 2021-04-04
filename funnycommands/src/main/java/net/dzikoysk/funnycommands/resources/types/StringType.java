@@ -19,7 +19,7 @@ package net.dzikoysk.funnycommands.resources.types;
 import net.dzikoysk.funnycommands.resources.CommandDataType;
 import net.dzikoysk.funnycommands.resources.Context;
 import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
-import org.panda_lang.utilities.inject.InjectorProperty;
+import org.panda_lang.utilities.inject.Property;
 
 @FunnyComponent
 public final class StringType extends AbstractType<String> implements CommandDataType<String> {
@@ -29,7 +29,7 @@ public final class StringType extends AbstractType<String> implements CommandDat
     }
 
     @Override
-    public String apply(Context context, InjectorProperty required, String argument) {
+    public String apply(Context context, Property required, String argument) {
         return argument;
     }
 

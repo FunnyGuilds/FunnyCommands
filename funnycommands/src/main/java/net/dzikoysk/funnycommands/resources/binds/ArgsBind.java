@@ -19,23 +19,14 @@ package net.dzikoysk.funnycommands.resources.binds;
 import net.dzikoysk.funnycommands.commands.CommandUtils;
 import net.dzikoysk.funnycommands.resources.Bind;
 import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
-import org.panda_lang.utilities.commons.function.TriFunction;
-import org.panda_lang.utilities.inject.InjectorProperty;
-import org.panda_lang.utilities.inject.InjectorResources;
-
-import java.lang.annotation.Annotation;
+import org.panda_lang.utilities.inject.Resources;
 
 @FunnyComponent
-public final class ArgsBind implements Bind, TriFunction<InjectorProperty, Annotation, Object[], Object> {
+public final class ArgsBind implements Bind {
 
     @Override
-    public void accept(InjectorResources resources) {
-        resources.on(String[].class).assignHandler(this::apply);
-    }
-
-    @Override
-    public Object apply(InjectorProperty parameter, Annotation annotation, Object[] injectorArgs) {
-        return CommandUtils.getContext(injectorArgs).getArguments();
+    public void accept(Resources resources) {
+        resources.on(String[].class).assignHandler((property, annotation, args) -> CommandUtils.getContext(args).getArguments());
     }
 
 }

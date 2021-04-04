@@ -18,7 +18,7 @@ package net.dzikoysk.funnycommands.resources.binds;
 
 import net.dzikoysk.funnycommands.resources.Bind;
 import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
-import org.panda_lang.utilities.inject.InjectorResources;
+import org.panda_lang.utilities.inject.Resources;
 import org.panda_lang.utilities.inject.annotations.Injectable;
 
 import java.lang.annotation.Retention;
@@ -33,7 +33,7 @@ public final class RandomUUIDBind implements Bind {
     @interface RandomUUID { }
 
     @Override
-    public void accept(InjectorResources resources) {
+    public void accept(Resources resources) {
         resources.annotatedWith(RandomUUID.class).assignInstance(UUID::randomUUID);
     }
 

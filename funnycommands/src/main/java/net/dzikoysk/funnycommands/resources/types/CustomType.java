@@ -19,19 +19,19 @@ package net.dzikoysk.funnycommands.resources.types;
 import net.dzikoysk.funnycommands.resources.CommandDataType;
 import net.dzikoysk.funnycommands.resources.Context;
 import org.panda_lang.utilities.commons.function.TriFunction;
-import org.panda_lang.utilities.inject.InjectorProperty;
+import org.panda_lang.utilities.inject.Property;
 
 public class CustomType<T> extends AbstractType<T> implements CommandDataType<T> {
 
-    private final TriFunction<Context, InjectorProperty, String, T> deserializer;
+    private final TriFunction<Context, Property, String, T> deserializer;
 
-    public CustomType(String name, Class<T> type, TriFunction<Context, InjectorProperty, String, T> deserializer) {
+    public CustomType(String name, Class<T> type, TriFunction<Context, Property, String, T> deserializer) {
         super(name, type);
         this.deserializer = deserializer;
     }
 
     @Override
-    public T apply(Context context, InjectorProperty required, String argument) {
+    public T apply(Context context, Property required, String argument) {
         return deserializer.apply(context, required, argument);
     }
 

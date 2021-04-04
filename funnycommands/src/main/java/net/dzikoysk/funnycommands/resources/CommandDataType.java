@@ -17,9 +17,9 @@
 package net.dzikoysk.funnycommands.resources;
 
 import org.panda_lang.utilities.commons.function.TriFunction;
-import org.panda_lang.utilities.inject.InjectorProperty;
+import org.panda_lang.utilities.inject.Property;
 
-public interface CommandDataType<T> extends TriFunction<Context, InjectorProperty, String, T> {
+public interface CommandDataType<T> extends TriFunction<Context, Property, String, T> {
 
     Class<T> getType();
 

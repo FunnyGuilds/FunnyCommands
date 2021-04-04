@@ -4,7 +4,7 @@ import net.dzikoysk.funnycommands.FunnyCommandsUtils;
 import net.dzikoysk.funnycommands.resources.CommandDataType;
 import net.dzikoysk.funnycommands.resources.Context;
 import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
-import org.panda_lang.utilities.inject.InjectorProperty;
+import org.panda_lang.utilities.inject.Property;
 
 @FunnyComponent
 public final class ShortType extends AbstractType<Short> implements CommandDataType<Short> {
@@ -14,7 +14,7 @@ public final class ShortType extends AbstractType<Short> implements CommandDataT
     }
 
     @Override
-    public Short apply(Context context, InjectorProperty required, String argument) {
+    public Short apply(Context context, Property required, String argument) {
         return FunnyCommandsUtils.parseNumber(argument, Short::parseShort);
     }
 

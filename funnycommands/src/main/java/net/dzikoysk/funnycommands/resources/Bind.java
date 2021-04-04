@@ -16,9 +16,9 @@
 
 package net.dzikoysk.funnycommands.resources;
 
-import org.panda_lang.utilities.inject.InjectorResources;
+import org.panda_lang.utilities.inject.Resources;
 
 import java.util.function.Consumer;
 
 @FunctionalInterface
-public interface Bind extends Consumer<InjectorResources> { }
+public interface Bind extends Consumer<Resources> { }

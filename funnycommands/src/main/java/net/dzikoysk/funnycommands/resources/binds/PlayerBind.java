@@ -6,13 +6,13 @@ import net.dzikoysk.funnycommands.resources.Context;
 import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.panda_lang.utilities.inject.InjectorResources;
+import org.panda_lang.utilities.inject.Resources;
 
 @FunnyComponent
 public final class PlayerBind implements Bind {
 
     @Override
-    public void accept(InjectorResources injectorResources) {
+    public void accept(Resources injectorResources) {
         injectorResources.on(Player.class).assignHandler((injectorProperty, annotation, args) -> {
             Context context = CommandUtils.getContext(args);
             CommandSender commandSender = context.getCommandSender();

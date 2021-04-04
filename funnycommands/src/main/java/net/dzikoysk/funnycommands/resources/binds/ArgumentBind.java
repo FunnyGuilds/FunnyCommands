@@ -27,93 +27,88 @@ import net.dzikoysk.funnycommands.stereotypes.Arg;
 import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
 import org.panda_lang.utilities.commons.StringUtils;
 import org.panda_lang.utilities.commons.function.Option;
-import org.panda_lang.utilities.commons.function.TriFunction;
-import org.panda_lang.utilities.inject.InjectorProperty;
-import org.panda_lang.utilities.inject.InjectorResources;
+import org.panda_lang.utilities.inject.Resources;
 
 import java.lang.reflect.Array;
 import java.util.Optional;
 
 @FunnyComponent
-public final class ArgumentBind implements Bind, TriFunction<InjectorProperty, Arg, Object[], Object> {
+public final class ArgumentBind implements Bind {
 
     @Override
-    public void accept(InjectorResources resources) {
-        resources.annotatedWith(Arg.class).assignHandler(this);
-    }
+    public void accept(Resources resources) {
+        resources.annotatedWith(Arg.class).assignHandler((property, arg, args) -> {
+            CommandInfo command = CommandUtils.getCommandInfo(args);
+            Context context = CommandUtils.getContext(args);
+            String parameter = arg.value();
 
-    @Override
-    public Object apply(InjectorProperty required, Arg arg, Object... injectorArgs) {
-        CommandInfo command = CommandUtils.getCommandInfo(injectorArgs);
-        Context context = CommandUtils.getContext(injectorArgs);
-        String parameter = arg.value();
-
-        if (parameter.isEmpty()) {
-            parameter = required.getName();
-        }
-
-        CommandParameter commandParameter = command.getParameters().get(parameter);
-
-        if (commandParameter == null) {
-            throw new FunnyCommandsException("Unknown parameter: " + arg.value() + " (inferred: " + parameter + ")");
-        }
-
-        String[] arguments = context.getArguments();
-        String[] selected = StringUtils.EMPTY_ARRAY;
-
-        if (commandParameter.getIndex() < arguments.length) {
-            if (commandParameter.isVarargs()) {
-                selected = new String[arguments.length - commandParameter.getIndex()];
-                System.arraycopy(arguments, commandParameter.getIndex(), selected, 0, selected.length);
+            if (parameter.isEmpty()) {
+                parameter = property.getName();
             }
-            else {
-                selected = new String[] { arguments[commandParameter.getIndex()] };
+
+            CommandParameter commandParameter = command.getParameters().get(parameter);
+
+            if (commandParameter == null) {
+                throw new FunnyCommandsException("Unknown parameter: " + arg.value() + " (inferred: " + parameter + ")");
             }
-        }
-        else if (!commandParameter.isOptional()) {
-            throw new FunnyCommandsException(commandParameter + " is not marked as optional"); // should not happen
-        }
 
-        TypeMapper<?> mapper = command.getMappers().get(parameter);
-        Object[] mappedArguments = (Object[]) Array.newInstance(mapper.getType(), selected.length);
+            String[] arguments = context.getArguments();
+            String[] selected = StringUtils.EMPTY_ARRAY;
 
-        for (int index = 0; index < selected.length; index++) {
-            mappedArguments[index] = command.getMappers()
-                    .get(parameter)
-                    .map(context, required, selected[index]);
-        }
-
-        Object result = mappedArguments;
-
-        if (!commandParameter.isVarargs()) {
-            if (mappedArguments.length == 0) {
-                result = null;
+            if (commandParameter.getIndex() < arguments.length) {
+                if (commandParameter.isVarargs()) {
+                    selected = new String[arguments.length - commandParameter.getIndex()];
+                    System.arraycopy(arguments, commandParameter.getIndex(), selected, 0, selected.length);
+                }
+                else {
+                    selected = new String[] { arguments[commandParameter.getIndex()] };
+                }
             }
-            else if (mappedArguments.length == 1) {
-                result = mappedArguments[0];
+            else if (!commandParameter.isOptional()) {
+                throw new FunnyCommandsException(commandParameter + " is not marked as optional"); // should not happen
             }
-            else {
-                throw new FunnyCommandsException("Invalid amount of command parameters"); // should not happen
+
+            TypeMapper<?> mapper = command.getMappers().get(parameter);
+            Object[] mappedArguments = (Object[]) Array.newInstance(mapper.getType(), selected.length);
+
+            for (int index = 0; index < selected.length; index++) {
+                mappedArguments[index] = command.getMappers()
+                        .get(parameter)
+                        .map(context, property, selected[index]);
             }
-        }
 
-        if (required.getType().isAssignableFrom(Option.class)) {
-            return Option.of(result);
-        }
+            Object result = mappedArguments;
 
-        if (required.getType() == Optional.class) {
-            return Optional.ofNullable(result);
-        }
+            if (!commandParameter.isVarargs()) {
+                if (mappedArguments.length == 0) {
+                    result = null;
+                }
+                else if (mappedArguments.length == 1) {
+                    result = mappedArguments[0];
+                }
+                else {
+                    throw new FunnyCommandsException("Invalid amount of command parameters"); // should not happen
+                }
+            }
 
-        if (result != null) {
-            return result;
-        }
+            if (property.getType().isAssignableFrom(Option.class)) {
+                return Option.of(result);
+            }
 
-        if (required.getAnnotation(javax.annotation.Nullable.class) != null) {
-            return null;
-        }
+            if (property.getType() == Optional.class) {
+                return Optional.ofNullable(result);
+            }
 
-        throw new NullPointerException("Illegal null value at " + required);
+            if (result != null) {
+                return result;
+            }
+
+            if (property.getAnnotation(javax.annotation.Nullable.class) != null) {
+                return null;
+            }
+
+            throw new NullPointerException("Illegal null value at " + property);
+        });
     }
 
 }

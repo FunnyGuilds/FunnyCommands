@@ -19,9 +19,9 @@ package net.dzikoysk.funnycommands;
 import net.dzikoysk.funnycommands.resources.Bind;
 import net.dzikoysk.funnycommands.resources.CommandDataType;
 import net.dzikoysk.funnycommands.resources.Completer;
+import net.dzikoysk.funnycommands.resources.Context;
 import net.dzikoysk.funnycommands.resources.DefaultResources;
 import net.dzikoysk.funnycommands.resources.ExceptionHandler;
-import net.dzikoysk.funnycommands.resources.Context;
 import net.dzikoysk.funnycommands.resources.PermissionHandler;
 import net.dzikoysk.funnycommands.resources.ResponseHandler;
 import net.dzikoysk.funnycommands.resources.UsageHandler;
@@ -37,7 +37,7 @@ import org.panda_lang.utilities.commons.ObjectUtils;
 import org.panda_lang.utilities.commons.function.Lazy;
 import org.panda_lang.utilities.commons.function.ThrowingQuadFunction;
 import org.panda_lang.utilities.commons.function.TriFunction;
-import org.panda_lang.utilities.inject.InjectorProperty;
+import org.panda_lang.utilities.inject.Property;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -145,7 +145,7 @@ public final class FunnyCommandsConfiguration {
         return type(commandDataType.getName(), commandDataType.getType(), commandDataType);
     }
 
-    public <T> FunnyCommandsConfiguration type(String typeName, Class<T> type, TriFunction<Context, InjectorProperty, String, T> deserializer) {
+    public <T> FunnyCommandsConfiguration type(String typeName, Class<T> type, TriFunction<Context, Property, String, T> deserializer) {
         this.typeMappers.put(typeName, new TypeMapper<>(typeName, type, deserializer));
         return this;
     }
@@ -155,7 +155,7 @@ public final class FunnyCommandsConfiguration {
         return this;
     }
 
-    public <A extends Annotation, V, E extends Exception> FunnyCommandsConfiguration validator(@Nullable  Class<A> annotation, @Nullable Class<V> type, ThrowingQuadFunction<Context, A, InjectorProperty, V, Boolean, E> function) {
+    public <A extends Annotation, V, E extends Exception> FunnyCommandsConfiguration validator(@Nullable  Class<A> annotation, @Nullable Class<V> type, ThrowingQuadFunction<Context, A, Property, V, Boolean, E> function) {
         return validator(new CustomValidator<>(annotation, type, function));
     }
 

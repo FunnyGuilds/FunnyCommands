@@ -20,16 +20,14 @@ import net.dzikoysk.funnycommands.commands.CommandUtils;
 import net.dzikoysk.funnycommands.resources.Bind;
 import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
 import org.bukkit.command.CommandSender;
-import org.panda_lang.utilities.inject.InjectorResources;
+import org.panda_lang.utilities.inject.Resources;
 
 @FunnyComponent
 public final class CommandSenderBind implements Bind {
 
     @Override
-    public void accept(InjectorResources resources) {
-        resources.on(CommandSender.class).assignHandler(((parameter, annotation, objects) -> {
-            return CommandUtils.getContext(objects).getCommandSender();
-        }));
+    public void accept(Resources resources) {
+        resources.on(CommandSender.class).assignHandler(((parameter, annotation, objects) -> CommandUtils.getContext(objects).getCommandSender()));
     }
 
 }
