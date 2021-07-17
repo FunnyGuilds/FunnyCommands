@@ -23,9 +23,9 @@ import net.dzikoysk.funnycommands.resources.types.TypeMapper;
 import net.dzikoysk.funnycommands.stereotypes.FunnyCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
-import org.panda_lang.utilities.commons.ReflectionUtils;
-import org.panda_lang.utilities.commons.function.PandaStream;
-import org.panda_lang.utilities.commons.text.Formatter;
+import panda.std.stream.PandaStream;
+import panda.utilities.ReflectionUtils;
+import panda.utilities.text.Formatter;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;

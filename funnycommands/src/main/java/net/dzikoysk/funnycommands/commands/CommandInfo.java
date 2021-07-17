@@ -17,7 +17,7 @@
 package net.dzikoysk.funnycommands.commands;
 
 import net.dzikoysk.funnycommands.resources.types.TypeMapper;
-import org.panda_lang.utilities.commons.function.PandaStream;
+import panda.std.stream.PandaStream;
 
 import java.util.List;
 import java.util.Map;

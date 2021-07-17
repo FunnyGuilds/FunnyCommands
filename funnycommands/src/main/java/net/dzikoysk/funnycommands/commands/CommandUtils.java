@@ -18,12 +18,12 @@ package net.dzikoysk.funnycommands.commands;
 
 import net.dzikoysk.funnycommands.resources.Context;
 import org.apache.commons.lang.StringUtils;
-import org.panda_lang.utilities.commons.CharacterUtils;
-import org.panda_lang.utilities.commons.collection.FixedStack;
-import org.panda_lang.utilities.commons.collection.IStack;
-import org.panda_lang.utilities.commons.function.PandaStream;
-import org.panda_lang.utilities.commons.text.Formatter;
-import org.panda_lang.utilities.commons.text.Joiner;
+import panda.utilities.CharacterUtils;
+import panda.utilities.collection.FixedStack;
+import panda.utilities.text.Formatter;
+import panda.utilities.text.Joiner;
+import panda.std.stream.PandaStream;
+import panda.utilities.collection.IStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;

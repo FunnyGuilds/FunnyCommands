@@ -25,11 +25,11 @@ import net.dzikoysk.funnycommands.resources.responses.BooleanResponseHandler;
 import net.dzikoysk.funnycommands.resources.types.StringType;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Nullable;
-import org.panda_lang.utilities.commons.ObjectUtils;
-import org.panda_lang.utilities.commons.function.Option;
-import org.panda_lang.utilities.commons.text.Formatter;
 import org.panda_lang.utilities.inject.DependencyInjection;
 import org.panda_lang.utilities.inject.Injector;
+import panda.std.Option;
+import panda.utilities.ObjectUtils;
+import panda.utilities.text.Formatter;
 
 import java.util.ArrayList;
 import java.util.Collection;

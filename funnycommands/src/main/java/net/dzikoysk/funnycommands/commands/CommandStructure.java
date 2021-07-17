@@ -16,8 +16,8 @@
 
 package net.dzikoysk.funnycommands.commands;
 
-import org.panda_lang.utilities.commons.StringUtils;
-import org.panda_lang.utilities.commons.function.Option;
+import panda.utilities.StringUtils;
+import panda.std.Option;
 
 import java.util.ArrayList;
 import java.util.Collection;

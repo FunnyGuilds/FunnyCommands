@@ -28,8 +28,8 @@ import net.dzikoysk.funnycommands.resources.types.IntegerType;
 import net.dzikoysk.funnycommands.resources.types.LongType;
 import net.dzikoysk.funnycommands.resources.types.ShortType;
 import net.dzikoysk.funnycommands.resources.types.StringType;
-import org.panda_lang.utilities.commons.ObjectUtils;
-import org.panda_lang.utilities.commons.iterable.ResourcesIterable;
+import panda.utilities.ObjectUtils;
+import panda.utilities.iterable.ResourcesIterable;
 
 import java.util.Arrays;
 import java.util.Collections;

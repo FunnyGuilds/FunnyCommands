@@ -18,7 +18,7 @@ package net.dzikoysk.funnycommands.resources.completers;
 
 import net.dzikoysk.funnycommands.resources.Completer;
 import net.dzikoysk.funnycommands.resources.Context;
-import org.panda_lang.utilities.commons.function.TriFunction;
+import panda.std.function.TriFunction;
 
 import java.util.List;
 

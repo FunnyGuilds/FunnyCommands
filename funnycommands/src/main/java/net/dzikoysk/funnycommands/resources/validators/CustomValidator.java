@@ -19,7 +19,7 @@ package net.dzikoysk.funnycommands.resources.validators;
 import net.dzikoysk.funnycommands.resources.Context;
 import net.dzikoysk.funnycommands.resources.Validator;
 import org.jetbrains.annotations.Nullable;
-import org.panda_lang.utilities.commons.function.ThrowingQuadFunction;
+import panda.std.function.ThrowingQuadFunction;
 import org.panda_lang.utilities.inject.Property;
 
 import java.lang.annotation.Annotation;

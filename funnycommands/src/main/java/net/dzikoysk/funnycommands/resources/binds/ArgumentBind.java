@@ -25,9 +25,9 @@ import net.dzikoysk.funnycommands.resources.Context;
 import net.dzikoysk.funnycommands.resources.types.TypeMapper;
 import net.dzikoysk.funnycommands.stereotypes.Arg;
 import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
-import org.panda_lang.utilities.commons.StringUtils;
-import org.panda_lang.utilities.commons.function.Option;
 import org.panda_lang.utilities.inject.Resources;
+import panda.std.Option;
+import panda.utilities.StringUtils;
 
 import java.lang.reflect.Array;
 import java.util.Optional;

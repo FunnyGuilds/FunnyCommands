@@ -25,9 +25,9 @@ import org.bukkit.help.GenericCommandHelpTopic;
 import org.bukkit.help.HelpMap;
 import org.bukkit.help.HelpTopic;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.panda_lang.utilities.commons.ObjectUtils;
-import org.panda_lang.utilities.commons.function.Lazy;
-import org.panda_lang.utilities.commons.function.ThrowingSupplier;
+import panda.std.Lazy;
+import panda.std.function.ThrowingSupplier;
+import panda.utilities.ObjectUtils;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;

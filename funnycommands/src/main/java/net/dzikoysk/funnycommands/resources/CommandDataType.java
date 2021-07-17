@@ -16,7 +16,7 @@
 
 package net.dzikoysk.funnycommands.resources;
 
-import org.panda_lang.utilities.commons.function.TriFunction;
+import panda.std.function.TriFunction;
 import org.panda_lang.utilities.inject.Property;
 
 public interface CommandDataType<T> extends TriFunction<Context, Property, String, T> {

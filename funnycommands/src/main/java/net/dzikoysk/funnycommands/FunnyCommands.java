@@ -25,7 +25,7 @@ import net.dzikoysk.funnycommands.resources.Validator;
 import net.dzikoysk.funnycommands.resources.types.TypeMapper;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.panda_lang.utilities.commons.text.Formatter;
+import panda.utilities.text.Formatter;
 import org.panda_lang.utilities.inject.Injector;
 
 import java.util.Collection;

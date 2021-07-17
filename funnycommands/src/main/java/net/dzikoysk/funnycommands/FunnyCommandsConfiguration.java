@@ -33,11 +33,11 @@ import net.dzikoysk.funnycommands.resources.types.TypeMapper;
 import net.dzikoysk.funnycommands.resources.validators.CustomValidator;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
-import org.panda_lang.utilities.commons.ObjectUtils;
-import org.panda_lang.utilities.commons.function.Lazy;
-import org.panda_lang.utilities.commons.function.ThrowingQuadFunction;
-import org.panda_lang.utilities.commons.function.TriFunction;
 import org.panda_lang.utilities.inject.Property;
+import panda.std.Lazy;
+import panda.std.function.ThrowingQuadFunction;
+import panda.std.function.TriFunction;
+import panda.utilities.ObjectUtils;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;

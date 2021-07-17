@@ -18,7 +18,7 @@ package net.dzikoysk.funnycommands.resources.responses;
 
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Nullable;
-import org.panda_lang.utilities.commons.function.Option;
+import panda.std.Option;
 
 public final class MultilineResponse {
 

@@ -27,9 +27,9 @@ import net.dzikoysk.funnycommands.stereotypes.Arg;
 import net.dzikoysk.funnycommands.stereotypes.FunnyCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.panda_lang.utilities.commons.function.Option;
-import org.panda_lang.utilities.commons.text.Joiner;
 import org.panda_lang.utilities.inject.annotations.Injectable;
+import panda.std.Option;
+import panda.utilities.text.Joiner;
 
 import javax.annotation.Nullable;
 import java.lang.annotation.Retention;

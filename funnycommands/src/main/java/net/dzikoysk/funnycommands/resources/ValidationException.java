@@ -16,7 +16,7 @@
 
 package net.dzikoysk.funnycommands.resources;
 
-import org.panda_lang.utilities.commons.function.Option;
+import panda.std.Option;
 
 public final class ValidationException extends RuntimeException {
 

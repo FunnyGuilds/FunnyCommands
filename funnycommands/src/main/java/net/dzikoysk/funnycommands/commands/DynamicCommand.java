@@ -18,8 +18,8 @@ package net.dzikoysk.funnycommands.commands;
 
 import net.dzikoysk.funnycommands.FunnyCommands;
 import net.dzikoysk.funnycommands.FunnyCommandsException;
-import net.dzikoysk.funnycommands.resources.ExceptionHandler;
 import net.dzikoysk.funnycommands.resources.Context;
+import net.dzikoysk.funnycommands.resources.ExceptionHandler;
 import net.dzikoysk.funnycommands.resources.ValidationException;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -28,13 +28,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
-import org.panda_lang.utilities.commons.ArrayUtils;
-import org.panda_lang.utilities.commons.ClassUtils;
-import org.panda_lang.utilities.commons.ObjectUtils;
-import org.panda_lang.utilities.commons.StringUtils;
-import org.panda_lang.utilities.commons.function.Option;
 import org.panda_lang.utilities.inject.DependencyInjectionException;
 import org.panda_lang.utilities.inject.MethodInjector;
+import panda.std.Option;
+import panda.utilities.ArrayUtils;
+import panda.utilities.ClassUtils;
+import panda.utilities.ObjectUtils;
+import panda.utilities.StringUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;

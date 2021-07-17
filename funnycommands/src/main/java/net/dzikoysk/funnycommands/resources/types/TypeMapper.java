@@ -17,7 +17,7 @@
 package net.dzikoysk.funnycommands.resources.types;
 
 import net.dzikoysk.funnycommands.resources.Context;
-import org.panda_lang.utilities.commons.function.TriFunction;
+import panda.std.function.TriFunction;
 import org.panda_lang.utilities.inject.Property;
 
 public final class TypeMapper<T> {

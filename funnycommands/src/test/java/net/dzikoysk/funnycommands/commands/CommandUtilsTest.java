@@ -18,7 +18,7 @@ package net.dzikoysk.funnycommands.commands;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.panda_lang.utilities.commons.ArrayUtils;
+import panda.utilities.ArrayUtils;
 
 class CommandUtilsTest {
 
