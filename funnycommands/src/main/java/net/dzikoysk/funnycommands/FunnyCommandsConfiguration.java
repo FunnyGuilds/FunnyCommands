@@ -33,6 +33,8 @@ import net.dzikoysk.funnycommands.resources.types.TypeMapper;
 import net.dzikoysk.funnycommands.resources.validators.CustomValidator;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
+import org.panda_lang.utilities.inject.DependencyInjection;
+import org.panda_lang.utilities.inject.Injector;
 import org.panda_lang.utilities.inject.Property;
 import panda.std.Lazy;
 import panda.std.function.ThrowingQuadFunction;
@@ -64,6 +66,7 @@ public final class FunnyCommandsConfiguration {
     protected final Map<Class<?>, ResponseHandler<?>> responseHandlers = new HashMap<>();
     protected PermissionHandler permissionHandler;
     protected UsageHandler usageHandler;
+    protected Injector injector = DependencyInjection.createInjector();
 
     FunnyCommandsConfiguration(Supplier<JavaPlugin> plugin) {
         this.plugin = new Lazy<>(plugin);
@@ -198,6 +201,11 @@ public final class FunnyCommandsConfiguration {
 
     public FunnyCommandsConfiguration usageHandler(UsageHandler usageHandler) {
         this.usageHandler = usageHandler;
+        return this;
+    }
+
+    public FunnyCommandsConfiguration injector(Injector injector) {
+        this.injector = injector;
         return this;
     }
 

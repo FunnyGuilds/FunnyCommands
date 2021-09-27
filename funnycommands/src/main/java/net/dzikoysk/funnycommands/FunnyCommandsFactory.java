@@ -44,9 +44,8 @@ final class FunnyCommandsFactory {
             formatter.register("${" + key + "}", () -> value.apply(key));
         });
 
-        Injector injector = DependencyInjection.createInjector(resources -> {
-            configuration.binds.forEach(bind -> bind.accept(resources));
-        });
+        Injector injector = configuration.injector;
+        configuration.binds.forEach(bind -> bind.accept(injector.getResources()));
 
         configuration.validators.forEach(validator -> {
             if (validator.getType() == null && validator.getAnnotation() == null) {
@@ -68,7 +67,7 @@ final class FunnyCommandsFactory {
 
         for (Class<?> commandClass : configuration.commandsClasses) {
             try {
-                commands.add(injector.newInstance(commandClass));
+                commands.add(injector.newInstanceWithFields(commandClass));
             } catch (Throwable throwable) {
                 throw new FunnyCommandsException("Failed to instantiate command class " + commandClass, throwable);
             }

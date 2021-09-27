@@ -20,7 +20,7 @@
 
     <groupId>net.dzikoysk</groupId>
     <artifactId>funnycommands-parent</artifactId>
-    <version>0.4.0</version>
+    <version>0.4.1</version>
     <modules>
         <module>funnycommands</module>
         <module>funnycommands-test</module>
@@ -37,7 +37,7 @@
         <repository>
             <id>panda-repository</id>
             <name>Panda Repository</name>
-            <url>https://repo.panda-lang.org/</url>
+            <url>https://repo.panda-lang.org/releases</url>
         </repository>
         <repository>
             <id>spigot-repo</id>
