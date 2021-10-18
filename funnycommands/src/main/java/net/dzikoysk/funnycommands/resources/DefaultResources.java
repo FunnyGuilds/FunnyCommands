@@ -2,6 +2,7 @@ package net.dzikoysk.funnycommands.resources;
 
 import net.dzikoysk.funnycommands.resources.binds.ArgsBind;
 import net.dzikoysk.funnycommands.resources.binds.ArgumentBind;
+import net.dzikoysk.funnycommands.resources.binds.CommandInfoBind;
 import net.dzikoysk.funnycommands.resources.binds.CommandSenderBind;
 import net.dzikoysk.funnycommands.resources.binds.ContextBind;
 import net.dzikoysk.funnycommands.resources.binds.PlayerBind;
@@ -39,6 +40,7 @@ public final class DefaultResources {
     public static Iterable<? extends Bind> BINDS = Arrays.asList(
             new ArgsBind(),
             new ArgumentBind(),
+            new CommandInfoBind(),
             new CommandSenderBind(),
             new ContextBind(),
             new PlayerBind(),
