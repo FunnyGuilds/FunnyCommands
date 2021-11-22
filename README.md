@@ -7,23 +7,37 @@ FunnyGuilds command framework based on top of the [Panda](https://github.com/pan
 * Null safety
 
 ### Install
-FunnyCommands artifact is available in Panda repository. Add these declarations to your `pom.xml`. 
-```xml
-<dependency>
-  <groupId>net.dzikoysk</groupId>
-  <artifactId>funnycommands</artifactId>
-  <version>0.4.2</version>
-</dependency>
-```
-
-Located in Maven repository: [repo.panda-lang.org](https://repo.panda-lang.org/)
+FunnyCommands artifact is available in [repo.panda-lang.org](https://repo.panda-lang.org/) repository. 
+Add these declarations to your `pom.xml`. 
 
 ```xml
-<repository>
+<repositories>
+  <repository>
     <id>panda-repository</id>
     <name>Panda Repository</name>
     <url>https://repo.panda-lang.org/releases</url>
-</repository>
+  </repository>
+</repositories>
+
+<dependencies>
+  <dependency>
+    <groupId>net.dzikoysk</groupId>
+    <artifactId>funnycommands</artifactId>
+    <version>0.4.2</version>
+  </dependency>
+</dependencies>
+```
+
+Or in Gradle:
+
+```groovy
+repositories {
+  maven { url "https://repo.panda-lang.org/releases" }
+}
+
+dependencies {
+  implementation "net.dzikoysk:funnycommands:0.4.2"
+}
 ```
 
 Requirements:
