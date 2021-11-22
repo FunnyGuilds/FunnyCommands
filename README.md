@@ -22,7 +22,7 @@ Located in Maven repository: [repo.panda-lang.org](https://repo.panda-lang.org/)
 <repository>
     <id>panda-repository</id>
     <name>Panda Repository</name>
-    <url>https://repo.panda-lang.org/</url>
+    <url>https://repo.panda-lang.org/releases</url>
 </repository>
 ```
 
