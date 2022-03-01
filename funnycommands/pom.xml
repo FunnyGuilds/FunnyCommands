@@ -20,7 +20,7 @@
     <parent>
         <artifactId>funnycommands-parent</artifactId>
         <groupId>net.dzikoysk</groupId>
-        <version>0.4.3</version>
+        <version>0.5.1</version>
     </parent>
 
     <artifactId>funnycommands</artifactId>
@@ -31,12 +31,7 @@
         <dependency>
             <groupId>org.panda-lang.utilities</groupId>
             <artifactId>di</artifactId>
-            <version>1.5.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.panda-lang</groupId>
-            <artifactId>panda-utilities</artifactId>
-            <version>0.5.2-alpha</version>
+            <version>1.5.1</version>
         </dependency>
 
         <!-- General -->

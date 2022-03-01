@@ -20,27 +20,27 @@ import org.jetbrains.annotations.Nullable;
 import panda.std.Option;
 import org.panda_lang.utilities.inject.MethodInjector;
 
-public final class CommandMetadata implements Comparable<CommandMetadata> {
+public class CommandMetadata implements Comparable<CommandMetadata> {
 
     private final Object commandInstance;
     private final CommandInfo commandInfo;
     private final MethodInjector commandMethod;
-    private final @Nullable MethodInjector tabCompleteMethod;
+    private final Option<MethodInjector> tabCompleteMethod;
 
     CommandMetadata(Object commandInstance, CommandInfo commandInfo, MethodInjector commandMethod, @Nullable MethodInjector tabCompleteMethod) {
         this.commandInstance = commandInstance;
         this.commandInfo = commandInfo;
         this.commandMethod = commandMethod;
-        this.tabCompleteMethod = tabCompleteMethod;
+        this.tabCompleteMethod = Option.of(tabCompleteMethod);
     }
 
     @Override
-    public int compareTo(CommandMetadata o) {
-        return commandInfo.getName().compareTo(o.getName());
+    public int compareTo(CommandMetadata to) {
+        return commandInfo.getName().compareTo(to.getName());
     }
 
     protected Option<MethodInjector> getTabCompleteMethod() {
-        return Option.of(tabCompleteMethod);
+        return tabCompleteMethod;
     }
 
     protected MethodInjector getCommandMethod() {

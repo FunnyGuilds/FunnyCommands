@@ -51,15 +51,16 @@ final class DynamicCommand extends Command {
     private final Supplier<JavaPlugin> plugin;
     private final CommandStructure root;
 
-    protected DynamicCommand(FunnyCommands funnyCommands, Supplier<JavaPlugin> plugin, CommandStructure root, CommandInfo commandInfo) {
+    DynamicCommand(FunnyCommands funnyCommands, Supplier<JavaPlugin> plugin, CommandStructure root, CommandInfo commandInfo) {
         super(commandInfo.getName(), commandInfo.getDescription(), commandInfo.getUsageMessage(), new ArrayList<>(commandInfo.getAliases()));
         this.funnyCommands = funnyCommands;
         this.plugin = plugin;
         this.root = root;
     }
 
+    @SuppressWarnings("NullableProblems")
     @Override
-    public boolean execute(@NotNull CommandSender sender, @NotNull String alias, String[] arguments) {
+    public boolean execute(CommandSender sender, String alias, String[] arguments) {
         Option<Context> contextValue = createContext(sender, alias, arguments);
 
         if (!contextValue.isDefined()) {
@@ -117,7 +118,6 @@ final class DynamicCommand extends Command {
             resolveExceptionHandler(throwable.getClass())
                     .orThrow(() -> new FunnyCommandsException("Cannot invoke command", throwable))
                     .apply(ObjectUtils.cast(throwable));
-
             return;
         }
 
@@ -143,6 +143,7 @@ final class DynamicCommand extends Command {
         }
     }
 
+    @SuppressWarnings("NullableProblems")
     @Override
     public List<String> tabComplete(CommandSender sender, String alias, String[] arguments) throws IllegalArgumentException {
         // custom tab complete

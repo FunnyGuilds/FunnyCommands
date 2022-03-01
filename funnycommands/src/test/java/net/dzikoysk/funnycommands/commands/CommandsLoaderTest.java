@@ -49,32 +49,32 @@ class CommandsLoaderTest {
 
     private static final class CommandA {
         @FunnyCommand(name = "a")
-        protected boolean a() { return true; }
+        boolean a() { return true; }
     }
 
     private static final class CommandB {
         @FunnyCommand(name = "b")
-        protected boolean b() { return true; }
+        boolean b() { return true; }
     }
 
     private static final class CommandB1 {
         @FunnyCommand(name = "b 1")
-        protected boolean b1() { return true; }
+        boolean b1() { return true; }
     }
 
     private static final class CommandB2 {
         @FunnyCommand(name = "b 2")
-        protected boolean b2() { return true; }
+        boolean b2() { return true; }
     }
 
     private static final class CommandB12 {
         @FunnyCommand(name = "b 1 2")
-        protected boolean b12() { return true; }
+        boolean b12() { return true; }
     }
 
     private static final class CommandC {
         @FunnyCommand(name = "c")
-        protected boolean c() { return true; }
+        boolean c() { return true; }
     }
 
 }

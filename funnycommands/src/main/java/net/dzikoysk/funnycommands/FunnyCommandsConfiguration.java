@@ -37,6 +37,7 @@ import org.panda_lang.utilities.inject.DependencyInjection;
 import org.panda_lang.utilities.inject.Injector;
 import org.panda_lang.utilities.inject.Property;
 import panda.std.Lazy;
+import panda.std.Option;
 import panda.std.function.ThrowingQuadFunction;
 import panda.std.function.TriFunction;
 import panda.utilities.ObjectUtils;
@@ -52,7 +53,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public final class FunnyCommandsConfiguration {
+public class FunnyCommandsConfiguration {
 
     protected final Supplier<JavaPlugin> plugin;
     protected final Map<String, Function<String, String>> placeholders = new HashMap<>();
@@ -64,9 +65,9 @@ public final class FunnyCommandsConfiguration {
     protected final Collection<Validator<?, ?, ?>> validators = new ArrayList<>();
     protected final Map<Class<? extends Exception>, ExceptionHandler<? extends Exception>> exceptionHandlers = new HashMap<>();
     protected final Map<Class<?>, ResponseHandler<?>> responseHandlers = new HashMap<>();
-    protected PermissionHandler permissionHandler;
-    protected UsageHandler usageHandler;
     protected Injector injector = DependencyInjection.createInjector();
+    protected Option<PermissionHandler> permissionHandler = Option.none();
+    protected Option<UsageHandler> usageHandler = Option.none();
 
     FunnyCommandsConfiguration(Supplier<JavaPlugin> plugin) {
         this.plugin = new Lazy<>(plugin);
@@ -195,12 +196,12 @@ public final class FunnyCommandsConfiguration {
     }
 
     public FunnyCommandsConfiguration permissionHandler(PermissionHandler permissionHandler) {
-        this.permissionHandler = permissionHandler;
+        this.permissionHandler = Option.of(permissionHandler);
         return this;
     }
 
     public FunnyCommandsConfiguration usageHandler(UsageHandler usageHandler) {
-        this.usageHandler = usageHandler;
+        this.usageHandler = Option.of(usageHandler);
         return this;
     }
 

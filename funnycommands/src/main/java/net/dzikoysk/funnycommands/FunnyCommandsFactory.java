@@ -24,8 +24,6 @@ import net.dzikoysk.funnycommands.resources.ValidationException;
 import net.dzikoysk.funnycommands.resources.responses.BooleanResponseHandler;
 import net.dzikoysk.funnycommands.resources.types.StringType;
 import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.Nullable;
-import org.panda_lang.utilities.inject.DependencyInjection;
 import org.panda_lang.utilities.inject.Injector;
 import panda.std.Option;
 import panda.utilities.ObjectUtils;
@@ -37,7 +35,7 @@ import java.util.function.BiConsumer;
 
 final class FunnyCommandsFactory {
 
-    protected FunnyCommands createFunnyCommands(FunnyCommandsConfiguration configuration) {
+    FunnyCommands createFunnyCommands(FunnyCommandsConfiguration configuration) {
         Formatter formatter = new Formatter(message -> Option.when(message.contains("${"), () -> new ValidationException("Message '" + message + "' contains unresolved placeholders")));
 
         configuration.placeholders.forEach((key, value) -> {
@@ -81,26 +79,20 @@ final class FunnyCommandsFactory {
             configuration.responseHandler(new BooleanResponseHandler());
         }
 
-        @Nullable BiConsumer<Context, String> permissionHandler = configuration.permissionHandler;
+        BiConsumer<Context, String> permissionHandler = configuration.permissionHandler
+                .orElseGet((context, permission) -> context.getCommandSender().sendMessage(FunnyCommandsUtils.translate("&cYou don't have permission to perform that command")));
 
-        if (permissionHandler == null) {
-            permissionHandler = (context, permission) -> context.getCommandSender().sendMessage(FunnyCommandsUtils.translate("&cYou don't have permission to perform that command"));
-        }
+        BiConsumer<CommandSender, CommandStructure> usageHandler = configuration.usageHandler
+                .orElseGet((sender, commandTree) -> {
+                    CommandInfo commandInfo = commandTree.getMetadata().getCommandInfo();
+                    String usageMessage = commandInfo.getUsageMessage();
 
-        @Nullable BiConsumer<CommandSender, CommandStructure> usageHandler = configuration.usageHandler;
+                    if (usageMessage.isEmpty()) {
+                        usageMessage = FunnyCommandsUtils.formatUsage(commandInfo.getName(), commandInfo.getParameters().values());
+                    }
 
-        if (usageHandler == null) {
-            usageHandler = (sender, commandTree) -> {
-                CommandInfo commandInfo = commandTree.getMetadata().getCommandInfo();
-                String usageMessage = commandInfo.getUsageMessage();
-
-                if (usageMessage.isEmpty()) {
-                    usageMessage = FunnyCommandsUtils.formatUsage(commandInfo.getName(), commandInfo.getParameters().values());
-                }
-
-                sender.sendMessage(FunnyCommandsUtils.translate(usageMessage));
-            };
-        }
+                    sender.sendMessage(FunnyCommandsUtils.translate(usageMessage));
+                });
 
         FunnyCommands funnyCommands = new FunnyCommands(configuration, injector, formatter, permissionHandler, usageHandler);
         funnyCommands.getCommandsLoader().registerCommands(commands);
