@@ -112,7 +112,12 @@ final class DynamicCommand extends Command {
         try {
             result = invoke(metadata, metadata.getCommandMethod(), context);
         } catch (ValidationException validationException) {
-            validationException.getValidationMessage().peek(message -> sender.sendMessage(ChatColor.translateAlternateColorCodes('&', message)));
+            validationException.getValidationMessage().peek(message -> {
+                if (message.isEmpty()) {
+                    return;
+                }
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+            });
             return;
         } catch (Throwable throwable) {
             resolveExceptionHandler(throwable.getClass())
