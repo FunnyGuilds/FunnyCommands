@@ -16,6 +16,14 @@
 
 package net.dzikoysk.funnycommands.commands;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.function.Supplier;
 import net.dzikoysk.funnycommands.FunnyCommands;
 import net.dzikoysk.funnycommands.FunnyCommandsException;
 import net.dzikoysk.funnycommands.resources.Context;
@@ -27,7 +35,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.StringUtil;
-import org.jetbrains.annotations.NotNull;
 import org.panda_lang.utilities.inject.DependencyInjectionException;
 import org.panda_lang.utilities.inject.MethodInjector;
 import panda.std.Option;
@@ -35,15 +42,6 @@ import panda.utilities.ArrayUtils;
 import panda.utilities.ClassUtils;
 import panda.utilities.ObjectUtils;
 import panda.utilities.StringUtils;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.function.BiFunction;
-import java.util.function.Supplier;
 
 final class DynamicCommand extends Command {
 
@@ -195,7 +193,7 @@ final class DynamicCommand extends Command {
         int completerIndex = normalizedArguments.length - 1;
 
         if (completerIndex == -1) {
-            completerIndex = 0;
+            return Collections.emptyList();
         }
 
         CustomizedCompleter completer = commandInfo.getCompletes().get(completerIndex);
