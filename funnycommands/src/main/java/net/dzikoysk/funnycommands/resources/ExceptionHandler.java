@@ -18,6 +18,7 @@ package net.dzikoysk.funnycommands.resources;
 
 import java.util.function.Function;
 
+@Deprecated
 public interface ExceptionHandler<E extends Exception> extends Function<E, Boolean> {
 
     Class<E> getExceptionType();
