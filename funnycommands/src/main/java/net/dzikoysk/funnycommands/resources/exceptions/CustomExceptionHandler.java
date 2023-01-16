@@ -16,23 +16,29 @@
 
 package net.dzikoysk.funnycommands.resources.exceptions;
 
-import net.dzikoysk.funnycommands.resources.ExceptionHandler;
+import net.dzikoysk.funnycommands.resources.Context;
+import net.dzikoysk.funnycommands.resources.DetailedExceptionHandler;
 
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
-public final class CustomExceptionHandler<E extends Exception> implements ExceptionHandler<E> {
+public final class CustomExceptionHandler<E extends Exception> implements DetailedExceptionHandler<E> {
 
     private final Class<E> type;
-    private final Function<E, Boolean> exceptionConsumer;
+    private final BiFunction<Context, E, Boolean> exceptionConsumer;
 
-    public CustomExceptionHandler(Class<E> type, Function<E, Boolean> exceptionConsumer) {
+    public CustomExceptionHandler(Class<E> type, BiFunction<Context, E, Boolean> exceptionConsumer) {
         this.type = type;
         this.exceptionConsumer = exceptionConsumer;
     }
 
+    public CustomExceptionHandler(Class<E> type, Function<E, Boolean> exceptionConsumer) {
+        this(type, (context, exception) -> exceptionConsumer.apply(exception));
+    }
+
     @Override
-    public Boolean apply(E exception) {
-        return exceptionConsumer.apply(exception);
+    public Boolean apply(Context context, E exception) {
+        return exceptionConsumer.apply(context, exception);
     }
 
     @Override

@@ -2,12 +2,10 @@ package net.dzikoysk.funnycommands.commands;
 
 import net.dzikoysk.funnycommands.FunnyCommands;
 import net.dzikoysk.funnycommands.FunnyCommandsPlugin;
-import net.dzikoysk.funnycommands.resources.Bind;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.junit.jupiter.api.Test;
 import org.panda_lang.utilities.inject.DependencyInjection;
 import org.panda_lang.utilities.inject.Injector;
-import org.panda_lang.utilities.inject.Resources;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;

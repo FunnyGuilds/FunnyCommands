@@ -60,7 +60,7 @@ public final class DefaultResources {
             new WorldsCompleter()
     );
 
-    public static Iterable<? extends ExceptionHandler<?>> EXCEPTION_HANDLERS = Collections.singletonList(
+    public static Iterable<? extends DetailedExceptionHandler<?>> EXCEPTION_HANDLERS = Collections.singletonList(
             new FunnyCommandsExceptionHandler()
     );
 

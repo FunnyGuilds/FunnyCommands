@@ -23,6 +23,7 @@ import net.dzikoysk.funnycommands.resources.Context;
 import net.dzikoysk.funnycommands.resources.ValidationException;
 import net.dzikoysk.funnycommands.resources.responses.BooleanResponseHandler;
 import net.dzikoysk.funnycommands.resources.types.StringType;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.panda_lang.utilities.inject.Injector;
 import panda.std.Option;
@@ -60,6 +61,18 @@ final class FunnyCommandsFactory {
                 return value;
             });
         });
+
+        if (!configuration.exceptionHandlers.containsKey(ValidationException.class)) {
+            configuration.exceptionHandler(ValidationException.class, (context, validationException) -> {
+                validationException.getValidationMessage().peek(message -> {
+                    if (message.isEmpty()) {
+                        return;
+                    }
+                    context.getCommandSender().sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+                });
+                return true;
+            });
+        }
 
         Collection<Object> commands = new ArrayList<>(configuration.commandsInstances);
 

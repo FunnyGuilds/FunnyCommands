@@ -21,6 +21,7 @@ import net.dzikoysk.funnycommands.resources.CommandDataType;
 import net.dzikoysk.funnycommands.resources.Completer;
 import net.dzikoysk.funnycommands.resources.Context;
 import net.dzikoysk.funnycommands.resources.DefaultResources;
+import net.dzikoysk.funnycommands.resources.DetailedExceptionHandler;
 import net.dzikoysk.funnycommands.resources.ExceptionHandler;
 import net.dzikoysk.funnycommands.resources.PermissionHandler;
 import net.dzikoysk.funnycommands.resources.ResponseHandler;
@@ -63,7 +64,7 @@ public class FunnyCommandsConfiguration {
     protected final Map<String, TypeMapper<?>> typeMappers = new HashMap<>();
     protected final Collection<Bind> binds = new ArrayList<>();
     protected final Collection<Validator<?, ?, ?>> validators = new ArrayList<>();
-    protected final Map<Class<? extends Exception>, ExceptionHandler<? extends Exception>> exceptionHandlers = new HashMap<>();
+    protected final Map<Class<? extends Exception>, DetailedExceptionHandler<? extends Exception>> exceptionHandlers = new HashMap<>();
     protected final Map<Class<?>, ResponseHandler<?>> responseHandlers = new HashMap<>();
     protected Injector injector = DependencyInjection.createInjector();
     protected Option<PermissionHandler> permissionHandler = Option.none();
@@ -119,8 +120,14 @@ public class FunnyCommandsConfiguration {
             return responseHandler(ObjectUtils.cast(componentInstance));
         }
 
+        //noinspection deprecation
         if (componentInstance instanceof ExceptionHandler)  {
-            return exceptionHandler(ObjectUtils.cast(componentInstance));
+            //noinspection deprecation
+            return exceptionHandler((ExceptionHandler<? extends Exception>) componentInstance);
+        }
+
+        if (componentInstance instanceof DetailedExceptionHandler)  {
+            return exceptionHandler((DetailedExceptionHandler<? extends Exception>) componentInstance);
         }
 
         return command(componentInstance);
@@ -177,13 +184,23 @@ public class FunnyCommandsConfiguration {
         return this;
     }
 
-    public <E extends Exception> FunnyCommandsConfiguration exceptionHandler(ExceptionHandler<E> exceptionHandler) {
+    public <E extends Exception> FunnyCommandsConfiguration exceptionHandler(DetailedExceptionHandler<E> exceptionHandler) {
         exceptionHandlers.put(exceptionHandler.getExceptionType(), exceptionHandler);
         return this;
     }
 
+    public <E extends Exception> FunnyCommandsConfiguration exceptionHandler(Class<E> exceptionType, BiFunction<Context, E, Boolean> exceptionConsumer) {
+        return exceptionHandler(new CustomExceptionHandler<>(exceptionType, exceptionConsumer));
+    }
+
+    @Deprecated
     public <E extends Exception> FunnyCommandsConfiguration exceptionHandler(Class<E> exceptionType, Function<E, Boolean> exceptionConsumer) {
         return exceptionHandler(new CustomExceptionHandler<>(exceptionType, exceptionConsumer));
+    }
+
+    @Deprecated
+    public <E extends Exception> FunnyCommandsConfiguration exceptionHandler(ExceptionHandler<E> exceptionHandler) {
+        return exceptionHandler(new CustomExceptionHandler<>(exceptionHandler.getExceptionType(), exceptionHandler));
     }
 
     public <R> FunnyCommandsConfiguration responseHandler(ResponseHandler<R> responseHandler) {

@@ -17,14 +17,15 @@
 package net.dzikoysk.funnycommands.resources.exceptions;
 
 import net.dzikoysk.funnycommands.FunnyCommandsException;
-import net.dzikoysk.funnycommands.resources.ExceptionHandler;
+import net.dzikoysk.funnycommands.resources.Context;
+import net.dzikoysk.funnycommands.resources.DetailedExceptionHandler;
 import net.dzikoysk.funnycommands.stereotypes.FunnyComponent;
 
 @FunnyComponent
-public final class FunnyCommandsExceptionHandler implements ExceptionHandler<FunnyCommandsException> {
+public final class FunnyCommandsExceptionHandler implements DetailedExceptionHandler<FunnyCommandsException> {
 
     @Override
-    public Boolean apply(FunnyCommandsException funnyCommandsException) {
+    public Boolean apply(Context context, FunnyCommandsException funnyCommandsException) {
         funnyCommandsException.printStackTrace();
         return true;
     }

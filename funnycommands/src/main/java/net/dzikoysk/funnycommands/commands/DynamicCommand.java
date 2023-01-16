@@ -27,9 +27,7 @@ import java.util.function.Supplier;
 import net.dzikoysk.funnycommands.FunnyCommands;
 import net.dzikoysk.funnycommands.FunnyCommandsException;
 import net.dzikoysk.funnycommands.resources.Context;
-import net.dzikoysk.funnycommands.resources.ExceptionHandler;
-import net.dzikoysk.funnycommands.resources.ValidationException;
-import org.bukkit.ChatColor;
+import net.dzikoysk.funnycommands.resources.DetailedExceptionHandler;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -42,6 +40,7 @@ import panda.utilities.ArrayUtils;
 import panda.utilities.ClassUtils;
 import panda.utilities.ObjectUtils;
 import panda.utilities.StringUtils;
+import panda.utilities.UnsafeUtils;
 
 final class DynamicCommand extends Command {
 
@@ -109,18 +108,10 @@ final class DynamicCommand extends Command {
 
         try {
             result = invoke(metadata, metadata.getCommandMethod(), context);
-        } catch (ValidationException validationException) {
-            validationException.getValidationMessage().peek(message -> {
-                if (message.isEmpty()) {
-                    return;
-                }
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
-            });
-            return;
-        } catch (Throwable throwable) {
-            resolveExceptionHandler(throwable.getClass())
-                    .orThrow(() -> new FunnyCommandsException("Cannot invoke command", throwable))
-                    .apply(ObjectUtils.cast(throwable));
+        } catch (Exception exception) {
+            resolveExceptionHandler(exception.getClass())
+                    .orThrow(() -> new FunnyCommandsException("Cannot invoke command", exception))
+                    .apply(context, ObjectUtils.cast(exception));
             return;
         }
 
@@ -227,20 +218,23 @@ final class DynamicCommand extends Command {
         return Option.of(context);
     }
 
-    private <T> T invoke(CommandMetadata metadata, MethodInjector method, Context context) throws Throwable {
+    private <T> T invoke(CommandMetadata metadata, MethodInjector method, Context context) throws Exception {
         try {
             return method.invoke(metadata.getCommandInstance(), metadata.getCommandInfo(), context);
         }
         catch (InvocationTargetException invocationTargetException) {
-            throw invocationTargetException.getTargetException();
+            return UnsafeUtils.throwException(invocationTargetException.getTargetException());
         }
         catch (DependencyInjectionException dependencyInjectionException) {
             throw new FunnyCommandsException("Dependency Injection failed due to: " + dependencyInjectionException.getMessage(), dependencyInjectionException);
         }
+        catch (Throwable throwable) {
+            throw new FunnyCommandsException("Fatal error occurred during executing fc command", throwable);
+        }
     }
 
-    private Option<ExceptionHandler<? extends Exception>> resolveExceptionHandler(Class<? extends Throwable> throwableClass) {
-        Map<Class<? extends Exception>, ExceptionHandler<? extends Exception>> exceptionHandlers = funnyCommands.getExceptionHandlers();
+    private Option<DetailedExceptionHandler<? extends Exception>> resolveExceptionHandler(Class<? extends Throwable> throwableClass) {
+        Map<Class<? extends Exception>, DetailedExceptionHandler<? extends Exception>> exceptionHandlers = funnyCommands.getExceptionHandlers();
         return ClassUtils.selectMostRelated(exceptionHandlers.keySet(), throwableClass).map(exceptionHandlers::get);
     }
 

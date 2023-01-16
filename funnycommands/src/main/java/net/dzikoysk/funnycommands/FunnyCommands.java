@@ -19,7 +19,7 @@ package net.dzikoysk.funnycommands;
 import net.dzikoysk.funnycommands.commands.CommandStructure;
 import net.dzikoysk.funnycommands.commands.CommandsLoader;
 import net.dzikoysk.funnycommands.resources.Completer;
-import net.dzikoysk.funnycommands.resources.ExceptionHandler;
+import net.dzikoysk.funnycommands.resources.DetailedExceptionHandler;
 import net.dzikoysk.funnycommands.resources.Context;
 import net.dzikoysk.funnycommands.resources.Validator;
 import net.dzikoysk.funnycommands.resources.types.TypeMapper;
@@ -65,7 +65,7 @@ public final class FunnyCommands {
         return permissionHandler;
     }
 
-    public Map<Class<? extends Exception>, ExceptionHandler<? extends Exception>> getExceptionHandlers() {
+    public Map<Class<? extends Exception>, DetailedExceptionHandler<? extends Exception>> getExceptionHandlers() {
         return configuration.exceptionHandlers;
     }
 
