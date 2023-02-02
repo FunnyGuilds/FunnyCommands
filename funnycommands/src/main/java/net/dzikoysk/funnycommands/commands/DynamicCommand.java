@@ -108,10 +108,10 @@ final class DynamicCommand extends Command {
 
         try {
             result = invoke(metadata, metadata.getCommandMethod(), context);
-        } catch (Exception exception) {
-            resolveExceptionHandler(exception.getClass())
-                    .orThrow(() -> new FunnyCommandsException("Cannot invoke command", exception))
-                    .apply(context, ObjectUtils.cast(exception));
+        } catch (Throwable throwable) {
+            resolveExceptionHandler(throwable.getClass())
+                    .orThrow(() -> new FunnyCommandsException("Cannot invoke command", throwable))
+                    .apply(context, ObjectUtils.cast(throwable));
             return;
         }
 
@@ -218,7 +218,7 @@ final class DynamicCommand extends Command {
         return Option.of(context);
     }
 
-    private <T> T invoke(CommandMetadata metadata, MethodInjector method, Context context) throws Exception {
+    private <T> T invoke(CommandMetadata metadata, MethodInjector method, Context context) throws Throwable {
         try {
             return method.invoke(metadata.getCommandInstance(), metadata.getCommandInfo(), context);
         }
@@ -227,9 +227,6 @@ final class DynamicCommand extends Command {
         }
         catch (DependencyInjectionException dependencyInjectionException) {
             throw new FunnyCommandsException("Dependency Injection failed due to: " + dependencyInjectionException.getMessage(), dependencyInjectionException);
-        }
-        catch (Throwable throwable) {
-            throw new FunnyCommandsException("Fatal error occurred during executing fc command", throwable);
         }
     }
 
