@@ -1,3 +1,6 @@
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
+
 plugins {
     java
     `java-library`
@@ -104,20 +107,19 @@ subprojects {
 
     tasks.withType<Test> {
         useJUnitPlatform()
-    }
+        setForkEvery(1)
+        maxParallelForks = 4
 
-    tasks.register("release") {
-        dependsOn(
-            "publishAllPublicationsToPanda-repositoryRepository"
-        )
+        testLogging {
+            events(TestLogEvent.STARTED, TestLogEvent.PASSED, TestLogEvent.FAILED, TestLogEvent.SKIPPED)
+            exceptionFormat = TestExceptionFormat.FULL
+            showExceptions = true
+            showCauses = true
+            showStackTraces = true
+            showStandardStreams = true
+        }
     }
 }
 
-tasks.register("release") {
-    dependsOn(
-        "clean", "build",
-        "publishAllPublicationsToPanda-repositoryRepository"
-    )
-}
 fun getEnvOrProperty(env: String, property: String): String? =
     System.getenv(env) ?: findProperty(property)?.toString()
