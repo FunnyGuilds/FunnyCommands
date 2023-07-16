@@ -1,4 +1,5 @@
-# FunnyCommands [![Build Status](https://travis-ci.org/FunnyGuilds/FunnyCommands.svg?branch=master)](https://travis-ci.org/FunnyGuilds/FunnyCommands)
+# FunnyCommands ![FunnyCommands CI](https://github.com/FunnyGuilds/FunnyCommands/actions/workflows/gradle.yml/badge.svg) ![maven](https://maven.reposilite.com/api/badge/latest/releases/net/dzikoysk/funnycommands?color=40c14a&name=Latest%20Release&prefix=v)
+
 FunnyGuilds command framework based on top of the [Panda](https://github.com/panda-lang/panda) dependency injection. Supported features:
 * Dynamic loading of commands
 * Configurable placeholders to extend annotation based API
