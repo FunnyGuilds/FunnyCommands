@@ -2,7 +2,7 @@ description = "FunnyCommands|Core"
 
 dependencies {
     // Panda stack
-    api("org.panda-lang.utilities:di:1.7.0")
+    api("org.panda-lang.utilities:di:1.8.0")
 
     // General
     val spigotVersion = "1.16.5-R0.1-SNAPSHOT"
