@@ -15,7 +15,7 @@ allprojects {
     apply(plugin = "signing")
     apply(plugin = "maven-publish")
 
-    group = "org.panda-lang.utilities"
+    group = "net.dzikoysk"
     version = "0.7.0"
 
     repositories {
