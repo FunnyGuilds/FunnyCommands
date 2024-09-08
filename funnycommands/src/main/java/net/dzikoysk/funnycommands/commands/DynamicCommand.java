@@ -33,6 +33,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.StringUtil;
+import org.jetbrains.annotations.Nullable;
 import org.panda_lang.utilities.inject.DependencyInjectionException;
 import org.panda_lang.utilities.inject.MethodInjector;
 import panda.std.Option;
@@ -53,19 +54,16 @@ final class DynamicCommand extends Command {
         this.funnyCommands = funnyCommands;
         this.plugin = plugin;
         this.root = root;
+
+        if (!StringUtils.isEmpty(commandInfo.getPermission())) {
+            this.setPermission(commandInfo.getPermission());
+        }
     }
 
     @SuppressWarnings("NullableProblems")
     @Override
     public boolean execute(CommandSender sender, String alias, String[] arguments) {
-        Option<Context> contextValue = createContext(sender, alias, arguments);
-
-        if (!contextValue.isDefined()) {
-            funnyCommands.getUsageHandler().accept(sender, root);
-            return true;
-        }
-
-        Context context = contextValue.get();
+        Context context = createContext(sender, alias, arguments);
         CommandStructure matchedCommand = context.getCommandStructure();
         CommandInfo commandInfo = matchedCommand.getMetadata().getCommandInfo();
 
@@ -149,15 +147,14 @@ final class DynamicCommand extends Command {
             }
         }
 
-        Option<Context> subcommandContext = createContext(sender, alias, arguments);
+        Context context = createContext(sender, alias, arguments);
+        CommandInfo commandInfo = context.getCommandStructure().getMetadata().getCommandInfo();
 
-        // list subcommands for root request
-        if (subcommandContext.isEmpty()) {
-            List<String> names = root.getSubcommandsNames();
-            return arguments.length == 0 ? names : StringUtil.copyPartialMatches(arguments[arguments.length - 1], names, new ArrayList<>());
+        // skip completion for unauthorized commands
+        if (!commandInfo.getPermission().isEmpty() && !sender.hasPermission(commandInfo.getPermission())) {
+            return Collections.emptyList();
         }
 
-        Context context = subcommandContext.get();
         String[] normalizedArguments = context.getArguments();
 
         if (context.getCommandStructure().equals(root) && normalizedArguments.length == 1) {
@@ -166,13 +163,6 @@ final class DynamicCommand extends Command {
             if (!subcommands.isEmpty()) {
                 return subcommands;
             }
-        }
-
-        CommandInfo commandInfo = context.getCommandStructure().getMetadata().getCommandInfo();
-
-        // skip completion for unauthorized commands
-        if (!commandInfo.getPermission().isEmpty() && !sender.hasPermission(commandInfo.getPermission())) {
-            return Collections.emptyList();
         }
 
         // skip undefined completions
@@ -202,7 +192,7 @@ final class DynamicCommand extends Command {
         return completer.apply(context, normalizedArguments[completerIndex]);
     }
 
-    private Option<Context> createContext(CommandSender commandSender, String alias, String[] arguments) {
+    private Context createContext(CommandSender commandSender, String alias, String[] arguments) {
         String[] normalizedArguments = CommandUtils.normalize(arguments);
         CommandStructure commandStructure = root;
         int index = 0;
@@ -218,9 +208,7 @@ final class DynamicCommand extends Command {
         }
 
         String[] commandArguments = Arrays.copyOfRange(normalizedArguments, index, normalizedArguments.length);
-        Context context = new Context(funnyCommands, commandSender, commandStructure, alias, commandArguments);
-
-        return Option.of(context);
+        return new Context(funnyCommands, commandSender, commandStructure, alias, commandArguments);
     }
 
     private <T> T invoke(CommandMetadata metadata, MethodInjector method, Context context) throws Throwable {
@@ -239,5 +227,4 @@ final class DynamicCommand extends Command {
         Map<Class<? extends Exception>, DetailedExceptionHandler<? extends Exception>> exceptionHandlers = funnyCommands.getExceptionHandlers();
         return ClassUtils.selectMostRelated(exceptionHandlers.keySet(), throwableClass).map(exceptionHandlers::get);
     }
-
 }

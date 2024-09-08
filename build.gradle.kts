@@ -16,7 +16,7 @@ allprojects {
     apply(plugin = "maven-publish")
 
     group = "net.dzikoysk"
-    version = "0.7.1"
+    version = "0.7.4"
 
     repositories {
         mavenCentral()
