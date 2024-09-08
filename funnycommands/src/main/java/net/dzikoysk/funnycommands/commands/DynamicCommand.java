@@ -170,6 +170,11 @@ final class DynamicCommand extends Command {
 
         CommandInfo commandInfo = context.getCommandStructure().getMetadata().getCommandInfo();
 
+        // skip completion for unauthorized commands
+        if (!commandInfo.getPermission().isEmpty() && !sender.hasPermission(commandInfo.getPermission())) {
+            return Collections.emptyList();
+        }
+
         // skip undefined completions
         if (commandInfo.getCompletes().isEmpty()) {
             return Collections.emptyList();
