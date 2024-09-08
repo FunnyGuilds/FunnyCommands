@@ -21,8 +21,8 @@ allprojects {
     repositories {
         mavenCentral()
         maven {
-            name = "panda-repository"
-            url = uri("https://repo.panda-lang.org/releases")
+            name = "reposilite-repository"
+            url = uri("https://maven.reposilite.com/releases")
         }
         maven {
             name = "spigot-repository"
@@ -37,7 +37,7 @@ allprojects {
     publishing {
         repositories {
             maven {
-                name = "panda-repository"
+                name = "reposilite-repository"
                 url = uri("https://maven.reposilite.com/${if (version.toString().endsWith("-SNAPSHOT")) "snapshots" else "releases"}")
 
                 credentials {

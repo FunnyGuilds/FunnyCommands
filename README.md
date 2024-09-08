@@ -14,9 +14,9 @@ Add these declarations to your `pom.xml`.
 ```xml
 <repositories>
   <repository>
-    <id>panda-repository</id>
-    <name>Panda Repository</name>
-    <url>https://repo.panda-lang.org/releases</url>
+    <id>reposilite-repository</id>
+    <name>Reposilite Repository</name>
+    <url>https://maven.reposilite.com/releases</url>
   </repository>
 </repositories>
 
@@ -33,7 +33,7 @@ Or in Gradle:
 
 ```groovy
 repositories {
-  maven { url "https://repo.panda-lang.org/releases" }
+  maven { url "https://maven.reposilite.com/releases" }
 }
 
 dependencies {
