@@ -7,7 +7,7 @@ dependencies {
     // General
     val spigotVersion = "1.16.5-R0.1-SNAPSHOT"
     compileOnlyApi("org.spigotmc:spigot-api:$spigotVersion")
-    compileOnlyApi("org.jetbrains:annotations:24.1.0")
+    compileOnlyApi("org.jetbrains:annotations:25.0.0")
     compileOnlyApi("com.google.code.findbugs:jsr305:3.0.2")
 
     // Tests
