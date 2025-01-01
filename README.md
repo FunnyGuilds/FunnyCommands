@@ -24,7 +24,7 @@ Add these declarations to your `pom.xml`.
   <dependency>
     <groupId>net.dzikoysk</groupId>
     <artifactId>funnycommands</artifactId>
-    <version>0.7.4</version>
+    <version>0.8.0</version>
   </dependency>
 </dependencies>
 ```
@@ -37,7 +37,7 @@ repositories {
 }
 
 dependencies {
-  implementation "net.dzikoysk:funnycommands:0.7.4"
+  implementation "net.dzikoysk:funnycommands:0.8.0"
 }
 ```
 

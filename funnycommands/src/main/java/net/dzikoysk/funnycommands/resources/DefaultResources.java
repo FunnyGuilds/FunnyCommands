@@ -14,7 +14,6 @@ import net.dzikoysk.funnycommands.resources.completers.EntityTypesCompleter;
 import net.dzikoysk.funnycommands.resources.completers.MaterialsCompleter;
 import net.dzikoysk.funnycommands.resources.completers.OnlinePlayersCompleter;
 import net.dzikoysk.funnycommands.resources.completers.PotionEffectTypesCompleter;
-import net.dzikoysk.funnycommands.resources.completers.SoundsCompleter;
 import net.dzikoysk.funnycommands.resources.completers.TimeUnitsCompleter;
 import net.dzikoysk.funnycommands.resources.completers.WorldsCompleter;
 import net.dzikoysk.funnycommands.resources.exceptions.FunnyCommandsExceptionHandler;
@@ -55,7 +54,6 @@ public final class DefaultResources {
             new MaterialsCompleter(),
             new OnlinePlayersCompleter(),
             new PotionEffectTypesCompleter(),
-            new SoundsCompleter(),
             new TimeUnitsCompleter(),
             new WorldsCompleter()
     );
