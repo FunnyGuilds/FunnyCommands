@@ -11,7 +11,7 @@ dependencies {
     compileOnlyApi("com.google.code.findbugs:jsr305:3.0.2")
 
     // Tests
-    val junit = "5.11.0"
+    val junit = "5.12.0"
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junit")
     testImplementation("org.junit.jupiter:junit-jupiter-engine:$junit")
     testImplementation("org.spigotmc:spigot-api:$spigotVersion")
